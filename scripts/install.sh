@@ -43,7 +43,6 @@ chown -R kid-learning-tv:kid-learning-tv "$INSTALL_DIR/content" "$STATE_DIR"
 )
 # Repair environments left root-only by an earlier installation attempt.
 chmod -R a+rX "$INSTALL_DIR/.venv"
-PYTHONPATH="$INSTALL_DIR" "$INSTALL_DIR/.venv/bin/python" "$INSTALL_DIR/tools/content_validator.py" || die "Content validation failed; fix local content before enabling the service."
 command -v runuser >/dev/null 2>&1 || die "runuser is required to securely set the PIN as the service account."
 pin_status="$(runuser -u kid-learning-tv -- env KLT_DATA_DIR="$STATE_DIR" PYTHONPATH="$INSTALL_DIR" \
     "$INSTALL_DIR/.venv/bin/python" -c 'import os; from pathlib import Path; from app.database import Database; print("configured" if Database(Path(os.environ["KLT_DATA_DIR"]) / "kid-learning-tv.sqlite3").get_pin_hash() else "missing")')"

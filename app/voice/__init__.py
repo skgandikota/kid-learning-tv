@@ -1,1 +1,0 @@
-"""Offline voice adapter interfaces."""

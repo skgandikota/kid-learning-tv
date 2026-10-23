@@ -1,1 +1,0 @@
-"""Local event notification helpers."""

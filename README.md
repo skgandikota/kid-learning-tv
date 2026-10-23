@@ -1,27 +1,20 @@
 # Kid Learning TV
 
-An offline-first, local-network learning and games appliance for a child-friendly TV. The current app includes the Avocado answer game, Memory Chain, parent controls, local content, optional natural local speech, and a parent-uploaded video library.
+Current version: **blank black TV screen and parent PIN login only**.
+Games, voice, AI, media controls and other feature code have been removed.
+Existing PIN and stored files are preserved; no models are downloaded.
 
-## Quick start
-
-For local development, install Python 3.10+, then run:
+Update on the Lubuntu laptop:
 
 ```bash
-python -m venv .venv
-# Activate the environment using your operating system's instructions.
-python -m pip install -e .
-python -m app.main
+cd ~/kid-learning-tv
+git pull --ff-only origin main
+sudo bash scripts/update.sh "$PWD"
 ```
 
-Open `http://127.0.0.1:8765/`; use `/parent` for parent setup and controls. `scripts/run-development.sh` is a convenience for Linux/macOS. The production scripts and systemd unit target a Lubuntu/Linux installation; see [INSTALLATION.md](INSTALLATION.md).
+Refresh the TV page at `http://127.0.0.1:8765/`.
+Open `http://<laptop-IP>:8765/parent` on your phone and use the existing PIN.
+After sign-in, the page has no feature controls.
 
-## Important capabilities and limits
-
-- The app serves locally and is designed to keep learning content and app data on the appliance.
-- The parent **Learning library** enables and launches matching pairs, counting, colour matching and shape matching inside the TV interface. Only a parent can restart or exit these games. They are original browser activities, not the full GCompris suite.
-- Optional **offline English voice play** uses the laptop microphone, local Whisper recognition and natural British Piper prompts. Updates install the required software/models automatically; see [INSTALLATION.md](INSTALLATION.md). No cloud recognition or saved microphone audio. Home has picture icons; tap or say Avocado to start Animals immediately.
-- Ask Rocky is a simulated activity; it does not record or retain audio. The bundled Rocky art is original helper art, not Paw Patrol artwork.
-- There is no YouTube downloader. Parents may upload local MP4/WebM videos through the parent UI.
-- LAN access uses HTTP by default. Keep the device on a trusted private network; do not expose its port to the internet.
-
-Read [QUICK-START.md](QUICK-START.md), [SECURITY.md](SECURITY.md), and [PRIVACY.md](PRIVACY.md) before use.
+Use a trusted home network only; do not expose port 8765 to the internet.
+See [INSTALLATION.md](INSTALLATION.md) for a fresh installation.

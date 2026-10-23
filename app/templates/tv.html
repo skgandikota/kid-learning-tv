@@ -1,85 +1,10 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="csrf-token" content="{{ csrf_token }}">
-  <title>Let's learn and play!</title>
-  <link rel="stylesheet" href="/static/css/app.css">
-  <script src="/static/js/learning.js" defer></script>
-  <script src="/static/js/tv.js" defer></script>
-  <script src="/static/js/voice.js" defer></script>
+  <title>TV</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
-<body class="tv">
-  <main id="app" aria-live="polite">
-    <header class="tv-header">
-      <h1>Let's learn and play!</h1>
-      <a class="parent-link" href="/parent" aria-label="Parent controls">Grown-up</a>
-    </header>
-    <aside class="voice-panel" aria-label="Offline voice">
-      <button id="start-voice" type="button">Start voice</button>
-      <span id="voice-status" role="status">Ask a grown-up to start voice once and allow the laptop microphone.</span>
-    </aside>
-    <section id="home-screen" class="screen">
-      <p class="big-prompt">What shall we play?</p>
-      <div id="home-cards" class="card-grid"></div>
-      <button class="activity-card rocky-card" data-action="rocky_request">
-        <img class="phone-icon" src="/static/images/phone.svg" alt="">
-        <img src="/static/characters/rocky-helper.svg" alt="">
-        <span>Ask Rocky</span>
-      </button>
-    </section>
-    <section id="choice-screen" class="screen hidden">
-      <h2 id="choice-title"></h2>
-      <div id="choice-cards" class="card-grid"></div>
-      <button class="secondary-button" data-action="home">Home</button>
-    </section>
-    <section id="play-screen" class="screen hidden">
-      <div class="character" aria-hidden="true">
-        <img src="/static/characters/avocado.svg" alt="">
-      </div>
-      <h2 id="screen-title"></h2>
-      <p id="message" class="big-prompt"></p>
-      <p id="current-activity" class="muted"></p>
-      <img id="activity-image" class="activity-image hidden" alt="">
-      <div id="input-area"></div>
-      <ul id="used-answers" class="answer-list" aria-label="Answers already used"></ul>
-      <div id="nickname" class="nickname hidden"></div>
-      <button class="secondary-button" data-action="home">Home</button>
-    </section>
-    <section id="learning-screen" class="screen hidden" aria-labelledby="learning-title">
-      <h2 id="learning-title"></h2>
-      <p id="learning-message" class="big-prompt"></p>
-      <p id="learning-progress"></p>
-      <div id="learning-target" class="learning-target"></div>
-      <div id="learning-board" class="learning-board"></div>
-      <p id="learning-status" role="status"></p>
-      <p class="muted">Your grown-up chooses what we play next.</p>
-    </section>
-    <section id="locked-screen" class="screen hidden">
-      <div class="character" aria-hidden="true"><img src="/static/characters/avocado.svg" alt=""></div>
-      <h2>Grown-up time</h2>
-      <p class="big-prompt">A grown-up will be right back.</p>
-    </section>
-    <section id="rocky-screen" class="screen hidden">
-      <div class="character rocky-character" aria-hidden="true"><img src="/static/characters/rocky-helper.svg" alt=""></div>
-      <h2 id="rocky-title">Ask Rocky</h2>
-      <p id="rocky-message" class="big-prompt"></p>
-      <div id="listening-indicator" class="listening-indicator hidden" aria-label="Listening animation">
-        <span></span><span></span><span></span><span></span><span></span>
-      </div>
-      <button class="primary-button" id="rocky-done" data-action="rocky_done">I'm finished</button>
-    </section>
-    <section id="video-screen" class="video-screen hidden" aria-label="Parent-selected video">
-      <video id="video-player" playsinline preload="auto" tabindex="-1"
-        disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback"></video>
-      <div id="video-loading" class="video-loading hidden" role="status" aria-live="polite">
-        <p>Loading your video…</p><progress id="video-loading-progress" max="100" value="0"></progress>
-        <span id="video-loading-percent">0%</span>
-      </div>
-      <p id="video-caption" class="video-caption"></p>
-    </section>
-    <footer><span id="connection-status">Starting…</span></footer>
-  </main>
-</body>
+<body class="tv"></body>
 </html>

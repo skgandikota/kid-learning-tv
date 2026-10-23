@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" role="img" aria-label="An original friendly grey elephant">
-  <path d="M46 119c0-47 31-80 82-80 45 0 76 27 76 68v32h-36v-27h-28v32H92v-24H46z" fill="#a7b3c0" stroke="#506274" stroke-width="7" stroke-linejoin="round"/>
-  <path d="M178 96c24 0 31 14 25 34-5 17-19 25-34 19" fill="none" stroke="#a7b3c0" stroke-width="22" stroke-linecap="round"/>
-  <path d="M178 96c24 0 31 14 25 34-5 17-19 25-34 19" fill="none" stroke="#506274" stroke-width="6" stroke-linecap="round"/>
-  <ellipse cx="67" cy="102" rx="33" ry="43" fill="#d4dae0" stroke="#506274" stroke-width="6"/>
-  <circle cx="148" cy="72" r="6" fill="#253746"/>
-  <path d="M150 87q14 11 26-1" fill="none" stroke="#405363" stroke-width="5" stroke-linecap="round"/>
-  <path d="M78 145v20M141 145v20" stroke="#506274" stroke-width="12" stroke-linecap="round"/>
-</svg>

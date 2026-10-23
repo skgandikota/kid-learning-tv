@@ -5,18 +5,15 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kid-learning-tv"
 version = "1.0.0"
-description = "Offline-first learning and games appliance for a child-friendly TV"
+description = "Blank TV display with parent PIN login"
 requires-python = ">=3.10"
 dependencies = [
   "Flask==3.1.2",
-  "jsonschema==4.25.1",
-  "qrcode==8.2",
   "waitress==3.0.2",
 ]
 
 [project.optional-dependencies]
 test = ["pytest==8.4.2"]
-voice = ["faster-whisper==1.2.1", "piper-tts==1.8.0"]
 
 [tool.setuptools.packages.find]
 include = ["app", "app.*"]
