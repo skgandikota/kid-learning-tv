@@ -37,6 +37,33 @@ playback reporting is laptop-only. In a regular Chromium window, launch with
 `--autoplay-policy=no-user-gesture-required`, then use F11 for full screen.
 Playback errors and autoplay failures are visible on the parent panel.
 
+## Start automatically in kiosk mode
+
+After installing/updating, run these as the Lubuntu desktop user, **without sudo**:
+
+```bash
+bash /opt/kid-learning-tv/scripts/enable-kiosk.sh
+bash /opt/kid-learning-tv/scripts/start-kiosk.sh
+```
+
+The local TV site opens in Chromium kiosk mode now and at future desktop logins.
+For power-on straight to the TV, enable automatic login for the dedicated TV
+desktop account in Lubuntu's login settings. Kiosk setup does not change login
+security or enable automatic login for you. The app service already starts at boot.
+
+To close kiosk temporarily, press **Ctrl+Alt+T** and run:
+
+```bash
+systemctl --user stop kid-learning-kiosk.service
+```
+
+If the terminal shortcut is unavailable, use **Ctrl+Alt+F3**, log in as the same
+desktop user, and run that command. Use **Ctrl+Alt+F1** or **Ctrl+Alt+F2** to
+return to the graphical desktop (the active console varies).
+Alt+F4 alone is not enough: the supervisor reopens Chromium.
+To disable future kiosk startup, run
+`bash /opt/kid-learning-tv/scripts/disable-kiosk.sh`.
+
 ## Quiz voice
 
 Setup tries natural Piper first and explicitly reports basic eSpeak fallback

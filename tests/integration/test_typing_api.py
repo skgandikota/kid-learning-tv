@@ -60,7 +60,7 @@ def test_typing_interruptions_clear_state_and_block_child_controls(client, app):
 
 def test_spaces_are_automatic_and_final_word_returns_to_menu(client):
     headers = {"X-CSRF-Token": csrf_for(client)}
-    for item_id, target in (("ant-man", "antman"), ("fish", "fish")):
+    for item_id, target in (("ant-man", "antman"), ("leg", "leg")):
         game = client.post("/api/child/typing", json={"action": "start", "id": item_id}, headers=headers).json["playback"]["typing"]
         for position, key in enumerate(target):
             result = client.post("/api/child/typing", json={"action": "key", "token": game["token"], "position": position, "key": key}, headers=headers)
@@ -68,3 +68,20 @@ def test_spaces_are_automatic_and_final_word_returns_to_menu(client):
         assert result.json["playback"]["typing"]["complete"]
     result = client.post("/api/child/typing", json={"action": "next", "token": game["token"]}, headers=headers)
     assert result.json["playback"]["mode"] == "typing-menu"
+
+
+def test_catalog_and_lessons_share_available_character_and_word_pictures(client):
+    headers = {"X-CSRF-Token": csrf_for(client)}
+    lessons = client.get("/api/typing/catalog").json["lessons"]
+    heroes = [item for item in lessons if item["category"] == "heroes"]
+    assert len({item["image"] for item in heroes}) == 26
+    for item in lessons:
+        image = client.get(item["image"])
+        assert image.status_code == 200, item["id"]
+        assert image.mimetype in {"image/png", "image/svg+xml"}
+        result = client.post(
+            "/api/child/typing", json={"action": "start", "id": item["id"]},
+            headers=headers,
+        )
+        assert result.status_code == 200
+        assert result.json["playback"]["typing"]["item"]["image"] == item["image"]

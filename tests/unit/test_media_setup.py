@@ -1,8 +1,49 @@
 import os
 from pathlib import Path
+import shlex
 import subprocess
 import tempfile
 import unittest
+
+
+@unittest.skipUnless(os.name == "posix", "The deployment scripts require Linux.")
+class KioskStartupTests(unittest.TestCase):
+    def test_launchers_work_without_executable_script_permissions(self):
+        project = Path(__file__).resolve().parents[2]
+        unit = (project / "systemd" / "kid-learning-kiosk.service").read_text()
+        command = shlex.split(next(line.removeprefix("ExecStart=") for line in unit.splitlines() if line.startswith("ExecStart=")))
+        self.assertEqual(command[0], "/bin/bash")
+        desktop = (project / "kiosk" / "kid-learning-tv.desktop").read_text()
+        enable = (project / "scripts" / "enable-kiosk.sh").read_text()
+        self.assertIn("Exec=/bin/bash ", desktop)
+        self.assertIn("Exec=/bin/bash ", enable)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("common.sh", "kiosk-supervisor.sh"):
+                target = root / name
+                target.write_text((project / "scripts" / name).read_text())
+                target.chmod(0o644)
+            binaries = root / "bin"
+            binaries.mkdir()
+            for name, script in (
+                ("chromium", '#!/bin/bash\nprintf "%s\\n" "$@" > "$TEST_LOG"\n'),
+                ("sleep", "#!/bin/bash\nexit 29\n"),
+            ):
+                target = binaries / name
+                target.write_text(script)
+                target.chmod(0o755)
+            result = subprocess.run(
+                [command[0], str(root / Path(command[1]).name)],
+                env={**os.environ, "PATH": f"{binaries}:{os.environ['PATH']}",
+                     "TEST_LOG": str(root / "browser-args"),
+                     "KLT_KIOSK_URL": "http://127.0.0.1:8765/"},
+                capture_output=True, text=True, timeout=10,
+            )
+            self.assertEqual(result.returncode, 29, result.stderr)
+            arguments = (root / "browser-args").read_text().splitlines()
+            self.assertIn("--kiosk", arguments)
+            self.assertIn("--autoplay-policy=no-user-gesture-required", arguments)
+            self.assertIn("http://127.0.0.1:8765/", arguments)
 
 
 @unittest.skipUnless(os.name == "posix", "The deployment scripts require Linux.")

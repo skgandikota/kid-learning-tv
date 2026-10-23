@@ -62,8 +62,12 @@ over buttons. Food time, videos and the end photo keep the pointer hidden.
 
 **Hero Typing - Level 1** adds 26 favourite character names, including Flash,
 Batman, Superman, Wonder Woman, Robin, Aquaman, Avengers, Thanos, Joker, Venom,
-Woody and Buzz Lightyear, followed by eight everyday words such as Ant and Apple.
-These use original generic hero artwork, not official character images.
+Woody and Buzz Lightyear, followed by 25 everyday words: animals, fruit,
+Table, Chair, Bed, Cup, Book, Ball and body parts.
+Each character has a parent-supplied picture on its choice card and inside the lesson.
+These supplied character images remain the property of their respective owners;
+they are not covered by this project's code license. Existing image credits are preserved.
+The new household and body-part illustrations are original SVGs.
 Choose a name, listen to its spelling, then type the highlighted letters using
 the keyboard or large on-screen keys. Sounds play after each completed sound
 group; Flash builds F, FL, FLA and then SH/FLASH. SH waits for both letters.

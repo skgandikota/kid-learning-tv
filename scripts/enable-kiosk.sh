@@ -13,7 +13,7 @@ cat > "$autostart/kid-learning-tv.desktop" <<EOF
 Type=Application
 Name=Kid Learning TV Kiosk
 Comment=Open the local learning appliance
-Exec=$INSTALL_DIR/scripts/start-kiosk.sh
+Exec=/bin/bash $INSTALL_DIR/scripts/start-kiosk.sh
 Terminal=false
 X-GNOME-Autostart-enabled=true
 EOF

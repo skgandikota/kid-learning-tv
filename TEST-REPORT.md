@@ -1,6 +1,6 @@
 # Test report
 
-`python -m pytest -q`: **186 passed, 5 skipped** on the development Windows host.
+`python -m pytest -q`: **188 passed, 6 skipped** on the development Windows host.
 Downloader tests mock yt-dlp, ffprobe and file failures; no third-party videos
 or AI models were downloaded on this machine. A missing setuptools build backend
 was installed only to check application packaging.
@@ -51,17 +51,24 @@ pairs through the real API using a controlled game clock. Mouse interaction was
 checked in rounds 1 and 20. All 42 cards fit 1366x768, with each target at least
 120x65 pixels; final completion, replay and stale-turn rejection passed.
 
-Hero Typing tests cover all 34 lessons, phonics group endings, Flash's SH,
+Hero Typing tests cover all 51 lessons, distinct character images on cards and
+inside lessons, available picture files, new household/body-part sound groups, Flash's SH,
 correct/wrong/stale keys, automatic spaces, next/completion, audio allowlists,
 missing engines, silent/invalid WAV rejection and activity interruption.
-An already-installed Linux eSpeak NG generated all 34 spelling introductions,
-34 complete names and 239 phoneme/blend WAVs; each had valid, nonzero audio.
+An already-installed Linux eSpeak NG generated all 51 spelling introductions,
+51 complete names and 308 phoneme/blend WAVs; each had valid, nonzero audio.
 This exposed silent B/D/G/J releases, fixed with short vowel-assisted prompts.
 No models were downloaded. Sound quality has not been reviewed by a phonics teacher.
 
 Real Edge used those generated WAVs to exercise physical/on-screen keys,
 F/FL/FLA then SH/FLASH, no premature S sound, wrong-letter hints, celebration,
 Next, close during speech, reload recovery and Food time interruption.
-Three home tiles, the standing generic hero, long-name wrapping and the
-1366x768 keyboard layout were checked. Target-Lubuntu speakers and voice
+The supplied launcher image and all 26 character/25 word pictures loaded both
+on cards and inside lessons. Table, Chair and Mouth completed with real local
+audio; incomplete CH/AIR/OU/TH groups waited for their final letter.
+Long-name wrapping and the 1366x768 keyboard layout were checked.
+Six Linux deployment/mock tests passed, including launching the actual kiosk
+supervisor through Bash with non-executable script permissions.
+Automatic desktop login and physical startup were not changed or tested remotely.
+Target-Lubuntu speakers and voice
 quality still need on-device listening.

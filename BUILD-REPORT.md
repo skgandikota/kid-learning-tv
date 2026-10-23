@@ -21,8 +21,11 @@ uses existing licensed pictures; no new packages, models or external assets.
 The website's TV pointer is large and white during child interaction and hidden
 for Food time, videos and the end photo.
 
-Hero Typing Level 1 adds a curated 26-name character collection and eight
-everyday words, with original generic hero artwork. The server validates each
+Hero Typing Level 1 adds a curated 26-name character collection and 25
+everyday words. Parent-supplied pictures identify each character on both the menu
+and lesson; original SVGs illustrate the added household objects and body parts.
+Supplied character images retain their owners' rights and existing credits.
+The server validates each
 letter; spelling, sound groups and suitable cumulative blends are spoken locally.
 SH/TH/CK and other teams wait until complete; irregular names skip prefix blends.
 eSpeak NG synthesizes explicit phonemes, not spoken letter names. Full names

@@ -82,8 +82,8 @@ This changes only the website pointer, not Chromium's toolbar or the desktop.
 ## Hero Typing - Level 1
 
 Click **Hero Typing** on the TV. Choose from **Heroes & friends** (26 names) or
-**Everyday words** (eight short words). The character pictures are original
-generic hero icons, not official artwork. Flash is the first choice; other names
+**Everyday words** (25 words). Each character uses its parent-supplied picture
+on both the choice card and inside the lesson. Flash is the first choice; other names
 include Batman, Superman, Wonder Woman, Robin, Aquaman, familiar Avengers,
 Thanos, Joker, Venom, Woody and Buzz Lightyear. This is a starter collection,
 not every Avengers character.
@@ -102,7 +102,9 @@ Iron is treated as a special whole-word chunk.
 
 After finishing, the hero celebrates and the full name is spoken.
 **Next adventure** moves through the names and then Ant, Apple, Cat, Dog, Pig,
-Hen, Duck and Fish. **Hear again** repeats the introduction, or the completed
+Hen, Duck, Fish, Table, Chair, Bed, Cup, Book, Ball, Head, Hair, Eye, Ear,
+Nose, Mouth, Tooth, Hand, Foot, Arm and Leg. Everyday words have matching pictures.
+**Hear again** repeats the introduction, or the completed
 name. **Choose a name** returns to choices; the red X returns home.
 
 Sounds are local, synthesized British-English approximations, not human

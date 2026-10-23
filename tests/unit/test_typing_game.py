@@ -59,3 +59,16 @@ def test_irregular_names_do_not_teach_invented_prefix_blends():
         for position in range(1, len(game.item["word"].replace(" ", "")) + 1):
             step = sound_step(game.item, position)
             assert step is None or step["blend"] is None
+
+
+def test_everyday_words_include_household_objects_and_body_parts():
+    words = {item["name"] for item in LESSONS if item["category"] == "words"}
+    assert {"Table", "Chair", "Bed", "Cup", "Book", "Ball"} <= words
+    assert {"Head", "Hair", "Eye", "Ear", "Nose", "Mouth", "Tooth", "Hand", "Foot", "Arm", "Leg"} <= words
+    for item_id, position, expected in (
+        ("chair", 1, None), ("chair", 2, "tS"), ("chair", 5, "e@"),
+        ("mouth", 2, None), ("mouth", 3, "aU"), ("mouth", 5, "T"),
+        ("tooth", 3, "u:"), ("foot", 3, "U"),
+    ):
+        step = sound_step(TypingGame(item_id).item, position)
+        assert (step["sound"] if step else None) == expected

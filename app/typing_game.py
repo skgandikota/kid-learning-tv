@@ -11,10 +11,11 @@ def lesson(name, groups, *, category="heroes", picture=None, blend=True):
     word = name.upper()
     if "".join(part["letters"] for part in parts) != word.replace(" ", ""):
         raise ValueError(f"Sound groups do not spell {name}.")
+    item_id = name.lower().replace(" ", "-")
     return {
-        "id": name.lower().replace(" ", "-"), "name": name, "word": word,
+        "id": item_id, "name": name, "word": word,
         "category": category, "groups": parts, "blend": blend,
-        "image": picture or "/static/images/typing-hero.svg",
+        "image": picture or f"/static/images/typing-{item_id}.png",
     }
 
 
@@ -64,6 +65,30 @@ for name, groups, image in [
     ("Fish", [("f", "f"), ("i", "I"), ("sh", "S")], "/static/images/typing-fish.svg"),
 ]:
     LESSONS.append(lesson(name, groups, category="words", picture=image))
+
+for name, groups, blend in [
+    ("Table", [("t", "t"), ("a", "eI"), ("b", "b"), ("le", "@l")], False),
+    ("Chair", [("ch", "tS"), ("air", "e@")], True),
+    ("Bed", [("b", "b"), ("e", "E"), ("d", "d")], True),
+    ("Cup", [("c", "k"), ("u", "V"), ("p", "p")], True),
+    ("Book", [("b", "b"), ("oo", "U"), ("k", "k")], True),
+    ("Ball", [("b", "b"), ("a", "O:"), ("ll", "l")], True),
+    ("Head", [("h", "h"), ("ea", "E"), ("d", "d")], True),
+    ("Hair", [("h", "h"), ("air", "e@")], True),
+    ("Eye", [("eye", "aI")], False),
+    ("Ear", [("ear", "i@")], False),
+    ("Nose", [("n", "n"), ("ose", "@Uz")], False),
+    ("Mouth", [("m", "m"), ("ou", "aU"), ("th", "T")], True),
+    ("Tooth", [("t", "t"), ("oo", "u:"), ("th", "T")], True),
+    ("Hand", [("h", "h"), ("a", "a"), ("n", "n"), ("d", "d")], True),
+    ("Foot", [("f", "f"), ("oo", "U"), ("t", "t")], True),
+    ("Arm", [("ar", "A:"), ("m", "m")], True),
+    ("Leg", [("l", "l"), ("e", "E"), ("g", "g")], True),
+]:
+    LESSONS.append(lesson(
+        name, groups, category="words", blend=blend,
+        picture=f"/static/images/typing-{name.lower()}.svg",
+    ))
 
 
 def get_lesson(item_id):
