@@ -61,3 +61,18 @@ is available. If both fail, the TV attempts an installed offline browser voice;
 otherwise it still shows the name and reports a sound warning here.
 Check laptop volume and kiosk autoplay if speech cannot play. A picture-loading
 warning also appears here; use Next or restart the category.
+
+## Card match
+
+On the TV home, click the two smiling cards labelled **Card match**.
+Find pairs of familiar animals and fruits. Matching cards disappear with a
+gentle magical sound; different cards stay visible briefly, then flip back.
+Only two cards can open at once. There is no time limit, scoring or wrong-answer
+sound. Complete each board to move through 4, 6, 8, 10 and 12 cards automatically.
+After the fifth round, choose Play again or the large red X to return home.
+
+TV refresh keeps the current board; closing or restarting the service ends it.
+Food time or a parent-started video interrupts and clears the game.
+The white pointer is larger on home, quiz and matching screens, including
+over buttons, but stays hidden during Food time, video and the end photo.
+This changes only the website pointer, not Chromium's toolbar or the desktop.

@@ -1,6 +1,6 @@
 # Test report
 
-`python -m pytest -q`: **151 passed, 4 skipped** on the development Windows host.
+`python -m pytest -q`: **164 passed, 4 skipped** on the development Windows host.
 Downloader tests mock yt-dlp, ffprobe and file failures; no third-party videos
 or AI models were downloaded on this machine. A missing setuptools build backend
 was installed only to check application packaging.
@@ -38,3 +38,11 @@ containment, close-button hit testing, 1366x768 tiles and phone width were check
 Browser speech used a local test WAV, not a downloaded model.
 The application wheel was checked for all 73 quiz SVGs and bundled license notices.
 Real Piper/eSpeak quality and target-laptop model installation remain unverified.
+
+Matching tests cover exact duplicate pairs, all five board sizes, mismatch
+delay, disappearing matches, completion, stale/double/invalid flips and display
+interruption. Real Edge mouse play completed every round, checked all 80 sparkle
+oscillator notes, reload recovery, replay and red X. The 12-card board fit within
+1366x768 without scrolling; flipped images stayed inside the cards. Computed
+cursor styles confirmed the large pointer on home/quiz/card buttons and no
+pointer or visible buttons during Food time and video.

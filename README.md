@@ -33,7 +33,7 @@ buffering. After the last video, your supplied end-of-screen-time photo appears.
 Food time interrupts playback; Stop returns to the Quiz home tile. Playlists do not restart
 automatically after a service restart.
 
-The TV home has a smiling **Quiz** button. Click it with the mouse, then choose a
+The TV home has **Quiz** and **Card match** picture buttons. Click Quiz, then choose a
 picture tile: car logos, animals, vegetables, fruits, birds, country shapes or
 flags. A large red **X** closes the quiz. Food time and videos still have no TV
 buttons. Quizzes show a picture, count down gently, then show and speak its name
@@ -51,6 +51,13 @@ the service account and reports whether natural or basic fallback speech works.
 To skip natural-voice downloads, run
 `sudo env KLT_QUIZ_NATURAL_VOICE=0 bash scripts/update.sh "$PWD"`.
 Actual voice quality and speaker volume must be checked on that laptop.
+
+**Card match** uses familiar animal and fruit pictures. Click two cards: matching
+pairs vanish with a gentle sparkle sound; different pictures flip back after a
+short look. Rounds automatically grow through **4, 6, 8, 10 and 12 cards**.
+There is no timer or score. The red X returns home; Play again starts fresh.
+A large white mouse pointer is used on home, quizzes and Card match, including
+over buttons. Food time, videos and the end photo keep the pointer hidden.
 
 For sound without touching the TV, run the laptop browser in kiosk mode:
 after updating, close/reopen the kiosk browser (or log out/in to the desktop).

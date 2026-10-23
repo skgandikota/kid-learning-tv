@@ -14,6 +14,7 @@
 | POST | `/api/tv/playback` | Loopback TV reports progress/ended/error with session and revision |
 | GET | `/api/quiz/catalog` | Public category names, counts and local tile images |
 | POST | `/api/child/quiz` | `menu`, `start` with `category`, or `close`; blocked during Food time/video/end photo |
+| POST | `/api/child/matching` | `start`, `close`, or `flip` with board `token` and integer `index`; CSRF required |
 | GET | `/api/parent/quiz` | Parent settings, catalog, playback and speech status |
 | POST | `/api/parent/quiz` | `settings` with seconds/count/ticking; start/category, menu, pause, resume, reveal, next, close |
 | POST | `/api/tv/quiz` | Loopback ready/speech-done/image-error, current token and optional warning; stale token returns 409 |
@@ -33,3 +34,13 @@ Use `position` (seconds) for seek and `volume` (0-1) for volume.
 Quiz phases are loading, question, answer and complete. `ready` starts the timer;
 answers stay at least four seconds, waiting for speech completion (bounded by a
 further twelve seconds). No microphone or scoring API exists.
+
+`playback.matching` contains the current board token, round 1-5, card states,
+and phase (playing, match, mismatch, round-done, complete).
+Face-down cards have no image/name in the response. Board sizes are 4/6/8/10/12;
+each image appears exactly twice. A match vanishes after 0.8 seconds; a mismatch
+flips back after 1.5 seconds. Completing a board advances after a short pause.
+Stale, duplicate and out-of-turn flips return 409; invalid indexes return 400.
+Child matching controls cannot interrupt quizzes, Food time, video or the end
+photo (423). Parents can interrupt through existing Food/video/quiz controls.
+The game stays in memory only; a service restart does not resume it.

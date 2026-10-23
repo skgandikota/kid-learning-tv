@@ -184,7 +184,7 @@
     const state = event.detail;
     home.hidden = state.mode !== "blank";
     screen.hidden = !["quiz-menu", "quiz"].includes(state.mode);
-    document.body.classList.toggle("quiz-interactive", !home.hidden || !screen.hidden);
+    document.body.classList.toggle("quiz-interactive", !home.hidden || !screen.hidden || state.mode === "matching");
     const quiz = state.quiz;
     if (screen.hidden || !quiz) {
       stopSound();

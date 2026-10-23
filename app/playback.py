@@ -7,6 +7,7 @@ import time
 import uuid
 
 from app.quiz import QuizRound
+from app.matching import MatchingGame
 
 
 def seconds(value):
@@ -32,6 +33,7 @@ class Playback:
         self.error = ""
         self.last_seen = None
         self.quiz = None
+        self.matching = None
 
     def snapshot(self):
         with self.lock:
@@ -49,6 +51,7 @@ class Playback:
                 "remaining": max(0, total - elapsed), "total": total,
                 "tv_connected": self.last_seen is not None and time.monotonic() - self.last_seen < 6,
                 "quiz": self.quiz.snapshot() if self.mode == "quiz" and self.quiz else None,
+                "matching": self.matching.snapshot() if self.mode == "matching" and self.matching else None,
             }
 
     def food(self, enabled):
@@ -56,6 +59,7 @@ class Playback:
             self.database.set_food_time(enabled)
             self.mode = "food" if enabled else "blank"
             self.quiz = None
+            self.matching = None
             self.queue = []
             self.index = 0
             self.position = 0.0
@@ -69,6 +73,7 @@ class Playback:
             self.session = uuid.uuid4().hex
             self.mode = "video"
             self.quiz = None
+            self.matching = None
             self.queue = [dict(item) for item in items]
             self.index = 0
             self.position = 0.0
@@ -81,6 +86,14 @@ class Playback:
         with self.lock:
             self.food(False)
             self.mode = "quiz-menu"
+
+    def start_matching(self):
+        with self.lock:
+            game = MatchingGame()
+            self.food(False)
+            self.matching = game
+            self.mode = "matching"
+            self.session = uuid.uuid4().hex
 
     def start_quiz(self, category):
         with self.lock:

@@ -125,6 +125,27 @@ def create_app(overrides: dict | None = None) -> Flask:
             "playback": playback.snapshot(), "speech": speech.status(),
         })
 
+    @app.post("/api/child/matching")
+    def child_matching():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Choose a card control.")
+        with playback.lock:
+            if playback.mode not in {"blank", "matching"}:
+                return jsonify({"error": "Close the current activity before opening Card match."}), 423
+            action = body.get("action")
+            if action == "start":
+                playback.start_matching()
+            elif action == "close":
+                playback.food(False)
+            elif action == "flip":
+                if playback.matching is None or not playback.matching.flip(body.get("token"), body.get("index")):
+                    return jsonify({"error": "That card turn has changed. Choose another card."}), 409
+                playback.revision += 1
+            else:
+                raise ValueError("Choose a card or close the game.")
+            return jsonify({"ok": True, "playback": playback.snapshot()})
+
     @app.post("/api/parent/quiz")
     def parent_quiz_action():
         if not session.get("parent_authenticated"):

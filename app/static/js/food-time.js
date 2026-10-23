@@ -116,7 +116,7 @@ video.addEventListener("error", () => {
 });
 document.addEventListener("contextmenu", (event) => event.preventDefault());
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "F11" && !["blank", "quiz-menu", "quiz"].includes(state?.mode)) event.preventDefault();
+  if (event.key !== "F11" && !["blank", "quiz-menu", "quiz", "matching"].includes(state?.mode)) event.preventDefault();
 });
 
 async function updateDisplay() {
