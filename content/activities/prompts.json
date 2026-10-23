@@ -1,0 +1,11 @@
+[
+  {"id":"count-blue-blocks","name":"Counting","prompt":"Bring me three blue blocks.","enabled":true},
+  {"id":"letter-b","name":"Letters","prompt":"Find something beginning with B.","enabled":true},
+  {"id":"elephant-move","name":"Movement","prompt":"Move like an elephant.","enabled":true},
+  {"id":"animal-fact","name":"Animals","prompt":"Elephants use their trunks to pick things up. An elephant's trunk can help it smell and drink water.","image":"/static/images/elephant.svg","enabled":true},
+  {"id":"one-more","name":"Counting","prompt":"Show me one more block than you have now.","enabled":true},
+  {"id":"red-circle","name":"Shapes","prompt":"Draw a big red circle.","enabled":true},
+  {"id":"clap-five","name":"Movement","prompt":"Clap your hands five times.","enabled":true},
+  {"id":"find-yellow","name":"Colours","prompt":"Find something yellow in the room.","enabled":true},
+  {"id":"story-time","name":"Story time","prompt":"Once there was a little moon who was afraid of the dark. The stars came out one by one, and the moon found it was never alone.","enabled":true}
+]

@@ -1,0 +1,7 @@
+{
+  "stt_profile": "no-stt",
+  "voice_enabled": true,
+  "tts_engine": "espeak-ng",
+  "low_animation": false,
+  "reduced_assets": false
+}

@@ -1,0 +1,17 @@
+{
+  "id": "animals",
+  "name": "Animals",
+  "enabled": true,
+  "answers": [
+    {"name": "Elephant", "aliases": ["elephants"], "facts": ["Elephants use their trunks to pick things up."]},
+    {"name": "Lion", "aliases": ["lions"]},
+    {"name": "Tiger", "aliases": ["tigers"]},
+    {"name": "Giraffe", "aliases": ["giraffes"]},
+    {"name": "Hippo", "aliases": ["hippopotamus", "hippopotamuses"]},
+    {"name": "Zebra", "aliases": ["zebras"]},
+    {"name": "Penguin", "aliases": ["penguins"]},
+    {"name": "Dolphin", "aliases": ["dolphins"]},
+    {"name": "Monkey", "aliases": ["monkeys"]},
+    {"name": "Rabbit", "aliases": ["rabbits"]}
+  ]
+}

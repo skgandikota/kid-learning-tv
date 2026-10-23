@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["id", "name", "answers"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "name": {"type": "string", "minLength": 1, "maxLength": 60},
+    "enabled": {"type": "boolean"},
+    "difficulty": {"type": "string", "enum": ["easy", "medium", "challenging"]},
+    "age_suitability": {"type": "string", "maxLength": 30},
+    "answers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1, "maxLength": 80},
+          "aliases": {"type": "array", "items": {"type": "string"}},
+          "pronunciation": {"type": "array", "items": {"type": "string"}},
+          "image": {"type": "string"},
+          "audio": {"type": "string"},
+          "age_suitability": {"type": "string", "maxLength": 30},
+          "facts": {"type": "array", "items": {"type": "string"}}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

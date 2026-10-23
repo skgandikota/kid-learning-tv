@@ -1,0 +1,1 @@
+{"id":"shapes","name":"Shapes","enabled":true,"answers":[{"name":"Circle","aliases":["circles"]},{"name":"Square","aliases":["squares"]},{"name":"Triangle","aliases":["triangles"]},{"name":"Rectangle","aliases":["rectangles"]},{"name":"Star","aliases":["stars"]},{"name":"Heart","aliases":["hearts"]},{"name":"Oval","aliases":["ovals"]},{"name":"Diamond","aliases":["diamonds"]}]}

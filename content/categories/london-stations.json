@@ -1,0 +1,17 @@
+{
+  "id": "london-stations",
+  "name": "London stations",
+  "enabled": true,
+  "answers": [
+    {"name": "King's Cross", "aliases": ["Kings Cross", "King's Cross St Pancras"]},
+    {"name": "Paddington", "aliases": []},
+    {"name": "Waterloo", "aliases": []},
+    {"name": "Victoria", "aliases": []},
+    {"name": "Euston", "aliases": []},
+    {"name": "Liverpool Street", "aliases": []},
+    {"name": "London Bridge", "aliases": []},
+    {"name": "Oxford Circus", "aliases": []},
+    {"name": "Baker Street", "aliases": []},
+    {"name": "Piccadilly Circus", "aliases": []}
+  ]
+}

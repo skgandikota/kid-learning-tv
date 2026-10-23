@@ -1,0 +1,25 @@
+[Unit]
+Description=Kid Learning TV local learning appliance
+After=network.target
+
+[Service]
+Type=simple
+User=kid-learning-tv
+Group=kid-learning-tv
+WorkingDirectory=/opt/kid-learning-tv
+EnvironmentFile=-/etc/kid-learning-tv/kid-learning-tv.env
+Environment=PYTHONUNBUFFERED=1
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/kid-learning-tv/.venv/bin/python -m app.main
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/kid-learning-tv /opt/kid-learning-tv/content
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

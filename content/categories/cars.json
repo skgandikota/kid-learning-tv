@@ -1,0 +1,17 @@
+{
+  "id": "cars",
+  "name": "Car names",
+  "enabled": true,
+  "answers": [
+    {"name": "Volkswagen", "aliases": ["VW", "V W"]},
+    {"name": "Mercedes-Benz", "aliases": ["Mercedes", "Mercedes Benz", "Merc"]},
+    {"name": "BMW", "aliases": ["B M W"]},
+    {"name": "Volvo", "aliases": []},
+    {"name": "Ford", "aliases": []},
+    {"name": "Toyota", "aliases": []},
+    {"name": "Honda", "aliases": []},
+    {"name": "Audi", "aliases": []},
+    {"name": "Nissan", "aliases": []},
+    {"name": "Mini", "aliases": ["MINI"]}
+  ]
+}

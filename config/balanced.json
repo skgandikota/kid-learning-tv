@@ -1,0 +1,8 @@
+{
+  "stt_profile": "balanced",
+  "voice_enabled": true,
+  "tts_engine": "espeak-ng",
+  "speech_rate": 145,
+  "low_animation": false,
+  "reduced_assets": false
+}

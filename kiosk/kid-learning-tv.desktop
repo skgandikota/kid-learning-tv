@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Application
+Name=Kid Learning TV Kiosk
+Comment=Open the local Kid Learning TV appliance
+Exec=/opt/kid-learning-tv/scripts/kiosk-supervisor.sh
+Terminal=false
+X-GNOME-Autostart-enabled=true

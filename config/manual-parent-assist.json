@@ -1,0 +1,7 @@
+{
+  "stt_profile": "manual-parent-assist",
+  "voice_enabled": false,
+  "tts_engine": "espeak-ng",
+  "low_animation": false,
+  "reduced_assets": false
+}

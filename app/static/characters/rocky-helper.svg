@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 240" role="img" aria-label="An original friendly green helper character">
+  <path d="M120 16 142 36l31-8 10 29 30 12-5 31 22 20-18 26 6 31-30 12-10 29-31-8-27 19-27-19-31 8-10-29-30-12 6-31-18-26 22-20-5-31 30-12 10-29 31 8z" fill="#b9e6cf" stroke="#246c58" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M63 91q-4-30 20-38l14 24M177 91q4-30-20-38l-14 24" fill="#58a977" stroke="#246c58" stroke-width="7" stroke-linejoin="round"/>
+  <rect x="75" y="101" width="90" height="72" rx="27" fill="#fafff5" stroke="#246c58" stroke-width="6"/>
+  <circle cx="101" cy="128" r="6" fill="#173d35"/><circle cx="139" cy="128" r="6" fill="#173d35"/>
+  <path d="M101 148q19 17 38 0" fill="none" stroke="#173d35" stroke-width="6" stroke-linecap="round"/>
+  <path d="M89 77h62" stroke="#e7a43b" stroke-width="12" stroke-linecap="round"/>
+  <path d="M97 184h46" stroke="#246c58" stroke-width="8" stroke-linecap="round"/>
+</svg>

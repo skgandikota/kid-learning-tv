@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>Parent controls · Kid Learning TV</title>
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="/static/js/parent.js" defer></script>
+</head>
+<body class="parent">
+  <header class="parent-header">
+    <div><h1>Parent controls</h1><p>Private controls for this home network.</p></div>
+    <a href="/" class="secondary-button">TV screen</a>
+  </header>
+  <main>
+    <section id="auth-panel" class="panel" aria-labelledby="auth-title">
+      <h2 id="auth-title">{{ "Sign in" if configured else "Set your parent PIN" }}</h2>
+      <p id="auth-help">{{ "Enter your parent PIN." if configured else "Choose a private PIN. Use 6 to 12 digits." }}</p>
+      <form id="auth-form" data-configured="{{ 'true' if configured else 'false' }}">
+        <label for="pin-input">Parent PIN</label>
+        <input id="pin-input" type="password" inputmode="numeric" autocomplete="current-password" minlength="6" maxlength="12" required>
+        <button class="primary-button" id="auth-submit" type="submit">{{ "Sign in" if configured else "Set PIN" }}</button>
+      </form>
+      <p id="auth-message" role="status" aria-live="polite"></p>
+    </section>
+    <div id="controls" class="hidden">
+      <section class="panel" aria-labelledby="device-title">
+        <h2 id="device-title">Device</h2>
+        <div id="device-status" class="status-grid"></div>
+        <p>Parent address: <a id="parent-url" href="#"></a></p>
+        <img id="parent-qr" class="qr-code hidden" alt="QR code for the parent control address">
+        <button id="show-qr" class="secondary-button">Show connection QR code</button>
+      </section>
+      <section class="panel">
+        <h2>Choose an activity</h2>
+        <label for="category-select">Avocado category</label>
+        <select id="category-select"></select>
+        <button class="primary-button" data-action="start_avocado">Start Avocado</button>
+        <label for="memory-select">Memory Chain category</label>
+        <select id="memory-select"></select>
+        <button class="primary-button" data-action="start_memory">Start Memory Chain</button>
+        <label for="prompt-select">Parent-selected activity</label>
+        <select id="prompt-select"></select>
+        <button class="secondary-button" data-action="activity">Show activity</button>
+      </section>
+      <section class="panel" aria-labelledby="learning-library-title">
+        <h2 id="learning-library-title">Learning library</h2>
+        <p>Enable activities one by one, then choose Play on TV. Only this parent page can start, restart or leave them.</p>
+        <p>Original browser activities inspired by educational games such as GCompris; no GCompris download or desktop app is needed.</p>
+        <div id="learning-library"></div>
+        <div class="button-row">
+          <button data-action="home">Return TV home</button>
+          <button data-action="reset">Restart current game</button>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Screen controls</h2>
+        <div class="button-row">
+          <button data-action="pause">Pause</button><button data-action="resume">Resume</button>
+          <button data-action="home">Home</button><button data-action="reset">Reset game</button><button data-action="end_round">End round</button>
+          <button data-action="lock">Lock child screen</button><button data-action="unlock">Unlock child screen</button>
+          <button data-action="break">Start a break</button>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Current round</h2>
+        <p id="live-message" aria-live="polite"></p>
+        <p id="live-state"></p>
+        <ul id="answers-list"></ul>
+        <div id="answer-tools" class="hidden">
+          <p>Possible answer: <strong id="pending-answer"></strong></p>
+          <div class="button-row">
+            <button class="primary-button" data-action="accept_answer">Yes, accept</button>
+            <button class="secondary-button" data-action="reject_answer">No, try again</button>
+          </div>
+          <label for="correct-answer">Correct the answer</label>
+          <input id="correct-answer" maxlength="100">
+          <button data-action="correct_answer">Use correction</button>
+        </div>
+        <label for="parent-answer">Enter an answer for the child</label>
+        <div class="inline-form"><input id="parent-answer" maxlength="100"><button data-action="send_answer">Send answer</button></div>
+        <label for="memory-answer">Memory Chain answer (separate items with commas)</label>
+        <div class="inline-form"><input id="memory-answer" maxlength="300"><button data-action="memory_answer">Check sequence</button></div>
+        <div class="button-row">
+          <button data-action="retry">Give another chance</button><button data-action="skip_turn">Skip application turn</button>
+        </div>
+      </section>
+      <section class="panel">
+        <h2>Ask Rocky</h2>
+        <p id="rocky-status">No new request.</p>
+        <label for="rocky-reply">Send a short reply to the TV</label>
+        <div class="inline-form"><input id="rocky-reply" maxlength="240"><button data-action="rocky_reply">Send reply</button></div>
+        <p>Requests use a pretend listening animation. The microphone is never opened and no audio is recorded or saved.</p>
+      </section>
+      <section class="panel">
+        <h2>Parent-selected videos</h2>
+        <p>Upload a video file you have permission to use. YouTube links are not downloaded. Local MP4 and WebM files stay on this device.</p>
+        <form id="video-upload">
+          <label for="video-title">Video title</label><input id="video-title" maxlength="100" required>
+          <label for="video-file">Choose an MP4 or WebM file (up to 256 MB)</label>
+          <input id="video-file" type="file" accept="video/mp4,video/webm,.mp4,.webm" required>
+          <button class="primary-button" type="submit">Add local video</button>
+        </form>
+        <progress id="video-upload-progress" class="hidden" max="100" value="0"></progress>
+        <p id="video-upload-status" aria-live="polite"></p>
+        <label for="video-select">Saved videos (not shown on the child home screen)</label>
+        <select id="video-select"></select>
+        <div class="button-row">
+          <button class="primary-button" data-action="play_video">Play on TV</button>
+          <button data-action="media_play">Play</button><button data-action="media_pause">Pause</button><button data-action="media_stop">Stop</button>
+          <button id="delete-video" class="danger-button">Remove selected video</button>
+        </div>
+        <label for="video-position">Seek in current video</label>
+        <input id="video-position" type="range" min="0" max="86400" value="0">
+        <p id="video-status" aria-live="polite">No video playing.</p>
+      </section>
+      <section class="panel">
+        <h2>Sound and session</h2>
+        <label><input type="checkbox" id="voice-enabled"> Speak prompts with offline eSpeak NG</label>
+        <label for="speech-rate">Speech speed</label>
+        <input id="speech-rate" type="range" min="100" max="200" value="145">
+        <label for="speech-voice">Offline voice</label>
+        <select id="speech-voice"><option value="en-gb">British English</option><option value="en-us">American English</option><option value="en">English fallback</option></select>
+        <label for="volume">Application volume</label>
+        <input id="volume" type="range" min="0" max="100" value="70">
+        <label><input type="checkbox" id="muted"> Mute speech</label>
+        <label for="session-minutes">Session length in minutes</label>
+        <input id="session-minutes" type="number" min="0" max="240" value="30">
+        <label for="break-reminder">Break reminder in minutes (0 disables)</label>
+        <input id="break-reminder" type="number" min="0" max="240" value="20">
+        <label for="retry-count">Friendly retries</label>
+        <input id="retry-count" type="number" min="0" max="5" value="1">
+        <label for="memory-level">Memory Chain level</label>
+        <select id="memory-level"><option value="1">Level 1</option><option value="2">Level 2</option><option value="3">Level 3</option></select>
+        <label><input type="checkbox" id="nicknames-enabled" checked> Use funny nicknames at the end of Avocado</label>
+        <label><input type="checkbox" id="low-animation"> Reduce animation</label>
+        <label><input type="checkbox" id="history-enabled"> Keep local activity summaries</label>
+        <button id="save-settings" class="primary-button">Save settings</button>
+        <button id="test-voice" class="secondary-button">Test offline voice</button>
+        <button data-action="stop_speech" class="secondary-button">Stop speech</button>
+        <p id="voice-status"></p>
+        <p id="microphone-state">Microphone is not used. No voice is recorded or sent.</p>
+      </section>
+      <section class="panel">
+        <h2>Learning content</h2>
+        <fieldset><legend>Enabled Avocado categories</legend><div id="category-toggles"></div></fieldset>
+        <label for="category-editor-select">Edit category answers and aliases</label>
+        <select id="category-editor-select"></select>
+        <textarea id="category-editor" rows="14" spellcheck="false" aria-label="Category JSON editor"></textarea>
+        <button id="load-category" class="secondary-button">Load category</button>
+        <button id="save-category" class="primary-button">Validate and save category</button>
+        <label for="nickname-editor">Funny nicknames (JSON list; set enabled to false to disable one)</label>
+        <textarea id="nickname-editor" rows="9" spellcheck="false" aria-label="Nickname JSON editor"></textarea>
+        <button id="load-nicknames" class="secondary-button">Load nicknames</button>
+        <button id="save-nicknames" class="primary-button">Validate and save nicknames</button>
+        <p>Use category JSON for names, aliases and pronunciation variants. No image uploads are enabled.</p>
+      </section>
+      <section class="panel">
+        <h2>Privacy and backup</h2>
+        <a class="secondary-button" href="/api/parent/export">Export settings</a>
+        <a class="secondary-button" href="/api/parent/backup">Download local backup</a>
+        <label for="settings-import">Import settings JSON</label>
+        <input id="settings-import" type="file" accept="application/json,.json">
+        <button id="import-settings" class="secondary-button">Import settings</button>
+        <button id="delete-history" class="danger-button">Delete all child activity history</button>
+        <label for="old-pin">Change parent PIN</label><input id="old-pin" type="password" inputmode="numeric" maxlength="12" placeholder="Current PIN">
+        <input id="new-pin" type="password" inputmode="numeric" maxlength="12" placeholder="New PIN (6 to 12 digits)">
+        <button id="change-pin" class="secondary-button">Change PIN</button>
+        <p>Database backups and service restarts use the local commands in the parent guide. They are not exposed as shell operations in this page.</p>
+      </section>
+      <section class="panel">
+        <h2>Close parent controls</h2>
+        <button id="logout" class="secondary-button">Sign out</button>
+      </section>
+    </div>
+    <p id="notice" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>

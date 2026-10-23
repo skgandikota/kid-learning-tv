@@ -1,0 +1,12 @@
+[Unit]
+Description=Kid Learning TV local kiosk browser
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+Environment=KLT_KIOSK_URL=http://127.0.0.1:8765/
+ExecStart=/opt/kid-learning-tv/scripts/kiosk-supervisor.sh
+Restart=always
+RestartSec=3
+NoNewPrivileges=true
+UMask=0077
