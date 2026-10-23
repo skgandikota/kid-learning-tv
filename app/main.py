@@ -1,4 +1,4 @@
-"""Blank TV display and parent PIN sign-in."""
+"""Parent-controlled Food time display and PIN sign-in."""
 from __future__ import annotations
 
 import hmac
@@ -68,7 +68,7 @@ def create_app(overrides: dict | None = None) -> Flask:
 
     @app.get("/")
     def tv():
-        return render_template("tv.html")
+        return render_template("tv.html", food_time=database.food_time())
 
     @app.get("/parent")
     def parent():
@@ -76,7 +76,23 @@ def create_app(overrides: dict | None = None) -> Flask:
             "parent.html", csrf_token=csrf_token(),
             configured=database.get_pin_hash() is not None,
             authenticated=bool(session.get("parent_authenticated")),
+            food_time=database.food_time(),
         )
+
+    @app.get("/api/display")
+    def display():
+        return jsonify({"food_time": database.food_time()})
+
+    @app.post("/api/parent/food-time")
+    def food_time():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        body = request.get_json(silent=True)
+        enabled = body.get("enabled") if isinstance(body, dict) else None
+        if not isinstance(enabled, bool):
+            return jsonify({"error": "Food time must be on or off."}), 400
+        database.set_food_time(enabled)
+        return jsonify({"ok": True, "food_time": enabled})
 
     @app.post("/api/setup")
     def setup():

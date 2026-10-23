@@ -1,6 +1,6 @@
 "use strict";
 
-async function submit(endpoint, body, button) {
+async function submit(endpoint, body, button, onSuccess = () => location.reload()) {
   const error = document.getElementById("error");
   button.disabled = true;
   error.textContent = "";
@@ -14,10 +14,11 @@ async function submit(endpoint, body, button) {
       body: JSON.stringify(body),
     });
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "Sign-in failed.");
-    location.reload();
+    if (!response.ok) throw new Error(result.error || "Request failed.");
+    onSuccess(result);
   } catch (failure) {
     error.textContent = failure.message;
+  } finally {
     button.disabled = false;
   }
 }
@@ -29,4 +30,10 @@ form?.addEventListener("submit", (event) => {
 });
 document.getElementById("logout")?.addEventListener("click", (event) => {
   submit("/api/logout", {}, event.currentTarget);
+});
+document.getElementById("food-time")?.addEventListener("click", (event) => {
+  const button = event.currentTarget;
+  submit("/api/parent/food-time", { enabled: button.getAttribute("aria-pressed") !== "true" }, button, (result) => {
+    button.setAttribute("aria-pressed", String(result.food_time));
+  });
 });

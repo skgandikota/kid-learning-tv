@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>TV</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="{{ url_for('static', filename='js/food-time.js') }}" defer></script>
 </head>
-<body class="tv"></body>
+<body class="tv">
+  <img id="food-time-image" src="{{ url_for('static', filename='images/food-time.png') }}"
+       alt="" draggable="false"{% if not food_time %} hidden{% endif %}>
+</body>
 </html>

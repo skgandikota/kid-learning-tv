@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kid-learning-tv"
 version = "1.0.0"
-description = "Blank TV display with parent PIN login"
+description = "Parent-controlled TV display with PIN login and Food time"
 requires-python = ">=3.10"
 dependencies = [
   "Flask==3.1.2",
@@ -20,7 +20,7 @@ include = ["app", "app.*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-app = ["templates/*.html", "static/css/*.css", "static/js/*.js", "static/images/*.svg", "static/characters/*.svg"]
+app = ["templates/*.html", "static/css/*.css", "static/js/*.js", "static/images/*.png"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -7,11 +7,10 @@ from app.main import create_app
 from tests.conftest import csrf_for
 
 
-def test_tv_is_empty_and_has_no_scripts_or_controls(client):
+def test_tv_starts_blank_and_has_no_controls(client):
     page = client.get("/")
     assert page.status_code == 200
-    assert '<body class="tv"></body>' in page.text
-    assert "<script" not in page.text
+    assert 'alt="" draggable="false" hidden' in page.text
     assert "<button" not in page.text
     assert "no-store" in page.headers["Cache-Control"]
 
@@ -26,9 +25,34 @@ def test_parent_login_logout_and_refresh(client, app):
     assert "Signed in." in page
     assert '<form id="login"' not in page
     assert "Avocado" not in page
+    assert 'id="food-time"' in page
     assert client.post("/api/logout", json={}, headers={"X-CSRF-Token": token}).status_code == 400
     assert client.post("/api/logout", json={}, headers={"X-CSRF-Token": response.json["csrf_token"]}).status_code == 200
     assert "Parent login" in client.get("/parent").text
+
+
+def test_food_time_requires_parent_login_csrf_and_boolean(client, app):
+    token = csrf_for(client)
+    headers = {"X-CSRF-Token": token}
+    assert 'id="food-time"' not in client.get("/parent").text
+    assert client.post("/api/parent/food-time", json={"enabled": True}, headers=headers).status_code == 401
+    app.extensions["klt_db"].set_pin_hash(hash_pin("123456"))
+    login = client.post("/api/login", json={"pin": "123456"}, headers=headers)
+    headers = {"X-CSRF-Token": login.json["csrf_token"]}
+    assert client.post("/api/parent/food-time", json={"enabled": True}).status_code == 400
+    for invalid in ("true", 1, None):
+        assert client.post("/api/parent/food-time", json={"enabled": invalid}, headers=headers).status_code == 400
+    assert client.get("/api/display").json == {"food_time": False}
+    assert client.post("/api/parent/food-time", json={"enabled": True}, headers=headers).json["food_time"] is True
+    assert client.get("/api/display").json == {"food_time": True}
+    assert 'draggable="false" hidden' not in client.get("/").text
+    assert 'aria-pressed="true"' in client.get("/parent").text
+    # A new app instance sees the same selection after a service restart.
+    restarted = create_app({"TESTING": True, "SECRET_KEY": "test", "DATA_DIR": app.config["DATA_DIR"]})
+    assert restarted.test_client().get("/api/display").json == {"food_time": True}
+    assert client.post("/api/parent/food-time", json={"enabled": False}, headers=headers).status_code == 200
+    assert client.get("/api/display").json == {"food_time": False}
+    assert 'draggable="false" hidden' in client.get("/").text
 
 
 def test_wrong_pin_csrf_and_rate_limiting(client, app):

@@ -11,6 +11,7 @@
 <body class="parent">
   <main>
     {% if authenticated %}
+    <button id="food-time" type="button" aria-pressed="{{ 'true' if food_time else 'false' }}">Food time</button>
     <p>Signed in.</p>
     <button id="logout" type="button">Sign out</button>
     {% else %}

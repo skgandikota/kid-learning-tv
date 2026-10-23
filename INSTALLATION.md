@@ -1,6 +1,6 @@
 # Lubuntu installation
 
-This version has only a blank TV display and parent PIN login. No AI, microphone,
+This version has a blank TV display, parent PIN login and a Food time picture. No AI, microphone,
 games or media features are installed or downloaded.
 
 For an existing installation:
@@ -20,8 +20,8 @@ For a fresh installation, install Python 3.10+ and `python3-venv`, then run
 terminal prompts. Python package installation requires internet.
 
 On the laptop, refresh `http://127.0.0.1:8765/`: the screen should be black and empty.
-On your phone, open `http://<laptop-IP>:8765/parent` and sign in. There are no
-feature controls after login. Use a trusted private LAN only.
+On your phone, open `http://<laptop-IP>:8765/parent` and sign in. Tap **Food time**
+to show the picture, then tap again to return to black. Use a trusted private LAN only.
 
 For a forgotten PIN, run
 `sudo bash /opt/kid-learning-tv/scripts/reset-parent-pin.sh`.
