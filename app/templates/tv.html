@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token }}">
   <title>TV</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <script src="{{ url_for('static', filename='js/food-time.js') }}" defer></script>
@@ -10,5 +11,14 @@
 <body class="tv">
   <img id="food-time-image" src="{{ url_for('static', filename='images/food-time.png') }}"
        alt="" draggable="false"{% if not food_time %} hidden{% endif %}>
+  <video id="tv-video" playsinline disablepictureinpicture disableremoteplayback
+         controlslist="nodownload nofullscreen noremoteplayback" tabindex="-1" hidden></video>
+  <div id="video-overlay" hidden>
+    <span id="video-loading" hidden>Loading...</span>
+    <span id="video-countdown"></span>
+    <progress id="playlist-progress" max="1" value="0" aria-label="Playlist progress"></progress>
+  </div>
+  <img id="screen-time-ended" src="{{ url_for('static', filename='images/screen-time-ended.jpg') }}"
+       alt="" draggable="false" hidden>
 </body>
 </html>

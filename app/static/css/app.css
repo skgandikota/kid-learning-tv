@@ -11,3 +11,23 @@ input, button { width: 100%; padding: 14px; font: inherit; margin-bottom: 16px; 
 button { cursor: pointer; }
 #food-time[aria-pressed="true"] { background: #254b37; color: #fff; border: 2px solid #254b37; }
 #error { color: #a11; }
+[hidden] { display: none !important; }
+.parent-tabs, .button-row { display: flex; gap: 8px; }
+.parent-tabs button { flex: 1; min-width: 0; }
+#videos-panel { margin-bottom: 28px; }
+h2 { font-size: 19px; margin-top: 24px; }
+.help { color: #555; font-size: 14px; overflow-wrap: anywhere; }
+.library-row { display: grid; grid-template-columns: minmax(0, 1fr) 64px 64px; gap: 6px; align-items: center; margin: 8px 0; }
+.library-row span, li { overflow-wrap: anywhere; }
+.library-row button { padding: 10px 4px; margin: 0; }
+.library-row [aria-pressed="true"] { background: #254b37; color: white; }
+.button-row { flex-wrap: wrap; }
+.button-row button { width: auto; flex: 1; padding: 12px 8px; }
+.current-video { font-weight: bold; color: #254b37; }
+#video-error, #playback-error { color: #a11; }
+#tv-video, #screen-time-ended { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+#tv-video { pointer-events: none; }
+#video-overlay { position: fixed; bottom: 0; left: 0; right: 0; padding: 10px 3vw; background: linear-gradient(transparent, #000b); color: #fff; text-align: right; pointer-events: none; }
+#video-loading { float: left; }
+#video-countdown { font: 500 clamp(16px, 2vw, 28px) system-ui, sans-serif; text-shadow: 0 1px 3px #000; }
+#playlist-progress { display: block; width: 100%; height: 4px; margin-top: 8px; accent-color: #f1d68a; }

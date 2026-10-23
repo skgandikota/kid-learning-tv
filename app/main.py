@@ -6,12 +6,14 @@ import secrets
 import time
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request, session
+from flask import Flask, jsonify, render_template, request, session, send_file
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from app.auth.security import hash_pin, valid_pin, verify_pin
 from app.config import DATA_DIR, HOST, PORT, SECURE_COOKIE
 from app.database import Database
+from app.playback import Playback
+from app.video_library import VideoLibrary
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -40,6 +42,10 @@ def create_app(overrides: dict | None = None) -> Flask:
     app.secret_key = app.config["SECRET_KEY"] or _secret_key(data_dir)
     database = Database(data_dir / "kid-learning-tv.sqlite3")
     app.extensions["klt_db"] = database
+    playback = Playback(database)
+    library = VideoLibrary(data_dir / "videos")
+    app.extensions["klt_playback"] = playback
+    app.extensions["klt_videos"] = library
 
     def csrf_token():
         if not session.get("csrf_token"):
@@ -68,7 +74,7 @@ def create_app(overrides: dict | None = None) -> Flask:
 
     @app.get("/")
     def tv():
-        return render_template("tv.html", food_time=database.food_time())
+        return render_template("tv.html", food_time=database.food_time(), csrf_token=csrf_token())
 
     @app.get("/parent")
     def parent():
@@ -76,12 +82,13 @@ def create_app(overrides: dict | None = None) -> Flask:
             "parent.html", csrf_token=csrf_token(),
             configured=database.get_pin_hash() is not None,
             authenticated=bool(session.get("parent_authenticated")),
-            food_time=database.food_time(),
+            food_time=playback.snapshot()["mode"] == "food",
         )
 
     @app.get("/api/display")
     def display():
-        return jsonify({"food_time": database.food_time()})
+        state = playback.snapshot()
+        return jsonify({"food_time": state["mode"] == "food", "playback": state})
 
     @app.post("/api/parent/food-time")
     def food_time():
@@ -91,8 +98,71 @@ def create_app(overrides: dict | None = None) -> Flask:
         enabled = body.get("enabled") if isinstance(body, dict) else None
         if not isinstance(enabled, bool):
             return jsonify({"error": "Food time must be on or off."}), 400
-        database.set_food_time(enabled)
+        playback.food(enabled)
         return jsonify({"ok": True, "food_time": enabled})
+
+    @app.get("/api/parent/videos")
+    def videos():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        return jsonify({
+            "videos": library.list(), "downloads": library.jobs(),
+            "folder": str(library.directory), "playback": playback.snapshot(),
+        })
+
+    @app.post("/api/parent/videos/download")
+    def download_video():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Provide a YouTube URL and title.")
+        job = library.download(body.get("url"), body.get("title"))
+        return jsonify({"ok": True, "job": job}), 202
+
+    @app.post("/api/parent/videos/play")
+    def play_videos():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        body = request.get_json(silent=True)
+        ids = body.get("ids") if isinstance(body, dict) else None
+        if not isinstance(ids, list) or not 1 <= len(ids) <= 50 or any(not isinstance(item, str) for item in ids):
+            raise ValueError("Select between 1 and 50 videos in play order.")
+        if len(set(ids)) != len(ids):
+            raise ValueError("Select each video once.")
+        playback.start(library.items(ids))
+        return jsonify({"ok": True, "playback": playback.snapshot()})
+
+    @app.post("/api/parent/videos/control")
+    def video_control():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Choose a video control.")
+        playback.command(body)
+        return jsonify({"ok": True, "playback": playback.snapshot()})
+
+    @app.get("/api/videos/<video_id>")
+    def stream_video(video_id):
+        if request.remote_addr not in {"127.0.0.1", "::1"} and not session.get("parent_authenticated"):
+            return jsonify({"error": "Local TV or parent sign-in required."}), 403
+        try:
+            path = library.resolve(video_id)
+        except ValueError:
+            return jsonify({"error": "Video file not found."}), 404
+        return send_file(path, conditional=True)
+
+    @app.post("/api/tv/playback")
+    def tv_playback():
+        if request.remote_addr not in {"127.0.0.1", "::1"}:
+            return jsonify({"error": "Only the laptop TV can report playback."}), 403
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Invalid TV report.")
+        if not playback.report(body):
+            return jsonify({"error": "That playback command has changed."}), 409
+        return jsonify({"ok": True})
 
     @app.post("/api/setup")
     def setup():
@@ -144,6 +214,10 @@ def create_app(overrides: dict | None = None) -> Flask:
     @app.errorhandler(404)
     def not_found(_error):
         return jsonify({"error": "That local resource was not found."}), 404
+
+    @app.errorhandler(ValueError)
+    def invalid_input(error):
+        return jsonify({"error": str(error)}), 400
 
     return app
 

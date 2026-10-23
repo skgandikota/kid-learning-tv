@@ -1,4 +1,5 @@
 import sqlite3
+import re
 
 import pytest
 
@@ -42,17 +43,17 @@ def test_food_time_requires_parent_login_csrf_and_boolean(client, app):
     assert client.post("/api/parent/food-time", json={"enabled": True}).status_code == 400
     for invalid in ("true", 1, None):
         assert client.post("/api/parent/food-time", json={"enabled": invalid}, headers=headers).status_code == 400
-    assert client.get("/api/display").json == {"food_time": False}
+    assert client.get("/api/display").json["food_time"] is False
     assert client.post("/api/parent/food-time", json={"enabled": True}, headers=headers).json["food_time"] is True
-    assert client.get("/api/display").json == {"food_time": True}
-    assert 'draggable="false" hidden' not in client.get("/").text
+    assert client.get("/api/display").json["food_time"] is True
+    assert not re.search(r'id="food-time-image"[^>]*\bhidden\b', client.get("/").text)
     assert 'aria-pressed="true"' in client.get("/parent").text
     # A new app instance sees the same selection after a service restart.
     restarted = create_app({"TESTING": True, "SECRET_KEY": "test", "DATA_DIR": app.config["DATA_DIR"]})
-    assert restarted.test_client().get("/api/display").json == {"food_time": True}
+    assert restarted.test_client().get("/api/display").json["food_time"] is True
     assert client.post("/api/parent/food-time", json={"enabled": False}, headers=headers).status_code == 200
-    assert client.get("/api/display").json == {"food_time": False}
-    assert 'draggable="false" hidden' in client.get("/").text
+    assert client.get("/api/display").json["food_time"] is False
+    assert re.search(r'id="food-time-image"[^>]*\bhidden\b', client.get("/").text)
 
 
 def test_wrong_pin_csrf_and_rate_limiting(client, app):

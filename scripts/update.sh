@@ -6,7 +6,11 @@ SOURCE="${1:-$SOURCE_DIR}"
 [[ -f "$SOURCE/pyproject.toml" && -d "$SOURCE/app" ]] || die "Usage: sudo $0 [project-source-directory]"
 [[ -d "$INSTALL_DIR" ]] || die "Install not found at $INSTALL_DIR."
 [[ "$(cd "$SOURCE" && pwd -P)" != "$INSTALL_DIR" ]] || die "Provide a separate updated project checkout as the source."
-confirm "Update the TV and parent page, including Food time? Your PIN and stored files stay unchanged. No AI models will be downloaded."
+confirm "Update Food time and Video controls, installing FFmpeg and the YouTube downloader? Your PIN/files stay unchanged. No videos or AI models download until requested."
+command -v apt-get >/dev/null 2>&1 || die "Lubuntu/Ubuntu apt-get is required to install FFmpeg."
+apt-get update
+apt-get install -y ffmpeg
+install -d -o kid-learning-tv -g kid-learning-tv -m 0750 "$STATE_DIR/videos"
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 backup="/var/backups/kid-learning-tv/releases/$stamp"
 [[ ! -e "$backup" ]] || die "A release snapshot already exists for this timestamp; retry in a moment."
@@ -36,6 +40,7 @@ chown -R kid-learning-tv:kid-learning-tv "$INSTALL_DIR/content"
     "$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR" waitress
 )
 chmod -R a+rX "$INSTALL_DIR/.venv"
+verify_video_tools
 rm -f "$INSTALL_DIR/scripts/setup-voice.sh" "$INSTALL_DIR/tools/setup_voice.py" \
     "$INSTALL_DIR/scripts/validate-content.sh" "$INSTALL_DIR/tools/content_validator.py"
 systemctl start "$SERVICE_NAME.service"

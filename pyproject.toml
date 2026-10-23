@@ -10,6 +10,8 @@ requires-python = ">=3.10"
 dependencies = [
   "Flask==3.1.2",
   "waitress==3.0.2",
+  "yt-dlp[default]==2026.10.21",
+  "deno==2.9.8",
 ]
 
 [project.optional-dependencies]
@@ -20,7 +22,7 @@ include = ["app", "app.*"]
 namespaces = false
 
 [tool.setuptools.package-data]
-app = ["templates/*.html", "static/css/*.css", "static/js/*.js", "static/images/*.png"]
+app = ["templates/*.html", "static/css/*.css", "static/js/*.js", "static/images/*.png", "static/images/*.jpg"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

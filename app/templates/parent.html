@@ -7,11 +7,56 @@
   <title>Parent</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <script src="{{ url_for('static', filename='js/parent.js') }}" defer></script>
+  {% if authenticated %}<script src="{{ url_for('static', filename='js/videos.js') }}" defer></script>{% endif %}
 </head>
 <body class="parent">
   <main>
     {% if authenticated %}
-    <button id="food-time" type="button" aria-pressed="{{ 'true' if food_time else 'false' }}">Food time</button>
+    <nav class="parent-tabs" aria-label="TV controls">
+      <button id="food-time" type="button" aria-pressed="{{ 'true' if food_time else 'false' }}">Food time</button>
+      <button id="open-videos" type="button" aria-expanded="false" aria-controls="videos-panel">Video</button>
+    </nav>
+    <section id="videos-panel" hidden>
+      <h1>Videos</h1>
+      <form id="download-video">
+        <label for="youtube-url">YouTube URL</label>
+        <input id="youtube-url" type="url" required placeholder="https://www.youtube.com/watch?v=..." maxlength="500">
+        <label for="video-title">Title</label>
+        <input id="video-title" type="text" required maxlength="120">
+        <p class="help">Only download videos you own or have permission to download. Downloads stay on this laptop.</p>
+        <button type="submit">Download in background</button>
+      </form>
+      <div id="downloads" aria-live="polite"></div>
+      <p id="video-folder" class="help"></p>
+      <h2>Library</h2>
+      <p class="help">Select videos in play order. Numbers show 1, 2, 3...</p>
+      <div id="video-library"></div>
+      <h2>Your selection</h2>
+      <ol id="video-selection"></ol>
+      <div class="button-row">
+        <button id="play-selection" type="button" disabled>Play selection</button>
+        <button id="clear-selection" type="button">Clear selection</button>
+      </div>
+      <section id="playback-controls" hidden>
+        <h2>On TV</h2>
+        <ol id="active-playlist"></ol>
+        <p id="playback-status" role="status"></p>
+        <p id="playback-error" role="alert"></p>
+        <label for="video-seek">Current video position</label>
+        <input id="video-seek" type="range" min="0" max="1" step="0.1" value="0">
+        <p id="video-times"></p>
+        <div class="button-row">
+          <button type="button" data-video-action="previous">Previous</button>
+          <button id="pause-video" type="button" data-video-action="pause">Pause</button>
+          <button type="button" data-video-action="next">Next</button>
+          <button type="button" data-video-action="stop">Stop</button>
+        </div>
+        <label for="video-volume">Volume</label>
+        <input id="video-volume" type="range" min="0" max="100" value="70">
+        <button id="mute-video" type="button">Mute</button>
+      </section>
+      <p id="video-error" role="alert"></p>
+    </section>
     <p>Signed in.</p>
     <button id="logout" type="button">Sign out</button>
     {% else %}
