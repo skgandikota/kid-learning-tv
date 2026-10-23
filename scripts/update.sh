@@ -29,7 +29,11 @@ for item in pyproject.toml requirements.lock README.md; do
     cp -a "$SOURCE/$item" "$INSTALL_DIR/"
 done
 chown -R kid-learning-tv:kid-learning-tv "$INSTALL_DIR/content"
-"$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR" waitress
+(
+    umask 022
+    "$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR" waitress
+)
+chmod -R a+rX "$INSTALL_DIR/.venv"
 systemctl start "$SERVICE_NAME.service"
 restart_service=0
 trap - EXIT

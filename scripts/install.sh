@@ -31,13 +31,18 @@ if [[ "$SOURCE_DIR" != "$INSTALL_DIR" ]]; then
     cp -a "$SOURCE_DIR/scripts/." "$INSTALL_DIR/scripts/"
 fi
 chown -R kid-learning-tv:kid-learning-tv "$INSTALL_DIR/content" "$STATE_DIR"
-python3 -m venv "$INSTALL_DIR/.venv"
-if [[ -n "${KLT_WHEELHOUSE:-}" ]]; then
-    [[ -d "$KLT_WHEELHOUSE" ]] || die "KLT_WHEELHOUSE is not a directory."
-    "$INSTALL_DIR/.venv/bin/pip" install --no-index --find-links "$KLT_WHEELHOUSE" "$INSTALL_DIR" waitress
-else
-    "$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR" waitress
-fi
+(
+    umask 022
+    python3 -m venv "$INSTALL_DIR/.venv"
+    if [[ -n "${KLT_WHEELHOUSE:-}" ]]; then
+        [[ -d "$KLT_WHEELHOUSE" ]] || die "KLT_WHEELHOUSE is not a directory."
+        "$INSTALL_DIR/.venv/bin/pip" install --no-index --find-links "$KLT_WHEELHOUSE" "$INSTALL_DIR" waitress
+    else
+        "$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR" waitress
+    fi
+)
+# Repair environments left root-only by an earlier installation attempt.
+chmod -R a+rX "$INSTALL_DIR/.venv"
 PYTHONPATH="$INSTALL_DIR" "$INSTALL_DIR/.venv/bin/python" "$INSTALL_DIR/tools/content_validator.py" || die "Content validation failed; fix local content before enabling the service."
 command -v runuser >/dev/null 2>&1 || die "runuser is required to securely set the PIN as the service account."
 pin_status="$(runuser -u kid-learning-tv -- env KLT_DATA_DIR="$STATE_DIR" PYTHONPATH="$INSTALL_DIR" \
