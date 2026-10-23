@@ -33,3 +33,30 @@ verify_video_tools() {
     runuser -u kid-learning-tv -- "$INSTALL_DIR/.venv/bin/deno" --version >/dev/null \
         || die "Deno JavaScript runtime verification failed."
 }
+setup_quiz_voice() {
+    install -d -o kid-learning-tv -g kid-learning-tv -m 0750 "$STATE_DIR/quiz-audio"
+    if [[ "${KLT_QUIZ_NATURAL_VOICE:-1}" == 1 ]]; then
+        install -d -m 0755 "$INSTALL_DIR/models"
+        info "Setting up optional local Piper voice on this laptop (model download required once)."
+        if (
+            umask 022
+            "$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR[quiz-voice]"
+        ); then
+            if ! "$INSTALL_DIR/.venv/bin/python" "$INSTALL_DIR/tools/setup_quiz_voice.py" --data-dir "$STATE_DIR"; then
+                info "WARNING: Natural voice setup failed. Checking the basic offline voice instead."
+            fi
+        else
+            info "WARNING: Piper package installation failed. Checking the basic offline voice instead."
+        fi
+    else
+        info "Skipping natural-voice downloads (KLT_QUIZ_NATURAL_VOICE=0)."
+    fi
+    chmod -R a+rX "$INSTALL_DIR/.venv"
+    if [[ -d "$INSTALL_DIR/models/piper-cori-medium" ]]; then
+        chmod -R a+rX "$INSTALL_DIR/models/piper-cori-medium"
+    fi
+    chown -R kid-learning-tv:kid-learning-tv "$STATE_DIR/quiz-audio"
+    runuser -u kid-learning-tv -- "$INSTALL_DIR/.venv/bin/python" \
+        "$INSTALL_DIR/tools/setup_quiz_voice.py" --verify --data-dir "$STATE_DIR" \
+        || die "Neither natural nor fallback quiz speech works. Fix the reported error before starting."
+}

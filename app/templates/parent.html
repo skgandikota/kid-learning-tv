@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <script src="{{ url_for('static', filename='js/parent.js') }}" defer></script>
   {% if authenticated %}<script src="{{ url_for('static', filename='js/videos.js') }}" defer></script>{% endif %}
+  {% if authenticated %}<script src="{{ url_for('static', filename='js/quiz-parent.js') }}" defer></script>{% endif %}
 </head>
 <body class="parent">
   <main>
@@ -15,7 +16,32 @@
     <nav class="parent-tabs" aria-label="TV controls">
       <button id="food-time" type="button" aria-pressed="{{ 'true' if food_time else 'false' }}">Food time</button>
       <button id="open-videos" type="button" aria-expanded="false" aria-controls="videos-panel">Video</button>
+      <button id="open-quiz" type="button" aria-expanded="false" aria-controls="quiz-panel">Quiz</button>
     </nav>
+    <section id="quiz-panel" hidden>
+      <h1>Picture quiz</h1>
+      <p class="help">For age three: try five familiar pictures at ten seconds. Say answers aloud together. No microphone, scores or wrong answers. Country shapes are harder.</p>
+      <form id="quiz-settings">
+        <label for="quiz-duration">Seconds to guess</label>
+        <select id="quiz-duration"><option value="5">5 seconds</option><option value="10" selected>10 seconds</option><option value="15">15 seconds</option><option value="20">20 seconds</option></select>
+        <label for="quiz-count">Round length</label>
+        <select id="quiz-count"><option value="5">Up to 5 pictures</option><option value="10">Up to 10 pictures</option></select>
+        <label><input id="quiz-ticking" type="checkbox" checked> Gentle ticking</label>
+        <button type="submit">Save for next round</button>
+      </form>
+      <div id="parent-quiz-categories"></div>
+      <div class="button-row">
+        <button type="button" data-quiz-action="menu">Categories on TV</button>
+        <button type="button" data-quiz-action="pause">Pause</button>
+        <button type="button" data-quiz-action="resume">Resume</button>
+        <button type="button" data-quiz-action="reveal">Show answer</button>
+        <button type="button" data-quiz-action="next">Next</button>
+        <button type="button" data-quiz-action="close">Close quiz</button>
+      </div>
+      <p id="quiz-parent-status" role="status"></p>
+      <p id="quiz-speech-status"></p>
+      <p id="quiz-parent-error" role="alert"></p>
+    </section>
     <section id="videos-panel" hidden>
       <h1>Videos</h1>
       <form id="download-video">

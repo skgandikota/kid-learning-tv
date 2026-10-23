@@ -14,6 +14,9 @@ from app.config import DATA_DIR, HOST, PORT, SECURE_COOKIE
 from app.database import Database
 from app.playback import Playback
 from app.video_library import VideoLibrary
+from app.quiz import validate_settings
+from app.quiz_catalog import CATEGORIES, get_items
+from app.quiz_speech import QuizSpeech
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -46,6 +49,8 @@ def create_app(overrides: dict | None = None) -> Flask:
     library = VideoLibrary(data_dir / "videos")
     app.extensions["klt_playback"] = playback
     app.extensions["klt_videos"] = library
+    speech = QuizSpeech(data_dir)
+    app.extensions["klt_quiz_speech"] = speech
 
     def csrf_token():
         if not session.get("csrf_token"):
@@ -67,7 +72,7 @@ def create_app(overrides: dict | None = None) -> Flask:
         response.headers["Referrer-Policy"] = "no-referrer"
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; style-src 'self'; script-src 'self'; "
-            "connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+            "connect-src 'self'; media-src 'self' blob:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
         )
         response.headers["Cache-Control"] = "no-store"
         return response
@@ -89,6 +94,99 @@ def create_app(overrides: dict | None = None) -> Flask:
     def display():
         state = playback.snapshot()
         return jsonify({"food_time": state["mode"] == "food", "playback": state})
+
+    @app.get("/api/quiz/catalog")
+    def quiz_catalog():
+        return jsonify({"categories": CATEGORIES})
+
+    @app.post("/api/child/quiz")
+    def child_quiz():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Choose a quiz.")
+        with playback.lock:
+            if playback.mode not in {"blank", "quiz-menu", "quiz"}:
+                return jsonify({"error": "A grown-up is using the TV."}), 423
+            action = body.get("action")
+            if action == "start":
+                playback.start_quiz(body.get("category"))
+            elif action in {"menu", "close"}:
+                playback.quiz_command(action)
+            else:
+                raise ValueError("Choose a quiz or close it.")
+        return jsonify({"ok": True})
+
+    @app.get("/api/parent/quiz")
+    def parent_quiz():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        return jsonify({
+            "categories": CATEGORIES, "settings": database.quiz_settings(),
+            "playback": playback.snapshot(), "speech": speech.status(),
+        })
+
+    @app.post("/api/parent/quiz")
+    def parent_quiz_action():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Choose a quiz control.")
+        action = body.get("action")
+        if action == "settings":
+            database.set_quiz_settings(validate_settings(body.get("settings")))
+        elif action == "start":
+            playback.start_quiz(body.get("category"))
+        else:
+            playback.quiz_command(action)
+        return jsonify({"ok": True})
+
+    @app.post("/api/tv/quiz")
+    def tv_quiz():
+        if request.remote_addr not in {"127.0.0.1", "::1"}:
+            return jsonify({"error": "Only the laptop TV can report quiz progress."}), 403
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Invalid quiz report.")
+        with playback.lock:
+            quiz = playback.quiz
+            if playback.mode != "quiz" or quiz is None:
+                return jsonify({"error": "That quiz has closed."}), 409
+            action = body.get("action")
+            if action == "ready":
+                accepted = quiz.ready(body.get("token"))
+            elif action == "speech-done":
+                warning = body.get("warning", "")
+                if not isinstance(warning, str):
+                    raise ValueError("Invalid speech status.")
+                accepted = quiz.speech_done(body.get("token"), warning)
+            elif action == "image-error":
+                warning = body.get("warning")
+                if not isinstance(warning, str):
+                    raise ValueError("Invalid image status.")
+                accepted = body.get("token") == quiz.token
+                if accepted:
+                    quiz.warning = warning[:240]
+            else:
+                raise ValueError("Invalid quiz report.")
+            if not accepted:
+                return jsonify({"error": "That quiz picture has changed."}), 409
+        return jsonify({"ok": True})
+
+    @app.get("/api/quiz/audio/<category>/<item_id>")
+    def quiz_audio(category, item_id):
+        if request.remote_addr not in {"127.0.0.1", "::1"} and not session.get("parent_authenticated"):
+            return jsonify({"error": "Local TV or parent sign-in required."}), 403
+        item = next((item for item in get_items(category) if item["id"] == item_id), None)
+        if item is None:
+            return jsonify({"error": "Quiz answer not found."}), 404
+        try:
+            audio = speech.audio(item.get("speech", item["name"]))
+        except (OSError, RuntimeError, ValueError) as error:
+            app.logger.error("Quiz speech failed: %s", error)
+            return jsonify({"error": "Quiz speech is unavailable. Check parent Quiz sound status."}), 503
+        from flask import Response
+        return Response(audio, mimetype="audio/wav")
 
     @app.post("/api/parent/food-time")
     def food_time():

@@ -2,11 +2,10 @@
 
 Open `http://<laptop-IP>:8765/parent` and enter your existing PIN.
 After login, **Food time** is at the top. Tap it to show the meal-time image on
-the TV; tap again to return to the blank screen. A green button means it is on.
+the TV; tap again to return to the Quiz home tile. A green button means it is on.
 You can also sign out. Signing out does not change the TV.
 
-Food time shows only the image, with no clock or controls. There are no games,
-microphone capture or AI features.
+Food time shows only the image, with no clock or controls. No microphone is used.
 
 ## Video
 
@@ -31,9 +30,34 @@ The **On TV** list shows the active order and highlights the current video.
 All pause/resume, stop, previous/next, seek, volume and mute controls stay here.
 Playback errors, buffering and missing TV connection are reported here too.
 
-The TV has no buttons: just video, a small total countdown and a progress bar.
+During video, the TV has no buttons: just video, a small total countdown and a progress bar.
 The countdown includes all selected videos and stops decreasing during pauses
 and buffering. After the last one, the screen-time-finished picture appears.
-Stop returns to black. Food time cancels playback and shows its image.
+Stop returns to the Quiz home tile. Food time cancels playback and shows its image.
 Refreshing the TV resumes the active video at its last reported position;
 restarting the service ends the playlist instead of starting it again.
+
+## Picture quizzes
+
+Your child can click **Quiz** on the TV, then a large picture category. The red
+**X** at the top closes the quiz, including the category menu and finished screen.
+This button appears only in quizzes, never over Food time or videos.
+
+On your phone, open **Quiz**. Choose seconds to guess (5/10/15/20), up to five or
+ten pictures, and ticking on/off. **Save for next round**, then choose a category.
+Each round uses different randomly selected pictures without repeats.
+The clock waits until the picture loads. The answer then appears and is spoken,
+staying at least four seconds and waiting for speech before the next picture.
+Pause, Resume, Show answer, Next, Categories on TV and Close quiz work remotely.
+Quiz settings persist; the active round does not resume after a service restart.
+
+For age three, start with animals, fruits or favourite car logos: five pictures,
+ten seconds each. Say answers together; the app does not listen, score or mark
+answers wrong. Birds and vegetables add variety. Country shapes are harder;
+flags are an optional matching game rather than a test.
+
+The voice status explains whether Piper natural speech or basic eSpeak fallback
+is available. If both fail, the TV attempts an installed offline browser voice;
+otherwise it still shows the name and reports a sound warning here.
+Check laptop volume and kiosk autoplay if speech cannot play. A picture-loading
+warning also appears here; use Next or restart the category.

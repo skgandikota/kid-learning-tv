@@ -1,0 +1,816 @@
+{
+  "schema_version": 1,
+  "categories": [
+    {
+      "id": "cars",
+      "name": "Car logos",
+      "harder": false,
+      "items": [
+        {
+          "id": "audi",
+          "name": "Audi",
+          "image": "/static/quiz/cars/audi.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/audi.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "daebead0fb61bc8cd88e90adabca5161a9b52a8d4202ce89c18daeab6bd70d7e",
+          "upstream_source": "https://www.audi.com/ci/en/intro/basics/rings.html"
+        },
+        {
+          "id": "bmw",
+          "name": "BMW",
+          "image": "/static/quiz/cars/bmw.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/bmw.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "d2a396f98f388b06861ed887a0d9830ed5e32224726c2acf000250e6ef289dcf",
+          "upstream_source": "https://www.bmw.de",
+          "speech": "B M W"
+        },
+        {
+          "id": "ford",
+          "name": "Ford",
+          "image": "/static/quiz/cars/ford.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/ford.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "933a0ad57caec864d69c4afb43c316018ebc54bd8e76244ffe545197236299c1",
+          "upstream_source": "https://secure.ford.com/brochures/"
+        },
+        {
+          "id": "honda",
+          "name": "Honda",
+          "image": "/static/quiz/cars/honda.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/honda.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "ae97b9478f29718f95fc7956a3971456a8a458e9ff48f24b903ef1d6b68f2de1",
+          "upstream_source": "https://www.honda.ie"
+        },
+        {
+          "id": "toyota",
+          "name": "Toyota",
+          "image": "/static/quiz/cars/toyota.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/toyota.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "70a20e8335255cff3311314636ab15dbc0c5941a52d1ae5ea3471e85f40e7507",
+          "upstream_source": "https://www.toyota.com/brandguidelines/logo/"
+        },
+        {
+          "id": "mercedes",
+          "name": "Mercedes",
+          "image": "/static/quiz/cars/mercedes.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/mercedes.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "26417721062cb3dc1cbe26cece9373d863c873ee5ee66122a9177e417a6606a7",
+          "upstream_source": "https://www.mercedes-benz.com",
+          "speech": "Mercedes Benz"
+        },
+        {
+          "id": "tesla",
+          "name": "Tesla",
+          "image": "/static/quiz/cars/tesla.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/tesla.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "4b94d9eaf23849d6feec7a9c819e3699a35cbb76045ba7d482d17cbcc97414a5",
+          "upstream_source": "https://www.tesla.com/tesla-gallery"
+        },
+        {
+          "id": "volkswagen",
+          "name": "Volkswagen",
+          "image": "/static/quiz/cars/volkswagen.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/volkswagen.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "de8379968dc31340ab9a06fd54f01d59be56f9846bc07938b9da5bd24407034f",
+          "upstream_source": "https://www.vw.com"
+        },
+        {
+          "id": "volvo",
+          "name": "Volvo",
+          "image": "/static/quiz/cars/volvo.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/volvo.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "3323cdf4d0f8aabe89f1ecd6d8169aacbd2e3a54a9791d75918ade418f538f19",
+          "upstream_source": "https://www.media.volvocars.com/global/en-gb/logos"
+        },
+        {
+          "id": "hyundai",
+          "name": "Hyundai",
+          "image": "/static/quiz/cars/hyundai.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/hyundai.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "dcd2d6c20e7c4bc431f7c3a1108c4493b007f978b8ee6f48b007406cc8435937",
+          "upstream_source": "https://www.hyundai.com"
+        },
+        {
+          "id": "nissan",
+          "name": "Nissan",
+          "image": "/static/quiz/cars/nissan.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/nissan.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "97980fa3135dfeffb72a9acdf3ee23b21bf9a53b8475e7b5cff9ce6df645cf5c",
+          "upstream_source": "https://www.nissan.ie"
+        },
+        {
+          "id": "kia",
+          "name": "Kia",
+          "image": "/static/quiz/cars/kia.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/kia.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "bbdeeab899331fc6181949c2b31686208a88d7afc69d182b54dccc138b8e4843",
+          "upstream_source": "https://www.kia.com"
+        },
+        {
+          "id": "renault",
+          "name": "Renault",
+          "image": "/static/quiz/cars/renault.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/renault.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "59a8b5df584c85f680e2f81b8255a3bbf562ce291c5a9db6a78f393c4ecad7d6",
+          "upstream_source": "https://en.media.groupe.renault.com/news/renault-news-march-2021-5f28-989c5.html"
+        },
+        {
+          "id": "peugeot",
+          "name": "Peugeot",
+          "image": "/static/quiz/cars/peugeot.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/peugeot.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "52eac20d95c797916ee5ce7344a0e2a647472a9e560af2f2e1e4f45f0de7edf3",
+          "upstream_source": "https://www.peugeot.co.uk"
+        },
+        {
+          "id": "suzuki",
+          "name": "Suzuki",
+          "image": "/static/quiz/cars/suzuki.svg",
+          "source": "https://raw.githubusercontent.com/simple-icons/simple-icons/0af835e2949a9222965522780e5e0810d3c53382/icons/suzuki.svg",
+          "license": "CC0-1.0",
+          "project": "simple-icons",
+          "sha256": "3ef67701d67dcb096645dbaf16cf5cad9dc9f04826d394b471a9f43aee4a2596",
+          "upstream_source": "https://www.suzuki.ie"
+        }
+      ]
+    },
+    {
+      "id": "animals",
+      "name": "Animals",
+      "harder": false,
+      "items": [
+        {
+          "id": "dog",
+          "name": "Dog",
+          "image": "/static/quiz/animals/dog.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F415.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "a01131556b1f472f2be150b5e61bb77e4ffed96bbdbc9b60ac4a36b62ffac2a3",
+          "upstream_annotation": "dog"
+        },
+        {
+          "id": "cat",
+          "name": "Cat",
+          "image": "/static/quiz/animals/cat.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F408.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "d028cef4726d15bc5c84ff1751db9d90c35d990151972a5f044afd53691beff6",
+          "upstream_annotation": "cat"
+        },
+        {
+          "id": "lion",
+          "name": "Lion",
+          "image": "/static/quiz/animals/lion.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F981.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "89f48f2663553b37db9db4f9bac6cef32780ca409a81641fc2867fd6939384d8",
+          "upstream_annotation": "lion"
+        },
+        {
+          "id": "elephant",
+          "name": "Elephant",
+          "image": "/static/quiz/animals/elephant.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F418.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "7901471e55dfc825d76dab37cb21f9792e5d9ba9c9c7219ec6af7a1c21682fa7",
+          "upstream_annotation": "elephant"
+        },
+        {
+          "id": "giraffe",
+          "name": "Giraffe",
+          "image": "/static/quiz/animals/giraffe.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F992.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "06bc70765de41b89a8ba2386fdac5e65129ac29df6347fe183b0d25f8bb3c306",
+          "upstream_annotation": "giraffe"
+        },
+        {
+          "id": "zebra",
+          "name": "Zebra",
+          "image": "/static/quiz/animals/zebra.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F993.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "1babbd1aedf369114357086296a93f045c4a2252d59e856deb628796c8325105",
+          "upstream_annotation": "zebra"
+        },
+        {
+          "id": "monkey",
+          "name": "Monkey",
+          "image": "/static/quiz/animals/monkey.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F412.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "bce5a2eaba5abfede627c0a8ea4304227a59213de55618daa61b25a2b8b0c46b",
+          "upstream_annotation": "monkey"
+        },
+        {
+          "id": "rabbit",
+          "name": "Rabbit",
+          "image": "/static/quiz/animals/rabbit.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F407.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "9aeb783c0b7be68b541edcc595bb436e850f6fed8dca7949ab3aab2121a07a97",
+          "upstream_annotation": "rabbit"
+        },
+        {
+          "id": "cow",
+          "name": "Cow",
+          "image": "/static/quiz/animals/cow.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F404.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "04c552b2c191baae04cd3cc0f5d8ac4fe8d8a263735b6e1beede3e58fe1a5059",
+          "upstream_annotation": "cow"
+        },
+        {
+          "id": "pig",
+          "name": "Pig",
+          "image": "/static/quiz/animals/pig.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F416.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "7a45c52cac97fc3bfb9c4317ee102da490ac5a8d860a41821378d346ee4ca5ca",
+          "upstream_annotation": "pig"
+        }
+      ]
+    },
+    {
+      "id": "vegetables",
+      "name": "Vegetables",
+      "harder": false,
+      "items": [
+        {
+          "id": "carrot",
+          "name": "Carrot",
+          "image": "/static/quiz/vegetables/carrot.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F955.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "703332895b3b583e966fd4405f4bdab91a5b005b55d2103a255f4a7394dd074d",
+          "upstream_annotation": "carrot"
+        },
+        {
+          "id": "broccoli",
+          "name": "Broccoli",
+          "image": "/static/quiz/vegetables/broccoli.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F966.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "fa0a076b19c8c8bf613dee8aa717851cb52df3cb59e90858e61f6b3d0da05a77",
+          "upstream_annotation": "broccoli"
+        },
+        {
+          "id": "potato",
+          "name": "Potato",
+          "image": "/static/quiz/vegetables/potato.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F954.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "c9b80fe9f1d4b384f7578387886262438526d6fb201ec0bb6deaf457632fe11a",
+          "upstream_annotation": "potato"
+        },
+        {
+          "id": "tomato",
+          "name": "Tomato",
+          "image": "/static/quiz/vegetables/tomato.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F345.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "2f51e144847befce1cf4888904e7de10814d59887f2922d44dd721a62a3a7587",
+          "upstream_annotation": "tomato"
+        },
+        {
+          "id": "cucumber",
+          "name": "Cucumber",
+          "image": "/static/quiz/vegetables/cucumber.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F952.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "8fd7d7f8bad6e903024c2f307f0ade337e99cc64f3ec4daec4c274e9eab0b486",
+          "upstream_annotation": "cucumber"
+        },
+        {
+          "id": "corn",
+          "name": "Corn",
+          "image": "/static/quiz/vegetables/corn.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F33D.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "1d1d9ff93c32ce0f7078c2eac024b58ad207c90dbe6e69fbc0e2b18e98849395",
+          "upstream_annotation": "ear of corn"
+        },
+        {
+          "id": "onion",
+          "name": "Onion",
+          "image": "/static/quiz/vegetables/onion.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F9C5.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "22a0efdb141913a50d6c1e7b4f4b556dd16262877bf32ce9f690bd50f70cc154",
+          "upstream_annotation": "onion"
+        },
+        {
+          "id": "pepper",
+          "name": "Pepper",
+          "image": "/static/quiz/vegetables/pepper.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1FAD1.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "e4047cc27004db8b11fe4e3d7fff09e907b3dd1e6a4228b875dda3bbbd548a9a",
+          "upstream_annotation": "bell pepper"
+        },
+        {
+          "id": "eggplant",
+          "name": "Eggplant",
+          "image": "/static/quiz/vegetables/eggplant.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F346.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "d7ac692076b9953287d2273be4d33b2a8bb887ceb6d2719a529e661779afd0fa",
+          "upstream_annotation": "eggplant"
+        },
+        {
+          "id": "hot-pepper",
+          "name": "Chilli pepper",
+          "image": "/static/quiz/vegetables/hot-pepper.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F336.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "befc3c6ee9cf85808f005e553de60cd738c36eb9a95b7e5e9ba9f4c7cb12657d",
+          "upstream_annotation": "hot pepper"
+        }
+      ]
+    },
+    {
+      "id": "fruits",
+      "name": "Fruits",
+      "harder": false,
+      "items": [
+        {
+          "id": "apple",
+          "name": "Apple",
+          "image": "/static/quiz/fruits/apple.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F34E.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "b4db458333fa917a803c8d36865ae57ae5ea54d2aa0e1f906518d3f0c9bf2bcb",
+          "upstream_annotation": "red apple"
+        },
+        {
+          "id": "banana",
+          "name": "Banana",
+          "image": "/static/quiz/fruits/banana.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F34C.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "f0b971973da0245c943bc82b8b6ce1506ac0ea161ca91688e7cc08f115757d2e",
+          "upstream_annotation": "banana"
+        },
+        {
+          "id": "orange",
+          "name": "Orange",
+          "image": "/static/quiz/fruits/orange.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F34A.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "230ad232508883cc6937f32ec1767ba75673e651addad6f7f1963f49244f72fd",
+          "upstream_annotation": "tangerine"
+        },
+        {
+          "id": "grapes",
+          "name": "Grapes",
+          "image": "/static/quiz/fruits/grapes.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F347.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "e7e987f43f3488270c29e95ff8089391dc450b91b274353e679a565ea08cd698",
+          "upstream_annotation": "grapes"
+        },
+        {
+          "id": "strawberry",
+          "name": "Strawberry",
+          "image": "/static/quiz/fruits/strawberry.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F353.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "d95668fd2f872fa9b8c3adb6b6a1b05376cf412dc99fdd485eb5b56ccf853459",
+          "upstream_annotation": "strawberry"
+        },
+        {
+          "id": "watermelon",
+          "name": "Watermelon",
+          "image": "/static/quiz/fruits/watermelon.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F349.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "d8ff1154131c8a4bdb91864eb9436742888d7b6af8c82b0c78121fe81b75cbcf",
+          "upstream_annotation": "watermelon"
+        },
+        {
+          "id": "pineapple",
+          "name": "Pineapple",
+          "image": "/static/quiz/fruits/pineapple.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F34D.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "a1aa1f4128254b6a42f188c367d5e3e95aedf9ebf7ef9f7c56fb1df0fe173e22",
+          "upstream_annotation": "pineapple"
+        },
+        {
+          "id": "pear",
+          "name": "Pear",
+          "image": "/static/quiz/fruits/pear.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F350.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "280e6766dc2574851e3d10b54608a4826e13dc9b62233d50708709c124590777",
+          "upstream_annotation": "pear"
+        },
+        {
+          "id": "peach",
+          "name": "Peach",
+          "image": "/static/quiz/fruits/peach.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F351.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "531d99c8f722b7942e51915d5f2ab10259f2f8642dd2e917a2e20119978f5c6e",
+          "upstream_annotation": "peach"
+        },
+        {
+          "id": "cherries",
+          "name": "Cherries",
+          "image": "/static/quiz/fruits/cherries.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F352.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "1052d5655ffff5dceaa179290734b33a7b788b8c77ed6373402626cbec0f1d7a",
+          "upstream_annotation": "cherries"
+        }
+      ]
+    },
+    {
+      "id": "birds",
+      "name": "Birds",
+      "harder": false,
+      "items": [
+        {
+          "id": "parrot",
+          "name": "Parrot",
+          "image": "/static/quiz/birds/parrot.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F99C.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "09f73898075506b6dde9141e9bd034879c7388b37e76a657c7ec5b98ae02f4cb",
+          "upstream_annotation": "parrot"
+        },
+        {
+          "id": "chicken",
+          "name": "Chicken",
+          "image": "/static/quiz/birds/chicken.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F414.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "b82358e421aeea61cc1887cde78591fe1472d1b9b5c7474cf658f645af764aaf",
+          "upstream_annotation": "chicken"
+        },
+        {
+          "id": "duck",
+          "name": "Duck",
+          "image": "/static/quiz/birds/duck.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F986.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "2868892a8885544800ffefc1a9282c68e1a706066ec955493d30bc72d76281e3",
+          "upstream_annotation": "duck"
+        },
+        {
+          "id": "penguin",
+          "name": "Penguin",
+          "image": "/static/quiz/birds/penguin.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F427.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "6cac4561b51d9695a9ebc010d2f2923dc78e4fc106ecb043f25069120e6bdd74",
+          "upstream_annotation": "penguin"
+        },
+        {
+          "id": "owl",
+          "name": "Owl",
+          "image": "/static/quiz/birds/owl.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F989.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "9237423e6c8d37e6ba2a02b779183d6a8ebdd212bc8cd4e5c8bc0a7de989ab51",
+          "upstream_annotation": "owl"
+        },
+        {
+          "id": "eagle",
+          "name": "Eagle",
+          "image": "/static/quiz/birds/eagle.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F985.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "921f51eef781977ce039a7b5f55a0ef68154c7c6217a34222e789bfac62db67e",
+          "upstream_annotation": "eagle"
+        },
+        {
+          "id": "dove",
+          "name": "Dove",
+          "image": "/static/quiz/birds/dove.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F54A.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "398a22ce6a2c6e35a6b621169814799e8fb6557ab2836489d91c1cfda9645789",
+          "upstream_annotation": "dove"
+        },
+        {
+          "id": "turkey",
+          "name": "Turkey",
+          "image": "/static/quiz/birds/turkey.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F983.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "a6eb9a54a77d07f16097916000b069f4ed37f1a68b05330d1ff6e84026bd999d",
+          "upstream_annotation": "turkey"
+        },
+        {
+          "id": "flamingo",
+          "name": "Flamingo",
+          "image": "/static/quiz/birds/flamingo.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F9A9.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "dc3c4b7e9f2269ff374fee3fa7a673d3ba321d987a601ed3db32717e17472f56",
+          "upstream_annotation": "flamingo"
+        },
+        {
+          "id": "peacock",
+          "name": "Peacock",
+          "image": "/static/quiz/birds/peacock.svg",
+          "source": "https://raw.githubusercontent.com/hfg-gmuend/openmoji/aeb8bb3a59e2de39c754ac79180c8131c906acea/color/svg/1F99A.svg",
+          "license": "CC-BY-SA-4.0",
+          "project": "openmoji",
+          "sha256": "73b90d7f77828fa41cd6d550cbb161b256221e32e6c1e5b671aa11ac7f54e68e",
+          "upstream_annotation": "peacock"
+        }
+      ]
+    },
+    {
+      "id": "countries",
+      "name": "Country shapes",
+      "harder": true,
+      "items": [
+        {
+          "id": "united-kingdom",
+          "name": "United Kingdom",
+          "image": "/static/quiz/countries/united-kingdom.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "25135d5cc9f22ebf2636d7af2b9d20c822f5c184d7fd334493c584845f4f2b15",
+          "source_feature": "ADM0_A3=GBR",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 57,
+          "rings": 57,
+          "insets": 0,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "india",
+          "name": "India",
+          "image": "/static/quiz/countries/india.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "2962b780f5b289710dfed427ecc92991bd5ae8997a502b63dbf5b0d5b1fd847a",
+          "source_feature": "ADM0_A3=IND",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 35,
+          "rings": 35,
+          "insets": 0,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "italy",
+          "name": "Italy",
+          "image": "/static/quiz/countries/italy.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "81a7fe819f750537cf1f862cd069cd0902658feadfb2714841d7bb00642003a4",
+          "source_feature": "ADM0_A3=ITA",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 29,
+          "rings": 31,
+          "insets": 0,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "australia",
+          "name": "Australia",
+          "image": "/static/quiz/countries/australia.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "f4f7305980c814c40dcad1bbd6b26424dbdcb12813a299c21aa4f64a88c402dd",
+          "source_feature": "ADM0_A3=AUS",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 94,
+          "rings": 94,
+          "insets": 2,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "japan",
+          "name": "Japan",
+          "image": "/static/quiz/countries/japan.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "bd0e697173beb3e7d7748fab6fae6ee7cf0edd8dd98029f8ba325bb7f65725cc",
+          "source_feature": "ADM0_A3=JPN",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 109,
+          "rings": 109,
+          "insets": 1,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "france",
+          "name": "France",
+          "image": "/static/quiz/countries/france.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "ee455ab48c7818ae4583669439481f81a8c4fc472d5d03ad04dcc79a976af528",
+          "source_feature": "ADM0_A3=FRA",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 21,
+          "rings": 22,
+          "insets": 4,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "brazil",
+          "name": "Brazil",
+          "image": "/static/quiz/countries/brazil.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "4e7f10af2faea9ade7a02d8ba1c9cbc430fb0cac3f36c2abfe5574a2c8475a11",
+          "source_feature": "ADM0_A3=BRA",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 43,
+          "rings": 43,
+          "insets": 0,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        },
+        {
+          "id": "united-states",
+          "name": "United States",
+          "image": "/static/quiz/countries/united-states.svg",
+          "source": "https://raw.githubusercontent.com/nvkelso/natural-earth-vector/ca96624a56bd078437bca8184e78163e5039ad19/geojson/ne_10m_admin_0_countries.geojson",
+          "license": "Public domain",
+          "project": "natural-earth",
+          "sha256": "0f285aeda00725b48f47cc41d24a3e14f0cb509f6cd53b981b2310649275de42",
+          "source_feature": "ADM0_A3=USA",
+          "changes": "Projected and fitted source coordinates; remote polygons in insets",
+          "polygons": 344,
+          "rings": 344,
+          "insets": 5,
+          "projection": "local equirectangular, north up; remote-territory insets"
+        }
+      ]
+    },
+    {
+      "id": "flags",
+      "name": "Flags",
+      "harder": true,
+      "items": [
+        {
+          "id": "india",
+          "name": "India",
+          "image": "/static/quiz/flags/india.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/in.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "91185efa1a9b52cdc0e470712518efeefc4e4d6a6555bae9de997ba71885bb98"
+        },
+        {
+          "id": "united-kingdom",
+          "name": "United Kingdom",
+          "image": "/static/quiz/flags/united-kingdom.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/gb.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "c8be1e7208798a4ae692ee1e937065d498bb29e741943f6172b29118b8ed8066"
+        },
+        {
+          "id": "united-states",
+          "name": "United States",
+          "image": "/static/quiz/flags/united-states.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/us.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "e7be4240cf57987926673708f09233be1ab6bdf35acc7b86bd32a263f197a2a7"
+        },
+        {
+          "id": "france",
+          "name": "France",
+          "image": "/static/quiz/flags/france.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/fr.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "a526851c372e3372b1596be71af355ea72b1650bbc4c06e6e2c226900d3de6cc"
+        },
+        {
+          "id": "japan",
+          "name": "Japan",
+          "image": "/static/quiz/flags/japan.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/jp.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "bfea80baf9989383dc4bf7ca594ed95be0df0ff125bfc88d0bfa878eb0198022"
+        },
+        {
+          "id": "italy",
+          "name": "Italy",
+          "image": "/static/quiz/flags/italy.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/it.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "9fa88118818d9b64838f578e2babcca3d0630aed21b5c33b34aff7ac5ce506bc"
+        },
+        {
+          "id": "brazil",
+          "name": "Brazil",
+          "image": "/static/quiz/flags/brazil.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/br.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "b0a912826c3ffd7287435ebed66e18fe058e992309c00dc10b430dd41a29ba91"
+        },
+        {
+          "id": "germany",
+          "name": "Germany",
+          "image": "/static/quiz/flags/germany.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/de.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "efd480af5a154a7651f29da23ee0d09dbc892410fb4041898ddf8face336c575"
+        },
+        {
+          "id": "canada",
+          "name": "Canada",
+          "image": "/static/quiz/flags/canada.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/ca.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "345ec9dac057e203f1331b2d3f9f473789864edaee1182a26bc261356bcf72f1"
+        },
+        {
+          "id": "australia",
+          "name": "Australia",
+          "image": "/static/quiz/flags/australia.svg",
+          "source": "https://raw.githubusercontent.com/lipis/flag-icons/ac7e0eb3259eb62aa6100c435607e2fe03896a97/flags/4x3/au.svg",
+          "license": "MIT",
+          "project": "flag-icons",
+          "sha256": "cbb2206c5e59a25d79228306af973666a191e163f0ae337681f447977e6edb18"
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,7 @@
 # Kid Learning TV
 
-Current version: **Food time and parent-controlled video playlists**.
-Games, voice and AI features remain removed.
-Existing PIN and stored files are preserved; no models are downloaded.
+Current version: **Food time, parent-controlled video playlists and picture quizzes**.
+Existing PIN and stored files are preserved. Quiz speech runs locally; no microphone.
 
 Update on the Lubuntu laptop:
 
@@ -15,7 +14,7 @@ sudo bash scripts/update.sh "$PWD"
 Refresh the TV page at `http://127.0.0.1:8765/`.
 Open `http://<laptop-IP>:8765/parent` on your phone and use the existing PIN.
 Tap **Food time** at the top of the signed-in parent page to show the supplied
-picture on the TV. Tap it again to return to black. The image fits without
+picture on the TV. Tap it again to return to the Quiz home tile. The image fits without
 cropping or stretching; other screen shapes may have black bars.
 Food time has no buttons, clock, text overlays or visible cursor on the TV.
 The selection survives refresh and service restart.
@@ -31,8 +30,27 @@ Each library row also has **Play** for that video alone. Pause/resume, seek, ski
 previous, stop and volume controls are phone-only. The TV shows a small total
 remaining-time countdown and playlist progress bar, and "Loading..." only while
 buffering. After the last video, your supplied end-of-screen-time photo appears.
-Food time interrupts playback; Stop returns to black. Playlists do not restart
+Food time interrupts playback; Stop returns to the Quiz home tile. Playlists do not restart
 automatically after a service restart.
+
+The TV home has a smiling **Quiz** button. Click it with the mouse, then choose a
+picture tile: car logos, animals, vegetables, fruits, birds, country shapes or
+flags. A large red **X** closes the quiz. Food time and videos still have no TV
+buttons. Quizzes show a picture, count down gently, then show and speak its name
+for at least four seconds. There are no scores or microphone recordings.
+
+Use **Quiz** on the parent page to choose 5/10/15/20 seconds, up to 5/10 pictures,
+and optional ticking; save before starting the next round. Five pictures at ten
+seconds is a gentle starting point for age three. Country shapes are harder.
+The curated catalog contains 73 licensed pictures, including 15 car brands, not
+every car logo worldwide. [Asset sources and licenses](docs/QUIZ-ASSET-LICENSES.md).
+
+The update installs eSpeak and attempts to install the optional Piper natural
+voice and download its model **on the Lubuntu laptop only**. It checks speech as
+the service account and reports whether natural or basic fallback speech works.
+To skip natural-voice downloads, run
+`sudo env KLT_QUIZ_NATURAL_VOICE=0 bash scripts/update.sh "$PWD"`.
+Actual voice quality and speaker volume must be checked on that laptop.
 
 For sound without touching the TV, run the laptop browser in kiosk mode:
 after updating, close/reopen the kiosk browser (or log out/in to the desktop).

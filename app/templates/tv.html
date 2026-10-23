@@ -7,6 +7,7 @@
   <title>TV</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
   <script src="{{ url_for('static', filename='js/food-time.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/quiz-tv.js') }}" defer></script>
 </head>
 <body class="tv">
   <img id="food-time-image" src="{{ url_for('static', filename='images/food-time.png') }}"
@@ -20,5 +21,23 @@
   </div>
   <img id="screen-time-ended" src="{{ url_for('static', filename='images/screen-time-ended.jpg') }}"
        alt="" draggable="false" hidden>
+  <section id="quiz-home" hidden>
+    <button id="quiz-launcher" class="quiz-tile" type="button" aria-label="Quiz">
+      <img src="{{ url_for('static', filename='images/quiz-mascot.svg') }}" alt=""><span>Quiz</span>
+    </button>
+  </section>
+  <section id="quiz-screen" hidden>
+    <button id="quiz-close" type="button" aria-label="Close quiz">X</button>
+    <div id="quiz-menu" hidden><h1>Let's play!</h1><div id="quiz-categories"></div></div>
+    <div id="quiz-slide" hidden>
+      <span id="quiz-round-count"></span>
+      <div id="quiz-picture-frame"><img id="quiz-picture" alt="" draggable="false"></div>
+      <p id="quiz-answer" hidden></p>
+      <div id="quiz-clock"><progress id="quiz-time-progress" max="1" value="1"></progress><span id="quiz-seconds"></span></div>
+      <div id="quiz-loader" hidden><span class="quiz-spinner"></span><span>Getting ready...</span></div>
+    </div>
+    <div id="quiz-complete" hidden><span aria-hidden="true">&#9733;</span><h1>Lovely playing!</h1><p>Let's play together.</p></div>
+    <p id="quiz-tv-error" role="alert"></p>
+  </section>
 </body>
 </html>

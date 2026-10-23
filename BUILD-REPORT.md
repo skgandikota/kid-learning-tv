@@ -5,8 +5,13 @@ background YouTube downloads, selection-ordered playlists and remote-only
 pause/resume, seek, skip, stop and volume controls. The TV shows video, total
 remaining time and playlist progress, then the parent-supplied end photo.
 
-The updater installs FFmpeg/ffprobe, yt-dlp with its default components, and Deno
-on the target laptop. No videos or AI models are downloaded during installation.
+Picture quizzes add a child-operated home tile, seven illustrated categories,
+large red X, timed reveals and local spoken answers. The curated catalog has
+73 locally bundled licensed SVGs; brand marks remain subject to trademark rights.
+
+The updater installs FFmpeg/ffprobe, yt-dlp, Deno and eSpeak on the target laptop.
+It attempts optional Piper/model setup there, never on the development host.
+Natural setup failures explicitly fall back to verified eSpeak.
 Existing parent PIN and data are retained.
 
 Browser playback was exercised with original synthetic H.264/AAC clips, not

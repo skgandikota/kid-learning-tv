@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import sqlite3
+import json
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -28,6 +29,10 @@ class Database:
                     food_time INTEGER NOT NULL DEFAULT 0
                 );
                 INSERT OR IGNORE INTO tv_display(id, food_time) VALUES(1, 0);
+                CREATE TABLE IF NOT EXISTS quiz_preferences (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    value TEXT NOT NULL
+                );
             """)
 
     @contextmanager
@@ -69,6 +74,18 @@ class Database:
     def set_food_time(self, enabled: bool):
         with self.connection() as db:
             db.execute("UPDATE tv_display SET food_time = ? WHERE id = 1", (int(enabled),))
+
+    def quiz_settings(self):
+        with self.connection() as db:
+            row = db.execute("SELECT value FROM quiz_preferences WHERE id = 1").fetchone()
+            return json.loads(row["value"]) if row else {"seconds": 10, "count": 5, "ticking": True}
+
+    def set_quiz_settings(self, value):
+        with self.connection() as db:
+            db.execute(
+                "INSERT INTO quiz_preferences(id, value) VALUES(1, ?) "
+                "ON CONFLICT(id) DO UPDATE SET value=excluded.value", (json.dumps(value),),
+            )
 
     def set_pin_hash(self, pin_hash: str):
         with self.connection() as db:

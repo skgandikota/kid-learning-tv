@@ -64,6 +64,7 @@ function apply(next) {
   if (!next || !Number.isInteger(next.revision)) throw new Error("Invalid display state.");
   if (state && next.session === state.session && next.revision < state.revision) return;
   state = next;
+  window.dispatchEvent(new CustomEvent("tv-display", { detail: next }));
   picture.hidden = state.mode !== "food";
   endPicture.hidden = state.mode !== "finished";
   video.hidden = overlay.hidden = state.mode !== "video";
@@ -115,7 +116,7 @@ video.addEventListener("error", () => {
 });
 document.addEventListener("contextmenu", (event) => event.preventDefault());
 document.addEventListener("keydown", (event) => {
-  if (event.key !== "F11") event.preventDefault();
+  if (event.key !== "F11" && !["blank", "quiz-menu", "quiz"].includes(state?.mode)) event.preventDefault();
 });
 
 async function updateDisplay() {

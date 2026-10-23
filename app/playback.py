@@ -6,6 +6,8 @@ import threading
 import time
 import uuid
 
+from app.quiz import QuizRound
+
 
 def seconds(value):
     if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
@@ -29,6 +31,7 @@ class Playback:
         self.buffering = False
         self.error = ""
         self.last_seen = None
+        self.quiz = None
 
     def snapshot(self):
         with self.lock:
@@ -45,12 +48,14 @@ class Playback:
                 "buffering": self.buffering, "error": self.error,
                 "remaining": max(0, total - elapsed), "total": total,
                 "tv_connected": self.last_seen is not None and time.monotonic() - self.last_seen < 6,
+                "quiz": self.quiz.snapshot() if self.mode == "quiz" and self.quiz else None,
             }
 
     def food(self, enabled):
         with self.lock:
             self.database.set_food_time(enabled)
             self.mode = "food" if enabled else "blank"
+            self.quiz = None
             self.queue = []
             self.index = 0
             self.position = 0.0
@@ -63,12 +68,52 @@ class Playback:
             self.database.set_food_time(False)
             self.session = uuid.uuid4().hex
             self.mode = "video"
+            self.quiz = None
             self.queue = [dict(item) for item in items]
             self.index = 0
             self.position = 0.0
             self.paused = False
             self.buffering = True
             self.error = ""
+            self.revision += 1
+
+    def quiz_menu(self):
+        with self.lock:
+            self.food(False)
+            self.mode = "quiz-menu"
+
+    def start_quiz(self, category):
+        with self.lock:
+            quiz = QuizRound(category, self.database.quiz_settings())
+            self.food(False)
+            self.mode = "quiz"
+            self.quiz = quiz
+            self.session = uuid.uuid4().hex
+
+    def quiz_command(self, action):
+        with self.lock:
+            if action == "menu":
+                self.quiz_menu()
+                return
+            if action == "close":
+                if self.mode not in {"blank", "quiz-menu", "quiz"}:
+                    raise ValueError("No quiz is open.")
+                self.food(False)
+                return
+            if self.mode != "quiz" or not self.quiz:
+                raise ValueError("No quiz is open.")
+            if action == "pause":
+                self.quiz.pause(True)
+            elif action == "resume":
+                self.quiz.pause(False)
+            elif action == "reveal":
+                if self.quiz.phase not in {"loading", "question"}:
+                    raise ValueError("The answer is already showing.")
+                self.quiz.reveal()
+            elif action == "next":
+                self.quiz.next()
+            else:
+                raise ValueError("Unknown quiz control.")
             self.revision += 1
 
     def command(self, body):

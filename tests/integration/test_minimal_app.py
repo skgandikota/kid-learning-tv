@@ -8,11 +8,13 @@ from app.main import create_app
 from tests.conftest import csrf_for
 
 
-def test_tv_starts_blank_and_has_no_controls(client):
+def test_tv_starts_with_quiz_launcher_but_no_video_controls(client):
     page = client.get("/")
     assert page.status_code == 200
     assert 'alt="" draggable="false" hidden' in page.text
-    assert "<button" not in page.text
+    assert 'id="quiz-launcher"' in page.text
+    assert '<video id="tv-video"' in page.text
+    assert ' controls ' not in page.text
     assert "no-store" in page.headers["Cache-Control"]
 
 

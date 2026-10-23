@@ -9,7 +9,7 @@ python3 -c 'import sys; raise SystemExit(sys.version_info < (3,10))' || die "Pyt
 confirm "Install the appliance to $INSTALL_DIR, enable its system service, and start it?"
 command -v apt-get >/dev/null 2>&1 || die "Lubuntu/Ubuntu apt-get is required to install FFmpeg."
 apt-get update
-apt-get install -y ffmpeg
+apt-get install -y ffmpeg espeak-ng
 
 if ! id kid-learning-tv >/dev/null 2>&1; then
     useradd --system --home-dir "$STATE_DIR" --shell /usr/sbin/nologin kid-learning-tv
@@ -47,6 +47,7 @@ chown -R kid-learning-tv:kid-learning-tv "$INSTALL_DIR/content" "$STATE_DIR"
 # Repair environments left root-only by an earlier installation attempt.
 chmod -R a+rX "$INSTALL_DIR/.venv"
 verify_video_tools
+setup_quiz_voice
 command -v runuser >/dev/null 2>&1 || die "runuser is required to securely set the PIN as the service account."
 pin_status="$(runuser -u kid-learning-tv -- env KLT_DATA_DIR="$STATE_DIR" PYTHONPATH="$INSTALL_DIR" \
     "$INSTALL_DIR/.venv/bin/python" -c 'import os; from pathlib import Path; from app.database import Database; print("configured" if Database(Path(os.environ["KLT_DATA_DIR"]) / "kid-learning-tv.sqlite3").get_pin_hash() else "missing")')"
