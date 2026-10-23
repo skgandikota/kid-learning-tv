@@ -13,7 +13,11 @@ immediately or **Memory** to start Shopping Memory Chain. Home cards also have
 large picture icons and start these games directly. Your phone still selects
 other categories. No typing is shown to the child while voice answers are on.
 
-The laptop listens after each spoken prompt. Avocado accepts an animal name and
+Piper speaks with a natural British voice; Whisper recognises English locally.
+Updates install both automatically and preserve your voice settings. The laptop
+listens after each spoken prompt. **Thinking...** means capture is temporarily
+paused while the CPU processes an answer; phone controls still work.
+Avocado accepts an animal name and
 asks for spoken yes/no confirmation on a fuzzy match. In Memory Chain, say the
 list and add an item. Counting, colour and shape games accept spoken answers;
 matching pairs stays tap/click. Use **Stop voice** or turn off **Offline voice

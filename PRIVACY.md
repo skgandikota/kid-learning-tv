@@ -1,6 +1,6 @@
 # Privacy and data handling
 
-The app is designed to operate locally. Core pages, game logic, content, settings, and optional eSpeak NG speech output do not require a cloud service. The service uses the LAN for parent-device access when enabled.
+The app is designed to operate locally. Core pages, game logic, content, settings, and optional Piper speech output do not require a cloud service. The service uses the LAN for parent-device access when enabled.
 
 ## What may be stored
 
@@ -17,8 +17,9 @@ game answers can appear in current game state like typed answers. Capture stops
 during spoken prompts, pause, lock, video and non-voice activities. Ask Rocky
 remains pretend and does not open the microphone or retain audio.
 
-Voice setup downloads a fixed English Vosk model once from alphacephei.com and
-installs dependencies; play itself needs no internet. eSpeak NG synthesizes
+Voice setup (also included in updates) downloads pinned English Whisper and
+Piper models once from Hugging Face and installs dependencies; play itself needs
+no internet. Models are loaded from local paths only. Piper synthesizes
 prompts locally and the TV browser plays them. No YouTube downloading is provided.
 
 ## Parent choices and retention

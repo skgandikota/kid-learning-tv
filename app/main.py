@@ -31,6 +31,7 @@ from app.services.content import ContentError, ContentStore
 from app.voice.tts import SpeechOutput
 from app.voice.commands import HOME_COMMANDS, NUMBERS, memory_items, vocabulary
 from app.voice.stt.offline import OfflineRecognizer
+from app.voice.models import MODELS, WHISPER_NAME
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -55,7 +56,7 @@ class Runtime:
         self.settings.setdefault("enabled_learning_activities", [])
         self.settings.setdefault("voice_input_enabled", False)
         self.voice_revision = 0
-        self.recognizer = OfflineRecognizer(ROOT / "models" / "vosk-model-small-en-us-0.15")
+        self.recognizer = OfflineRecognizer(MODELS / WHISPER_NAME)
         self.lock = threading.RLock()
         self.bus = EventBus()
         self.tts = SpeechOutput()
@@ -88,7 +89,6 @@ class Runtime:
     def emit(self, event_type: str, payload: dict | None = None):
         if event_type not in {"MEMORY_PICTURES_HIDDEN", "VOICE_STATUS", "MEDIA_PROGRESS"}:
             self.voice_revision += 1
-            self.recognizer.reset()
         payload = payload or {}
         self.state["updated_at"] = int(time.time())
         if self.settings.get("history_enabled", False):
@@ -123,7 +123,7 @@ class Runtime:
                 if self.content.memory_category(key)
             ]
             data["prompts"] = self.content.prompts()
-            data["voice_available"] = self.tts.available()
+            data["voice_available"] = self.tts.neural_available() if self.settings["voice_input_enabled"] else self.tts.available()
             data["voice_enabled"] = bool(self.settings.get("voice_enabled"))
             data["low_animation"] = bool(self.settings.get("low_animation"))
             data["memory_picture_seconds"] = int(self.settings.get("memory_picture_seconds", 4))
@@ -147,7 +147,11 @@ class Runtime:
             data["voice_input_available"] = self.recognizer.available()
             data["voice_revision"] = self.voice_revision
             data["voice_listening_allowed"] = bool(vocabulary(self))
-            data["stt_profile"] = "offline-vosk" if self.settings["voice_input_enabled"] else data["stt_profile"]
+            data["stt_profile"] = "offline-whisper" if self.settings["voice_input_enabled"] else data["stt_profile"]
+            data["voice_engine"] = (
+                "Piper British English / Whisper base.en INT8"
+                if self.settings["voice_input_enabled"] else "eSpeak (legacy)"
+            )
             return data
 
     def resolve_voice_confirmation(self, accepted):
@@ -546,50 +550,66 @@ def create_app(overrides: dict | None = None) -> Flask:
         return request.remote_addr in {"127.0.0.1", "::1"} and check_csrf()
 
     @app.post("/api/voice/audio")
-    @serialized
     def voice_audio():
         if not local_voice_request():
             return jsonify({"error": "Voice input is available only on the laptop's localhost TV page."}), 403
-        if not runtime.settings["voice_input_enabled"] or not vocabulary(runtime):
-            return jsonify({"error": "The microphone is off for this screen."}), 423
-        if request.args.get("turn") != str(runtime.voice_revision):
-            return jsonify({"error": "That voice turn has ended."}), 409
         if request.mimetype != "application/octet-stream":
             return jsonify({"error": "Expected 16 kHz mono PCM audio."}), 400
         audio = request.get_data()
         if not audio or len(audio) % 2 or len(audio) > 32000:
             return jsonify({"error": "Send at most one second of 16-bit mono PCM audio."}), 400
-        if not runtime.recognizer.available():
-            return jsonify({"error": "Run scripts/setup-voice.sh to install offline speech recognition."}), 503
-        result = runtime.recognizer.accept(audio, str(runtime.voice_revision), vocabulary(runtime))
-        if result is not None:
+        turn = request.args.get("turn")
+        # Slow CPU inference must not block a parent's pause, lock or Home command.
+        with runtime.recognizer.lock:
+            with runtime.lock:
+                if not runtime.settings["voice_input_enabled"] or not vocabulary(runtime):
+                    return jsonify({"error": "The microphone is off for this screen."}), 423
+                if turn != str(runtime.voice_revision):
+                    return jsonify({"error": "That voice turn has ended."}), 409
+                phrases = vocabulary(runtime)
+                if not runtime.recognizer.available():
+                    return jsonify({"error": "Run scripts/setup-voice.sh to install neural voice."}), 503
             try:
-                runtime.handle_voice(result["text"], result["confidence"])
-            except ValueError as error:
-                runtime.state["message"] = str(error)
-                runtime.emit("VOICE_RETRY")
-        return jsonify({"ok": True, "state": runtime.snapshot()})
+                result = runtime.recognizer.accept(audio, turn, phrases)
+            except (ImportError, MemoryError, RuntimeError, OSError, ValueError) as error:
+                app.logger.error("Offline recognition failed: %s", type(error).__name__)
+                return jsonify({"error": "Local recognition failed. Rerun voice setup and check available memory."}), 503
+            with runtime.lock:
+                if turn != str(runtime.voice_revision) or not runtime.settings["voice_input_enabled"] or not vocabulary(runtime):
+                    runtime.recognizer.reset()
+                    return jsonify({"error": "That voice turn has ended."}), 409
+                if result is not None:
+                    try:
+                        runtime.handle_voice(result["text"], result["confidence"])
+                    except ValueError as error:
+                        runtime.state["message"] = str(error)
+                        runtime.emit("VOICE_RETRY")
+                return jsonify({"ok": True, "state": runtime.snapshot()})
 
     @app.get("/api/voice/prompt")
-    @serialized
     def voice_prompt():
         if not local_voice_request():
             return jsonify({"error": "Open the TV on localhost to use offline voice."}), 403
-        if request.args.get("turn") != str(runtime.voice_revision):
-            return jsonify({"error": "That voice prompt has changed."}), 409
-        if not runtime.settings["voice_input_enabled"] or not runtime.settings.get("voice_enabled") or runtime.state["muted"]:
-            return jsonify({"error": "Voice output is off."}), 423
-        text = runtime.state["message"]
-        if runtime.state["screen"] == "home":
-            text = "Hello! Say Avocado to play with animals, or Memory to play a memory game."
-        try:
-            wave = runtime.tts.wave(
-                text, runtime.settings.get("tts_voice", "en-gb"),
-                int(runtime.settings.get("speech_rate", 135)), runtime.state["volume"],
+        with runtime.lock:
+            turn = str(runtime.voice_revision)
+            if request.args.get("turn") != turn:
+                return jsonify({"error": "That voice prompt has changed."}), 409
+            if not runtime.settings["voice_input_enabled"] or not runtime.settings.get("voice_enabled") or runtime.state["muted"] or runtime.state["locked"] or runtime.state["paused"]:
+                return jsonify({"error": "Voice output is off."}), 423
+            text = runtime.state["message"]
+            if runtime.state["screen"] == "home":
+                text = "Hello! Say Avocado to play with animals, or Memory to play a memory game."
+            voice, rate, volume = (
+                runtime.settings.get("tts_voice", "en-gb"),
+                int(runtime.settings.get("speech_rate", 145)), runtime.state["volume"],
             )
-        except (OSError, subprocess.SubprocessError) as error:
+        try:
+            wave = runtime.tts.wave(text, voice, rate, volume)
+        except (ImportError, MemoryError, OSError, subprocess.SubprocessError, RuntimeError, ValueError) as error:
             app.logger.error("Offline speech generation failed: %s", type(error).__name__)
-            return jsonify({"error": "Offline speech failed. Check that espeak-ng is installed."}), 503
+            return jsonify({"error": "Natural speech failed. Run scripts/setup-voice.sh and check available memory."}), 503
+        if turn != str(runtime.voice_revision):
+            return jsonify({"error": "That voice prompt has changed."}), 409
         return Response(wave, mimetype="audio/wav")
 
     @app.post("/api/voice/status")
@@ -1039,8 +1059,9 @@ def create_app(overrides: dict | None = None) -> Flask:
             runtime.emit("SPEECH_STOPPED")
             return jsonify({"ok": True, "state": runtime.snapshot()})
         elif action == "test_voice":
-            if not runtime.tts.available():
-                raise ValueError("eSpeak NG is not installed. Install espeak-ng to test offline speech.")
+            available = runtime.tts.neural_available() if runtime.settings["voice_input_enabled"] else runtime.tts.available()
+            if not available:
+                raise ValueError("Voice is not installed. Run scripts/setup-voice.sh.")
             if runtime.settings["voice_input_enabled"]:
                 state["message"] = "Hello! This is the offline voice test."
                 runtime.emit("VOICE_TEST")
@@ -1405,9 +1426,9 @@ def create_app(overrides: dict | None = None) -> Flask:
         return jsonify({
             "status": "ok",
             "database": database.path.exists(),
-            "stt": "offline-vosk" if runtime.settings["voice_input_enabled"] else "manual-parent-assist",
+            "stt": "offline-whisper" if runtime.settings["voice_input_enabled"] else "manual-parent-assist",
             "stt_available": runtime.recognizer.available(),
-            "tts_available": runtime.tts.available(),
+            "tts_available": runtime.tts.neural_available() if runtime.settings["voice_input_enabled"] else runtime.tts.available(),
             "uptime_seconds": int(time.time() - runtime.started_at),
         })
 

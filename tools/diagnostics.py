@@ -7,7 +7,11 @@ import platform
 import shutil
 import socket
 import subprocess
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from app.voice.models import MODELS, WHISPER_NAME, WHISPER_FILES, PIPER_NAME, PIPER_FILES, present
 
 
 def command_output(*args):
@@ -79,11 +83,15 @@ def report():
         "microphone_visibility": command_output("arecord", "-l") if os.name != "nt" else "unavailable on this platform",
         "display": command_output("xrandr", "--current") if os.name != "nt" else "unavailable on this platform",
         "stt": {
-            "vosk_installed": importlib.util.find_spec("vosk") is not None,
-            "english_model_present": (Path(__file__).resolve().parents[1] / "models" / "vosk-model-small-en-us-0.15" / "am" / "final.mdl").is_file(),
+            "faster_whisper_installed": importlib.util.find_spec("faster_whisper") is not None,
+            "english_model_present": present(MODELS / WHISPER_NAME, WHISPER_FILES),
+            "engine": "Whisper base.en, CPU INT8, 2 threads",
             "microphone": "browser permission on localhost required; see parent controls for live status",
         },
-        "tts": "espeak-ng: " + (shutil.which("espeak-ng") or "not installed"),
+        "tts": {
+            "piper_installed": importlib.util.find_spec("piper") is not None,
+            "british_model_present": present(MODELS / PIPER_NAME, PIPER_FILES),
+        },
         "service_state": command_output("systemctl", "is-active", "kid-learning-tv") if os.name != "nt" else "systemd unavailable",
     }
 

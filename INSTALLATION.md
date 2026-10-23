@@ -6,7 +6,7 @@ These instructions describe the deployment assets in this repository; they are n
 
 - Lubuntu or another systemd-based Linux desktop, Python 3.10+, `python3-venv`, and pip.
 - Network access during installation for Python packages, unless a complete compatible wheelhouse is supplied with `KLT_WHEELHOUSE`.
-- For kiosk mode, Chromium (`chromium` or `chromium-browser`) or Google Chrome. eSpeak NG is optional for local speech.
+- For kiosk mode, Chromium (`chromium` or `chromium-browser`) or Google Chrome.
 - A private home LAN. The default service listens on all interfaces at TCP port 8765; do not port-forward it.
 
 ## Install
@@ -37,10 +37,13 @@ After a normal installation, run:
 sudo bash /opt/kid-learning-tv/scripts/setup-voice.sh
 ```
 
-This installs eSpeak NG and Vosk, downloads the approximately 40 MB Apache-2.0
-English model from alphacephei.com, enables offline speech and restarts the app.
-Internet is needed only for setup. The model stays under
-`/opt/kid-learning-tv/models`; it is not included in the Git repository.
+This installs Piper, faster-whisper and their CPU dependencies, downloads about
+220 MB of pinned models from Hugging Face (British English Cori speech and
+Whisper base.en recognition), verifies both as the service account, enables
+offline speech and restarts the app. Allow extra disk space for Python packages
+and download staging; the model downloader requires at least 1 GB free after
+package installation. Internet is needed only for setup. Models stay under
+`/opt/kid-learning-tv/models`; they are not included in the Git repository.
 
 On the laptop, open **http://127.0.0.1:8765/** in Chromium. Tap **Start voice**
 once and allow microphone access. Select the laptop's built-in microphone in
@@ -61,19 +64,29 @@ pretend Rocky message. Recognition uses memory only; audio is not saved or sent
 to any cloud service. Recognition quality for a three-year-old, distance from
 the built-in microphone and the laptop's performance must be checked on-device;
 synthetic adult-like test speech is not evidence of child-speech accuracy.
-An English small model typically uses around 300 MB RAM.
+Whisper uses CPU INT8 and two inference threads; no GPU is needed. RAM usage and
+latency on this laptop have not been measured. During slow recognition, the UI
+shows **Thinking...** and pauses capture instead of overflowing an audio queue.
+Parent pause, lock and Home remain available during inference.
 
 Parents can switch voice answers off under **Sound and session**. Without voice
 setup, parent-assisted typed answers remain available.
 
-For an existing GitHub installation, update before running voice setup:
+For an existing GitHub installation, the update now installs all neural voice
+software and models automatically; no separate voice setup command is needed:
 
 ```bash
 cd ~/kid-learning-tv
 git pull --ff-only origin main
 sudo bash scripts/update.sh "$PWD"
-sudo bash /opt/kid-learning-tv/scripts/setup-voice.sh
 ```
+
+The first update needs internet and takes longer while packages/models download.
+Later updates reuse complete models. Existing parent voice settings are preserved:
+if voice was off, enable **Speak prompts** and **Offline voice answers** under
+**Sound and session**. Refresh the laptop's localhost page and tap **Start voice**.
+If setup fails, the update reports the error and leaves the service stopped;
+resolve it and rerun the same update command or use rollback.
 
 ## Kiosk
 

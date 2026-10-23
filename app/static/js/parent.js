@@ -67,8 +67,8 @@ async function loadDashboard() {
   byId("nicknames-enabled").checked = activeSettings.nicknames_enabled !== false;
   byId("low-animation").checked = Boolean(activeSettings.low_animation);
   byId("voice-status").textContent = data.state.voice_available
-    ? "eSpeak NG is available for local offline speech."
-    : "eSpeak NG is not installed; the TV can use a local browser voice when available.";
+    ? `${data.state.voice_engine || "Local speech"} is available.`
+    : "Natural speech setup is required; run the latest update.sh.";
   await Promise.all([loadCategories(), loadMedia()]);
 }
 
@@ -101,7 +101,7 @@ function paintState(state) {
     ["Device", dataHostname()],
     ["TV screen", state.screen || "home"],
     ["Activity", state.activity || "None"],
-    ["Speech recognition", state.voice_input_enabled ? (state.voice_input_available ? "Offline English" : "Voice setup required") : "Off"],
+    ["Speech recognition", state.voice_input_enabled ? (state.voice_input_available ? "Local Whisper English" : "Voice setup required") : "Off"],
     ["Microphone", state.microphone_status || "Not connected"],
   ].forEach(([label, value]) => {
     const card = document.createElement("div");

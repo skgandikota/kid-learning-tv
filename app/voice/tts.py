@@ -6,23 +6,36 @@ import logging
 import shutil
 import subprocess
 import threading
+import importlib.util
+import io
+import wave
+
+from app.voice.models import MODELS, PIPER_NAME, PIPER_FILE, PIPER_FILES, present
 
 
 class SpeechOutput:
-    @staticmethod
-    def wave(text: str, voice: str, rate: int, volume: int) -> bytes:
-        executable = shutil.which("espeak-ng") or shutil.which("espeak")
-        if not executable:
-            raise ValueError("Offline speech needs espeak-ng. Run scripts/setup-voice.sh.")
-        voice = voice if voice in {"en-gb", "en-us", "en"} else "en-gb"
-        result = subprocess.run(
-            [executable, "--stdout", "-v", voice, "-s", str(max(100, min(rate, 200))),
-             "-a", str(max(0, min(volume, 100))), "--stdin"],
-            input=str(text)[:500].encode("utf-8"), capture_output=True, timeout=30, check=True,
-        )
-        return result.stdout
+    def wave(self, text: str, voice: str, rate: int, volume: int) -> bytes:
+        if not self.neural_available():
+            raise ValueError("Natural speech is not installed. Run scripts/setup-voice.sh.")
+        from piper import PiperVoice, SynthesisConfig
+        with self._neural_lock:
+            if self._neural_voice is None:
+                self._neural_voice = PiperVoice.load(str(self.model_path / PIPER_FILE), use_cuda=False)
+            output = io.BytesIO()
+            with wave.open(output, "wb") as wav_file:
+                self._neural_voice.synthesize_wav(
+                    str(text)[:500], wav_file,
+                    syn_config=SynthesisConfig(
+                        volume=max(0, min(volume, 100)) / 100,
+                        length_scale=145 / max(100, min(rate, 200)),
+                    ),
+                )
+            return output.getvalue()
 
-    def __init__(self):
+    def __init__(self, model_path=None):
+        self.model_path = model_path or MODELS / PIPER_NAME
+        self._neural_lock = threading.Lock()
+        self._neural_voice = None
         self._queue = queue.Queue(maxsize=3)
         self._lock = threading.Lock()
         self._generation = 0
@@ -33,6 +46,9 @@ class SpeechOutput:
     @staticmethod
     def available() -> bool:
         return bool(shutil.which("espeak-ng") or shutil.which("espeak"))
+
+    def neural_available(self):
+        return importlib.util.find_spec("piper") is not None and present(self.model_path, PIPER_FILES)
 
     def say(self, text: str, voice: str = "en-gb", rate: int = 145, volume: int = 70):
         safe_text = str(text)[:240]

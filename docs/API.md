@@ -44,16 +44,20 @@ capture audio.
 
 - `POST /api/voice/audio?turn=<voice_revision>` accepts at most 32,000 bytes of
   16 kHz mono signed little-endian PCM16 (`application/octet-stream`). Audio is
-  decoded in memory by a lazy Vosk model. Stale turns are rejected (409);
+  buffered in memory (at most 18 seconds) and decoded by CPU INT8 Whisper after
+  speech detection and trailing silence. Slow inference does not hold the
+  game-state lock. Stale turns are rejected before and after inference (409);
   paused/locked and non-listening screens are rejected (423). No transcript is
   returned; resulting game state is returned instead.
 - `GET /api/voice/prompt?turn=<voice_revision>` synthesizes the current app prompt
-  only and returns WAV audio. Arbitrary text is not accepted.
+  only using Piper and returns WAV audio. Arbitrary text is not accepted. A
+  stale prompt is rejected after synthesis (409).
 - `POST /api/voice/status` accepts `off`, `speaking`, `listening`, `ready` or `error`.
   Status events do not reset the recognition turn.
 
 `voice_input_enabled` is a parent boolean setting (also validated on import).
-The small English model must be installed before use. No cloud fallback exists.
+Both pinned neural models must be installed before use. `update.sh` installs and
+verifies them while preserving parent preferences. No cloud fallback exists.
 
 ## Learning library
 

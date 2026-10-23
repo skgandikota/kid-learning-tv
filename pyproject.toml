@@ -16,7 +16,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = ["pytest==8.4.2"]
-voice = ["vosk==0.3.45"]
+voice = ["faster-whisper==1.2.1", "piper-tts==1.8.0"]
 
 [tool.setuptools.packages.find]
 include = ["app", "app.*"]

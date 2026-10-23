@@ -6,7 +6,7 @@ SOURCE="${1:-$SOURCE_DIR}"
 [[ -f "$SOURCE/pyproject.toml" && -d "$SOURCE/app" ]] || die "Usage: sudo $0 [project-source-directory]"
 [[ -d "$INSTALL_DIR" ]] || die "Install not found at $INSTALL_DIR."
 [[ "$(cd "$SOURCE" && pwd -P)" != "$INSTALL_DIR" ]] || die "Provide a separate updated project checkout as the source."
-confirm "Back up the installed application and update it from $SOURCE? The service will briefly stop."
+confirm "Update from $SOURCE including local neural voice packages and about 220 MB models? Internet and at least 1 GB free disk space are required; the service will stop during setup."
 PYTHONPATH="$INSTALL_DIR" "$INSTALL_DIR/.venv/bin/python" "$INSTALL_DIR/tools/content_validator.py" || die "Installed content is invalid; update refused without changing files."
 stamp="$(date -u +%Y%m%dT%H%M%SZ)"
 backup="/var/backups/kid-learning-tv/releases/$stamp"
@@ -16,7 +16,7 @@ for item in app config tools scripts systemd kiosk docs pyproject.toml requireme
     [[ ! -e "$INSTALL_DIR/$item" ]] || cp -a "$INSTALL_DIR/$item" "$backup/"
 done
 restart_service=1
-trap 'if [[ "${restart_service:-0}" == 1 ]]; then systemctl start "$SERVICE_NAME.service" || true; fi' EXIT
+trap 'if [[ "${restart_service:-0}" == 1 ]]; then printf "Update failed. Service remains stopped; fix the reported error and rerun update.sh, or use rollback.sh.\n" >&2; fi' EXIT
 systemctl stop "$SERVICE_NAME.service"
 for item in app config tools scripts systemd kiosk docs; do
     if [[ ! -d "$SOURCE/$item" && ( "$item" == docs || "$item" == kiosk ) ]]; then continue; fi
@@ -34,6 +34,7 @@ chown -R kid-learning-tv:kid-learning-tv "$INSTALL_DIR/content"
     "$INSTALL_DIR/.venv/bin/pip" install "$INSTALL_DIR" waitress
 )
 chmod -R a+rX "$INSTALL_DIR/.venv"
+bash "$INSTALL_DIR/scripts/setup-voice.sh" --update
 systemctl start "$SERVICE_NAME.service"
 restart_service=0
 trap - EXIT

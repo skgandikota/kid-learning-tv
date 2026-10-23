@@ -1,6 +1,6 @@
 # Kid Learning TV
 
-An offline-first, local-network learning and games appliance for a child-friendly TV. The current app includes the Avocado answer game, Memory Chain, parent controls, local content, optional local eSpeak speech, and a parent-uploaded video library.
+An offline-first, local-network learning and games appliance for a child-friendly TV. The current app includes the Avocado answer game, Memory Chain, parent controls, local content, optional natural local speech, and a parent-uploaded video library.
 
 ## Quick start
 
@@ -19,7 +19,7 @@ Open `http://127.0.0.1:8765/`; use `/parent` for parent setup and controls. `scr
 
 - The app serves locally and is designed to keep learning content and app data on the appliance.
 - The parent **Learning library** enables and launches matching pairs, counting, colour matching and shape matching inside the TV interface. Only a parent can restart or exit these games. They are original browser activities, not the full GCompris suite.
-- Optional **offline English voice play** uses the laptop microphone, Vosk and local eSpeak NG prompts. See [INSTALLATION.md](INSTALLATION.md) for one-time voice setup. No cloud recognition or saved microphone audio. Home has picture icons; tap or say Avocado to start Animals immediately.
+- Optional **offline English voice play** uses the laptop microphone, local Whisper recognition and natural British Piper prompts. Updates install the required software/models automatically; see [INSTALLATION.md](INSTALLATION.md). No cloud recognition or saved microphone audio. Home has picture icons; tap or say Avocado to start Animals immediately.
 - Ask Rocky is a simulated activity; it does not record or retain audio. The bundled Rocky art is original helper art, not Paw Patrol artwork.
 - There is no YouTube downloader. Parents may upload local MP4/WebM videos through the parent UI.
 - LAN access uses HTTP by default. Keep the device on a trusted private network; do not expose its port to the internet.

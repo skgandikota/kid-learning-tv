@@ -1,4 +1,5 @@
 from unittest.mock import Mock
+import threading
 
 import pytest
 
@@ -131,3 +132,80 @@ def test_microphone_status_does_not_interrupt_recognition(voice_client, app):
     assert response.json["ok"]
     assert runtime.snapshot()["microphone_status"] == "listening"
     assert voice_client.post("/api/voice/status", json={"status": "invalid"}).status_code == 400
+
+
+def test_parent_can_pause_during_slow_inference_and_late_answer_is_discarded(voice_client, parent_client, app):
+    runtime = app.extensions["klt_runtime"]
+    started, release = threading.Event(), threading.Event()
+    def recognise(*args):
+        started.set()
+        assert release.wait(5)
+        return {"text": "avocado", "confidence": 1}
+    runtime.recognizer.accept = recognise
+    token = voice_client.environ_base["HTTP_X_CSRF_TOKEN"]
+    turn = runtime.voice_revision
+    responses = []
+    def submit():
+        with app.test_client() as client:
+            with client.session_transaction() as session:
+                session["csrf_token"] = token
+            responses.append(client.post(
+                f"/api/voice/audio?turn={turn}", data=bytes(16000),
+                content_type="application/octet-stream", headers={"X-CSRF-Token": token},
+            ))
+    worker = threading.Thread(target=submit)
+    worker.start()
+    try:
+        assert started.wait(3)
+        paused = parent_client.post("/api/parent/action", json={"action": "pause"})
+        assert paused.status_code == 200
+        assert runtime.state["paused"]
+    finally:
+        release.set()
+        worker.join(5)
+    assert responses[0].status_code == 409
+    assert runtime.avocado is None
+
+
+def test_parent_can_lock_during_synthesis_and_late_prompt_is_discarded(voice_client, parent_client, app):
+    runtime = app.extensions["klt_runtime"]
+    started, release = threading.Event(), threading.Event()
+    def synthesize(*args):
+        started.set()
+        assert release.wait(5)
+        return b"RIFFstale"
+    runtime.tts.wave = synthesize
+    token = voice_client.environ_base["HTTP_X_CSRF_TOKEN"]
+    turn = runtime.voice_revision
+    responses = []
+    def submit():
+        with app.test_client() as client:
+            with client.session_transaction() as session:
+                session["csrf_token"] = token
+            responses.append(client.get(
+                f"/api/voice/prompt?turn={turn}", headers={"X-CSRF-Token": token},
+            ))
+    worker = threading.Thread(target=submit)
+    worker.start()
+    try:
+        assert started.wait(3)
+        assert parent_client.post("/api/parent/action", json={"action": "lock"}).status_code == 200
+        assert runtime.state["locked"]
+    finally:
+        release.set()
+        worker.join(5)
+    assert responses[0].status_code == 409
+
+
+def test_neural_failures_return_explicit_errors_instead_of_accepting_answers(voice_client, app):
+    runtime = app.extensions["klt_runtime"]
+    runtime.recognizer.accept = Mock(side_effect=RuntimeError("unavailable"))
+    response = voice_client.post(
+        f"/api/voice/audio?turn={runtime.voice_revision}", data=bytes(16000),
+        content_type="application/octet-stream",
+    )
+    assert response.status_code == 503
+    assert "memory" in response.json["error"]
+    assert runtime.avocado is None
+    runtime.tts.wave = Mock(side_effect=RuntimeError("unavailable"))
+    assert voice_client.get(f"/api/voice/prompt?turn={runtime.voice_revision}").status_code == 503

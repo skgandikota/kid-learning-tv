@@ -137,6 +137,11 @@ class OfflineVoice {
       if (!state.muted && state.voice_enabled) {
         const response = await fetch(`/api/voice/prompt?turn=${state.voice_revision}`, { headers: this.headers() });
         if (generation !== this.generation) return;
+        if (response.status === 409 || response.status === 423) {
+          const current = await fetch("/api/state").then((result) => result.json());
+          if (generation === this.generation) render(current);
+          return;
+        }
         if (!response.ok) throw new Error((await response.json()).error || "Offline voice could not speak.");
         const bytes = await response.arrayBuffer();
         const buffer = await this.context.decodeAudioData(bytes);
@@ -182,7 +187,11 @@ class OfflineVoice {
     this.node = new AudioWorkletNode(this.context, "microphone-pcm");
     this.node.port.onmessage = (event) => {
       if (generation !== this.generation) return;
-      if (this.queue.length >= 8) return this.fail(new Error("Offline recognition is too slow on this device."));
+      if (this.queue.length >= 8) {
+        this.stopCapture();
+        this.setStatus("ready", "Thinking... microphone paused while I understand your answer.");
+        return;
+      }
       this.queue.push(event.data);
       this.send(state, generation);
     };
@@ -196,11 +205,22 @@ class OfflineVoice {
     this.sending = true;
     try {
       while (this.queue.length && generation === this.generation) {
-        const response = await fetch(`/api/voice/audio?turn=${state.voice_revision}`, {
-          method: "POST",
-          headers: { ...this.headers(), "Content-Type": "application/octet-stream" },
-          body: this.queue.shift(),
-        });
+        const thinking = setTimeout(() => {
+          if (generation === this.generation) {
+            this.stopCapture();
+            this.setStatus("ready", "Thinking... microphone paused while I understand your answer.");
+          }
+        }, 1500);
+        let response;
+        try {
+          response = await fetch(`/api/voice/audio?turn=${state.voice_revision}`, {
+            method: "POST",
+            headers: { ...this.headers(), "Content-Type": "application/octet-stream" },
+            body: this.queue.shift(),
+          });
+        } finally {
+          clearTimeout(thinking);
+        }
         if (generation !== this.generation) break;
         if (response.status === 409 || response.status === 423) {
           this.stopCapture();
@@ -216,6 +236,13 @@ class OfflineVoice {
       if (generation === this.generation) this.fail(error);
     } finally {
       this.sending = false;
+      if (generation === this.generation && this.enabled && !this.stream && state.voice_listening_allowed) {
+        this.listen(state, generation).catch((error) => {
+          if (generation === this.generation) this.fail(error);
+        });
+      } else if (generation !== this.generation && this.queue.length && appState) {
+        this.send(appState, this.generation);
+      }
     }
   }
 }

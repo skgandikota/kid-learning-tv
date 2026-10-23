@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install the fixed offline English model, or enable it in local preferences."""
+"""Install fixed neural models once, verify locally, then enable offline voice."""
 from __future__ import annotations
 
 import argparse
@@ -8,77 +8,84 @@ from pathlib import Path
 import shutil
 import sys
 import tempfile
-import urllib.request
-import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-MODEL_NAME = "vosk-model-small-en-us-0.15"
-MODEL_URL = f"https://alphacephei.com/vosk/models/{MODEL_NAME}.zip"
+
+from app.voice.models import (
+    MODELS, WHISPER_NAME, WHISPER_REPO, WHISPER_REVISION, WHISPER_FILES,
+    PIPER_NAME, PIPER_REPO, PIPER_REVISION, PIPER_PREFIX, PIPER_FILES, present,
+)
 
 
-def install_model(destination: Path):
-    target = destination / MODEL_NAME
-    if (target / "am" / "final.mdl").is_file() and (target / "conf" / "model.conf").is_file():
-        print(f"Offline English model already installed: {target}")
+def install_model(destination, name, repo, revision, files, prefix=""):
+    target = destination / name
+    if present(target, files):
+        print(f"Already installed: {name}", flush=True)
         return
     if target.exists():
-        raise ValueError(f"Incomplete model exists at {target}. Move it aside before retrying.")
+        raise ValueError(f"Incomplete model at {target}. Move it aside and retry.")
+    from huggingface_hub import snapshot_download
     destination.mkdir(parents=True, exist_ok=True)
+    print(f"Downloading {repo} at {revision} (first setup only)...", flush=True)
     with tempfile.TemporaryDirectory(prefix=".voice-download-", dir=destination) as directory:
         staging = Path(directory)
-        archive = staging / "model.zip"
-        print(f"Downloading the approximately 40 MB English model from {MODEL_URL}", flush=True)
-        with urllib.request.urlopen(MODEL_URL, timeout=60) as response, archive.open("wb") as output:
-            total = 0
-            while chunk := response.read(1024 * 1024):
-                total += len(chunk)
-                if total > 100 * 1024 * 1024:
-                    raise ValueError("Speech model download exceeded its size limit.")
-                output.write(chunk)
-                print(f"\rDownloaded {total // (1024 * 1024)} MB", end="", flush=True)
-        print()
-        with zipfile.ZipFile(archive) as bundle:
-            if sum(member.file_size for member in bundle.infolist()) > 250 * 1024 * 1024:
-                raise ValueError("Expanded speech model exceeded its size limit.")
-            for member in bundle.infolist():
-                relative = Path(member.filename)
-                resolved = (staging / relative).resolve()
-                if (
-                    not member.filename.startswith(MODEL_NAME + "/")
-                    or "\\" in member.filename
-                    or not resolved.is_relative_to(staging.resolve())
-                    or member.external_attr >> 16 & 0o170000 == 0o120000
-                ):
-                    raise ValueError("Unsafe speech model archive path.")
-            bundle.extractall(staging)
-        model = staging / MODEL_NAME
-        for required in ("am/final.mdl", "conf/model.conf"):
-            if not (model / required).is_file():
-                raise ValueError(f"Speech model is missing {required}.")
-        shutil.move(str(model), target)
-    print(f"Installed offline English model: {target}")
+        paths = [f"{prefix}/{name}" if prefix else name for name in files]
+        snapshot = Path(snapshot_download(
+            repo_id=repo, revision=revision, allow_patterns=paths,
+            local_dir=staging / "download", max_workers=2, token=False,
+        ))
+        prepared = staging / "ready"
+        prepared.mkdir()
+        for relative, filename in zip(paths, files):
+            source = snapshot / relative
+            if not source.is_file() or source.stat().st_size == 0:
+                raise ValueError(f"Model download is missing {relative}.")
+            shutil.copyfile(source, prepared / filename)
+        (prepared / "SOURCE.txt").write_text(f"{repo}\n{revision}\n", encoding="ascii")
+        prepared.rename(target)
+    print(f"Installed: {target}", flush=True)
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--enable", action="store_true", help="Enable installed offline voice in the local database.")
-    arguments = parser.parse_args()
-    if arguments.enable:
-        from app.database import Database
-        from app.voice.stt.offline import OfflineRecognizer
-        recognizer = OfflineRecognizer(ROOT / "models" / MODEL_NAME)
-        if not recognizer.available():
-            raise ValueError("Install vosk and the English model before enabling voice.")
-        recognizer.accept(bytes(320), "setup-check", ["avocado"])
-        recognizer.reset()
+def install_models(destination):
+    if shutil.disk_usage(destination if destination.exists() else destination.parent).free < 1024**3:
+        raise ValueError("Voice setup needs at least 1 GB free disk space for model downloads.")
+    install_model(destination, WHISPER_NAME, WHISPER_REPO, WHISPER_REVISION, WHISPER_FILES)
+    install_model(destination, PIPER_NAME, PIPER_REPO, PIPER_REVISION, PIPER_FILES, PIPER_PREFIX)
+
+
+def verify_and_enable(enable):
+    import numpy as np
+    from app.database import Database
+    from app.voice.stt.offline import OfflineRecognizer
+    from app.voice.tts import SpeechOutput
+    recognizer = OfflineRecognizer(MODELS / WHISPER_NAME)
+    recognizer.load()
+    recognizer.speech_present(np.zeros(8000, dtype="float32"))
+    speech = SpeechOutput()
+    if not speech.wave("Hello! Let's play together.", "en-gb", 145, 70).startswith(b"RIFF"):
+        raise ValueError("Natural speech verification did not produce WAV audio.")
+    if enable:
         db = Database(Path(os.environ.get("KLT_DATA_DIR", ROOT / "var")) / "kid-learning-tv.sqlite3")
         preferences = db.get("preferences", {})
         preferences.update({"voice_enabled": True, "voice_input_enabled": True})
         db.set("preferences", preferences)
-        print("Offline voice enabled. Open the laptop TV page and allow its microphone.")
-    else:
-        install_model(ROOT / "models")
+    print("Verified local Whisper CPU INT8, speech detection and Piper British English.", flush=True)
+
+
+def main():
+    from huggingface_hub.errors import HfHubHTTPError
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--enable", action="store_true", help="Verify installed models and enable local voice.")
+    parser.add_argument("--verify", action="store_true", help="Verify models without changing parent preferences.")
+    arguments = parser.parse_args()
+    try:
+        if arguments.enable or arguments.verify:
+            verify_and_enable(arguments.enable)
+        else:
+            install_models(MODELS)
+    except (HfHubHTTPError, OSError, RuntimeError, ValueError) as error:
+        parser.exit(1, f"Voice setup failed: {error}\nCheck internet access to Hugging Face, free disk space and memory, then retry.\n")
 
 
 if __name__ == "__main__":
