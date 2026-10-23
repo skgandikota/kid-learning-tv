@@ -54,6 +54,7 @@ async function loadDashboard() {
   byId("parent-url").textContent = data.configured_url;
   byId("parent-url").href = data.configured_url;
   byId("voice-enabled").checked = Boolean(activeSettings.voice_enabled);
+  byId("voice-input-enabled").checked = Boolean(activeSettings.voice_input_enabled);
   byId("speech-rate").value = activeSettings.speech_rate || 145;
   byId("speech-voice").value = activeSettings.tts_voice || "en-gb";
   byId("volume").value = data.state.volume ?? activeSettings.volume ?? 70;
@@ -100,8 +101,8 @@ function paintState(state) {
     ["Device", dataHostname()],
     ["TV screen", state.screen || "home"],
     ["Activity", state.activity || "None"],
-    ["Speech recognition", "Off — parent-assisted input"],
-    ["Microphone", "Not used"],
+    ["Speech recognition", state.voice_input_enabled ? (state.voice_input_available ? "Offline English" : "Voice setup required") : "Off"],
+    ["Microphone", state.microphone_status || "Not connected"],
   ].forEach(([label, value]) => {
     const card = document.createElement("div");
     card.className = "status-item";
@@ -110,6 +111,7 @@ function paintState(state) {
     card.append(strong, document.createTextNode(value));
     device.appendChild(card);
   });
+  byId("microphone-state").textContent = `Laptop microphone: ${state.microphone_status || "not connected"}. Audio is never saved.`;
 }
 
 let hostname = "local device";
@@ -280,6 +282,7 @@ byId("save-settings").addEventListener("click", async () => {
     const response = await action("settings", { settings: {
       enabled_categories: enabledCategories,
       voice_enabled: byId("voice-enabled").checked,
+      voice_input_enabled: byId("voice-input-enabled").checked,
       speech_rate: Number(byId("speech-rate").value),
       tts_voice: byId("speech-voice").value,
       session_minutes: Number(byId("session-minutes").value),

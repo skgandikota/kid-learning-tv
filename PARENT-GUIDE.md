@@ -6,7 +6,23 @@ Set a unique 6–12 digit PIN in the installer's hidden prompts and keep it priv
 
 ## Activities
 
-The app currently provides Avocado (category-based turn-taking and answer matching) and Memory Chain (recall a growing sequence). Child answers are entered manually; no microphone or speech recognition is available. Adjust session/break settings and activity options in parent controls.
+Avocado and Memory Chain support optional offline English voice answers after
+[voice setup](INSTALLATION.md#offline-voice-setup). On the laptop TV page, allow
+the microphone once using **Start voice**. Say **Avocado** to start Animals
+immediately or **Memory** to start Shopping Memory Chain. Home cards also have
+large picture icons and start these games directly. Your phone still selects
+other categories. No typing is shown to the child while voice answers are on.
+
+The laptop listens after each spoken prompt. Avocado accepts an animal name and
+asks for spoken yes/no confirmation on a fuzzy match. In Memory Chain, say the
+list and add an item. Counting, colour and shape games accept spoken answers;
+matching pairs stays tap/click. Use **Stop voice** or turn off **Offline voice
+answers** in parent settings to stop listening. The phone shows the most recent
+microphone status from the TV page.
+
+This is a small general English model, not a child-speech model. Speak near the
+built-in microphone and test recognition with your child; accuracy is not
+guaranteed. Parent-assisted input remains available with voice mode off.
 
 Ask Rocky is a pretend activity simulation. It does not connect to Alexa and does not record or retain audio. The bundled Rocky character art is original helper artwork and is not Paw Patrol artwork.
 

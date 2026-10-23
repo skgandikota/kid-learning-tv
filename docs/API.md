@@ -36,7 +36,24 @@ The parent template supplies the required CSRF token in `X-CSRF-Token` for prote
 {"status":"ok","database":true,"stt":"manual-parent-assist","tts_available":false,"uptime_seconds":12}
 ```
 
-There is no microphone/STT endpoint. `tools/mock_voice_input.py` accepts typed mock text and prints a local demo event; it does not capture sound.
+## Offline voice
+
+Voice endpoints require loopback access, a TV session CSRF token in
+`X-CSRF-Token`, and enabled offline voice settings. The parent phone does not
+capture audio.
+
+- `POST /api/voice/audio?turn=<voice_revision>` accepts at most 32,000 bytes of
+  16 kHz mono signed little-endian PCM16 (`application/octet-stream`). Audio is
+  decoded in memory by a lazy Vosk model. Stale turns are rejected (409);
+  paused/locked and non-listening screens are rejected (423). No transcript is
+  returned; resulting game state is returned instead.
+- `GET /api/voice/prompt?turn=<voice_revision>` synthesizes the current app prompt
+  only and returns WAV audio. Arbitrary text is not accepted.
+- `POST /api/voice/status` accepts `off`, `speaking`, `listening`, `ready` or `error`.
+  Status events do not reset the recognition turn.
+
+`voice_input_enabled` is a parent boolean setting (also validated on import).
+The small English model must be installed before use. No cloud fallback exists.
 
 ## Learning library
 

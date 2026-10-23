@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Report only system facts observable on the current host."""
 import json
+import importlib.util
 import os
 import platform
 import shutil
@@ -77,7 +78,11 @@ def report():
         "audio_devices": command_output("aplay", "-l") if os.name != "nt" else "unavailable on this platform",
         "microphone_visibility": command_output("arecord", "-l") if os.name != "nt" else "unavailable on this platform",
         "display": command_output("xrandr", "--current") if os.name != "nt" else "unavailable on this platform",
-        "stt": "manual parent assist; no speech model loaded",
+        "stt": {
+            "vosk_installed": importlib.util.find_spec("vosk") is not None,
+            "english_model_present": (Path(__file__).resolve().parents[1] / "models" / "vosk-model-small-en-us-0.15" / "am" / "final.mdl").is_file(),
+            "microphone": "browser permission on localhost required; see parent controls for live status",
+        },
         "tts": "espeak-ng: " + (shutil.which("espeak-ng") or "not installed"),
         "service_state": command_output("systemctl", "is-active", "kid-learning-tv") if os.name != "nt" else "systemd unavailable",
     }

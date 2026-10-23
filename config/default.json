@@ -8,6 +8,7 @@
   "volume": 70,
   "muted": false,
   "voice_enabled": false,
+  "voice_input_enabled": false,
   "tts_engine": "espeak-ng",
   "tts_voice": "en-gb",
   "speech_rate": 145,

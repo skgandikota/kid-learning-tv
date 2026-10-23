@@ -6,6 +6,7 @@ import json
 import os
 import secrets
 import socket
+import subprocess
 import threading
 import time
 from pathlib import Path
@@ -28,6 +29,8 @@ from app.games.memory import MemoryGame
 from app.games.learning import ACTIVITIES, LearningGame, validate_enabled
 from app.services.content import ContentError, ContentStore
 from app.voice.tts import SpeechOutput
+from app.voice.commands import HOME_COMMANDS, NUMBERS, memory_items, vocabulary
+from app.voice.stt.offline import OfflineRecognizer
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -50,6 +53,9 @@ class Runtime:
         self.content = content
         self.settings = {**settings, **(db.get("preferences", {}) or {})}
         self.settings.setdefault("enabled_learning_activities", [])
+        self.settings.setdefault("voice_input_enabled", False)
+        self.voice_revision = 0
+        self.recognizer = OfflineRecognizer(ROOT / "models" / "vosk-model-small-en-us-0.15")
         self.lock = threading.RLock()
         self.bus = EventBus()
         self.tts = SpeechOutput()
@@ -80,6 +86,9 @@ class Runtime:
         self.emit(APPLICATION_STARTED)
 
     def emit(self, event_type: str, payload: dict | None = None):
+        if event_type not in {"MEMORY_PICTURES_HIDDEN", "VOICE_STATUS", "MEDIA_PROGRESS"}:
+            self.voice_revision += 1
+            self.recognizer.reset()
         payload = payload or {}
         self.state["updated_at"] = int(time.time())
         if self.settings.get("history_enabled", False):
@@ -91,7 +100,7 @@ class Runtime:
             self.db.add_history(activity, summary)
 
     def speak(self, text: str):
-        if self.settings.get("voice_enabled") and not self.state["muted"]:
+        if self.settings.get("voice_enabled") and not self.settings["voice_input_enabled"] and not self.state["muted"]:
             self.tts.say(
                 text,
                 self.settings.get("tts_voice", "en-gb"),
@@ -134,7 +143,90 @@ class Runtime:
             data["parent_managed_activity"] = self.learning_game is not None
             data["learning_game"] = self.learning_game.snapshot() if self.learning_game else None
             data["enabled_learning_activities"] = list(self.settings["enabled_learning_activities"])
+            data["voice_input_enabled"] = bool(self.settings["voice_input_enabled"])
+            data["voice_input_available"] = self.recognizer.available()
+            data["voice_revision"] = self.voice_revision
+            data["voice_listening_allowed"] = bool(vocabulary(self))
+            data["stt_profile"] = "offline-vosk" if self.settings["voice_input_enabled"] else data["stt_profile"]
             return data
+
+    def resolve_voice_confirmation(self, accepted):
+        result = self.avocado.resolve_pending(accepted)
+        self.state.update({"pending_answer": None, "screen": "avocado", "game_state": "child_turn"})
+        if result["status"] == "accepted":
+            answer = self.avocado.application_answer()
+            self.state["used_answers"] = self.avocado.summary()
+            if answer is None:
+                self.end_round("We used all the answers. You did a brilliant job.")
+                return
+            self.state["message"] = f"I'll say {answer}. Your turn!"
+        else:
+            self.state["message"] = "Let's try again. Say another answer."
+        self.emit("VOICE_CONFIRMATION_RESOLVED")
+
+    def handle_voice(self, text, confidence):
+        from app.games.avocado import normalize
+        text = normalize(text)
+        if not text or "unk" in text.split() or confidence < 0.65:
+            self.state["message"] = "I didn't quite hear you. Please say it again."
+            self.emit("VOICE_RETRY")
+            return
+        state = self.state
+        if state["screen"] == "learning" and self.learning_game:
+            game = self.learning_game
+            game.answer({
+                "session_id": game.session_id, "revision": game.revision,
+                "choice": NUMBERS.get(text, text),
+            })
+            self.update_learning()
+            if game.completed:
+                self.record_history(game.activity_id, game.message)
+        elif state["game_state"] == "confirmation" and self.avocado:
+            if text not in {"yes", "yes please", "no", "no thank you"}:
+                raise ValueError("Say yes or no.")
+            self.resolve_voice_confirmation(text.startswith("yes"))
+        elif state["screen"] == "avocado":
+            self.handle_avocado_answer(text)
+        elif state["screen"] == "memory":
+            items = memory_items(text, self.memory.category["items"])
+            self.handle_memory_answer(", ".join(items))
+        else:
+            command = HOME_COMMANDS.get(text)
+            if text in {"home", "go home"}:
+                self.avocado = None
+                self.memory = None
+                state.update({
+                    "screen": "home", "game": None, "activity": None, "game_state": "idle",
+                    "message": "Say Avocado to play with animals, or Memory to play a memory game.",
+                })
+                self.emit("RETURNED_HOME")
+            elif command:
+                action, prompt_id = command
+                if action == "start_avocado":
+                    ids = self.settings.get("enabled_categories", [])
+                    self.start_avocado("animals" if "animals" in ids else (ids[0] if ids else ""))
+                elif action == "start_memory":
+                    ids = self.settings.get("memory_categories", [])
+                    self.handle_memory_start("shopping" if "shopping" in ids else (ids[0] if ids else ""))
+                elif action == "rocky_request":
+                    state.update({
+                        "screen": "ask-rocky", "activity": "Ask Rocky", "game": None,
+                        "game_state": "request-open", "rocky_request_open": True,
+                        "rocky_message_pending": True, "rocky_reply": None,
+                        "message": "Rocky is busy right now. Leave a message after the beep, and Rocky will get back to you.",
+                    })
+                    self.emit("ROCKY_REQUEST_OPENED")
+                else:
+                    prompt = next((item for item in self.content.prompts() if item["id"] == prompt_id), None)
+                    if not prompt:
+                        raise ValueError("That activity is unavailable. Say Avocado or Memory.")
+                    state.update({
+                        "screen": "activity", "activity": prompt["name"], "game": None,
+                        "game_state": "active", "message": prompt["prompt"], "activity_image": prompt.get("image"),
+                    })
+                    self.emit(ACTIVITY_SELECTED)
+            else:
+                raise ValueError("Say Avocado or Memory to choose a game.")
 
     def start_learning(self, activity_id):
         if not isinstance(activity_id, str) or activity_id not in self.settings.get("enabled_learning_activities", []):
@@ -310,7 +402,9 @@ class Runtime:
             "message": "I went to the shop and bought " + ", ".join(sequence) + ". Now it is your turn!",
             "memory_sequence": sequence,
             "memory_picture_visible": self.memory.picture_visible,
+            "paused": False, "locked": False, "break_mode": False,
         })
+        self.session_started_at = self.session_started_at or time.time()
         self.emit(GAME_STARTED, {"game": "memory", "level": self.memory.level})
         self.speak(self.state["message"])
 
@@ -337,7 +431,7 @@ class Runtime:
             return result
         if self.memory.retries_left > 0:
             retry = self.memory.use_retry()
-            self.state["message"] = "Good try. Let's listen to the list once more."
+            self.state["message"] = "Good try. Listen again: " + ", ".join(self.memory.sequence) + ". Now your turn!"
             self.state["memory_picture_visible"] = self.memory.picture_visible
             self.emit(RETRY_GRANTED, retry)
         else:
@@ -447,6 +541,68 @@ def create_app(overrides: dict | None = None) -> Flask:
     def tv():
         token = csrf_token()
         return render_template("tv.html", csrf_token=token)
+
+    def local_voice_request():
+        return request.remote_addr in {"127.0.0.1", "::1"} and check_csrf()
+
+    @app.post("/api/voice/audio")
+    @serialized
+    def voice_audio():
+        if not local_voice_request():
+            return jsonify({"error": "Voice input is available only on the laptop's localhost TV page."}), 403
+        if not runtime.settings["voice_input_enabled"] or not vocabulary(runtime):
+            return jsonify({"error": "The microphone is off for this screen."}), 423
+        if request.args.get("turn") != str(runtime.voice_revision):
+            return jsonify({"error": "That voice turn has ended."}), 409
+        if request.mimetype != "application/octet-stream":
+            return jsonify({"error": "Expected 16 kHz mono PCM audio."}), 400
+        audio = request.get_data()
+        if not audio or len(audio) % 2 or len(audio) > 32000:
+            return jsonify({"error": "Send at most one second of 16-bit mono PCM audio."}), 400
+        if not runtime.recognizer.available():
+            return jsonify({"error": "Run scripts/setup-voice.sh to install offline speech recognition."}), 503
+        result = runtime.recognizer.accept(audio, str(runtime.voice_revision), vocabulary(runtime))
+        if result is not None:
+            try:
+                runtime.handle_voice(result["text"], result["confidence"])
+            except ValueError as error:
+                runtime.state["message"] = str(error)
+                runtime.emit("VOICE_RETRY")
+        return jsonify({"ok": True, "state": runtime.snapshot()})
+
+    @app.get("/api/voice/prompt")
+    @serialized
+    def voice_prompt():
+        if not local_voice_request():
+            return jsonify({"error": "Open the TV on localhost to use offline voice."}), 403
+        if request.args.get("turn") != str(runtime.voice_revision):
+            return jsonify({"error": "That voice prompt has changed."}), 409
+        if not runtime.settings["voice_input_enabled"] or not runtime.settings.get("voice_enabled") or runtime.state["muted"]:
+            return jsonify({"error": "Voice output is off."}), 423
+        text = runtime.state["message"]
+        if runtime.state["screen"] == "home":
+            text = "Hello! Say Avocado to play with animals, or Memory to play a memory game."
+        try:
+            wave = runtime.tts.wave(
+                text, runtime.settings.get("tts_voice", "en-gb"),
+                int(runtime.settings.get("speech_rate", 135)), runtime.state["volume"],
+            )
+        except (OSError, subprocess.SubprocessError) as error:
+            app.logger.error("Offline speech generation failed: %s", type(error).__name__)
+            return jsonify({"error": "Offline speech failed. Check that espeak-ng is installed."}), 503
+        return Response(wave, mimetype="audio/wav")
+
+    @app.post("/api/voice/status")
+    @serialized
+    def voice_status():
+        if not local_voice_request():
+            return jsonify({"error": "Local TV access required."}), 403
+        status = (request.get_json(silent=True) or {}).get("status")
+        if not isinstance(status, str) or status not in {"off", "listening", "speaking", "ready", "error"}:
+            raise ValueError("Unknown microphone state.")
+        runtime.state["microphone_status"] = status
+        runtime.emit("VOICE_STATUS")
+        return jsonify({"ok": True})
 
     @app.get("/parent")
     def parent():
@@ -880,11 +1036,16 @@ def create_app(overrides: dict | None = None) -> Flask:
             runtime.emit("MUTE_CHANGED", {"muted": muted})
         elif action == "stop_speech":
             runtime.tts.stop()
+            runtime.emit("SPEECH_STOPPED")
             return jsonify({"ok": True, "state": runtime.snapshot()})
         elif action == "test_voice":
             if not runtime.tts.available():
                 raise ValueError("eSpeak NG is not installed. Install espeak-ng to test offline speech.")
-            runtime.tts.say("Hello! This is the offline voice test.", runtime.settings.get("tts_voice", "en-gb"), int(runtime.settings.get("speech_rate", 145)), state["volume"])
+            if runtime.settings["voice_input_enabled"]:
+                state["message"] = "Hello! This is the offline voice test."
+                runtime.emit("VOICE_TEST")
+            else:
+                runtime.tts.say("Hello! This is the offline voice test.", runtime.settings.get("tts_voice", "en-gb"), int(runtime.settings.get("speech_rate", 145)), state["volume"])
             return jsonify({"ok": True, "state": runtime.snapshot(), "message": "Offline voice test started."})
         elif action == "activity":
             prompt_id = body.get("prompt_id")
@@ -932,7 +1093,7 @@ def create_app(overrides: dict | None = None) -> Flask:
                 "session_minutes", "break_reminder_minutes", "retries", "voice_enabled",
                 "speech_rate", "tts_voice", "memory_level", "memory_picture_seconds",
                 "enabled_categories", "enabled_nicknames", "history_enabled", "low_animation",
-                "nicknames_enabled", "memory_categories",
+                "nicknames_enabled", "memory_categories", "voice_input_enabled",
             }:
                 raise ValueError("One or more settings are not supported.")
             for key, value in changes.items():
@@ -945,7 +1106,7 @@ def create_app(overrides: dict | None = None) -> Flask:
                     minimum, maximum = bounds[key]
                     if type(value) is not int or not minimum <= value <= maximum:
                         raise ValueError(f"Invalid value for {key}.")
-                elif key in {"voice_enabled", "history_enabled", "low_animation", "nicknames_enabled"} and not isinstance(value, bool):
+                elif key in {"voice_enabled", "voice_input_enabled", "history_enabled", "low_animation", "nicknames_enabled"} and not isinstance(value, bool):
                     raise ValueError(f"Invalid value for {key}.")
                 elif key == "tts_voice" and value not in {"en-gb", "en-us", "en"}:
                     raise ValueError("Unsupported local speech voice.")
@@ -965,6 +1126,9 @@ def create_app(overrides: dict | None = None) -> Flask:
                 if set(changes["memory_categories"]) - valid_memories:
                     raise ValueError("The memory category list contains an unknown category.")
             runtime.settings.update(changes)
+            if "voice_input_enabled" in changes:
+                runtime.tts.stop()
+                runtime.state["microphone_status"] = "off"
             runtime.db.set("preferences", runtime.settings)
             runtime.emit("SETTINGS_CHANGED", changes)
         else:
@@ -1120,6 +1284,7 @@ def create_app(overrides: dict | None = None) -> Flask:
             "low_animation", "reduced_assets", "memory_level", "memory_picture_seconds",
             "memory_categories", "enabled_categories", "enabled_nicknames", "nicknames_enabled",
             "enabled_learning_activities",
+            "voice_input_enabled",
         }
         if (
             payload.get("version") != 1
@@ -1158,7 +1323,7 @@ def create_app(overrides: dict | None = None) -> Flask:
         for key, bounds in numeric_bounds.items():
             if key in values and (type(values[key]) is not int or not bounds[0] <= values[key] <= bounds[1]):
                 return jsonify({"error": f"Invalid value for {key}."}), 400
-        for key in ("muted", "voice_enabled", "history_enabled", "low_animation", "reduced_assets", "nicknames_enabled"):
+        for key in ("muted", "voice_enabled", "voice_input_enabled", "history_enabled", "low_animation", "reduced_assets", "nicknames_enabled"):
             if key in values and not isinstance(values[key], bool):
                 return jsonify({"error": f"Invalid value for {key}."}), 400
         if "memory_categories" in values:
@@ -1240,7 +1405,8 @@ def create_app(overrides: dict | None = None) -> Flask:
         return jsonify({
             "status": "ok",
             "database": database.path.exists(),
-            "stt": "manual-parent-assist",
+            "stt": "offline-vosk" if runtime.settings["voice_input_enabled"] else "manual-parent-assist",
+            "stt_available": runtime.recognizer.available(),
             "tts_available": runtime.tts.available(),
             "uptime_seconds": int(time.time() - runtime.started_at),
         })

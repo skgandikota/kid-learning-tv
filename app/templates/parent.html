@@ -118,6 +118,8 @@
       <section class="panel">
         <h2>Sound and session</h2>
         <label><input type="checkbox" id="voice-enabled"> Speak prompts with offline eSpeak NG</label>
+        <label><input type="checkbox" id="voice-input-enabled"> Offline voice answers from the laptop microphone</label>
+        <p>Requires local voice setup and microphone permission on the laptop's localhost TV page. Audio is processed in memory on the laptop, never saved or sent to a cloud service. Matching pairs stays tap/click; Ask Rocky stays pretend.</p>
         <label for="speech-rate">Speech speed</label>
         <input id="speech-rate" type="range" min="100" max="200" value="145">
         <label for="speech-voice">Offline voice</label>
@@ -138,9 +140,9 @@
         <label><input type="checkbox" id="history-enabled"> Keep local activity summaries</label>
         <button id="save-settings" class="primary-button">Save settings</button>
         <button id="test-voice" class="secondary-button">Test offline voice</button>
-        <button data-action="stop_speech" class="secondary-button">Stop speech</button>
+        <button data-action="stop_speech" class="secondary-button">Stop speech and listening</button>
         <p id="voice-status"></p>
-        <p id="microphone-state">Microphone is not used. No voice is recorded or sent.</p>
+        <p id="microphone-state">Microphone status appears when the local TV connects.</p>
       </section>
       <section class="panel">
         <h2>Learning content</h2>

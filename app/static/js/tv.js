@@ -66,13 +66,36 @@ const activities = [
 function buildHome() {
   const cards = document.getElementById("home-cards");
   cards.replaceChildren();
-  cards.appendChild(makeButton("Avocado", "show-avocado"));
-  cards.appendChild(makeButton("Memory Chain", "show-memory"));
+  function homeCard(label, action, icon, data = {}) {
+    const button = makeButton(label, action, data);
+    const image = document.createElement("img");
+    image.src = icon;
+    image.alt = "";
+    const caption = document.createElement("span");
+    caption.textContent = label;
+    button.replaceChildren(image, caption);
+    return button;
+  }
+  const categories = appState?.categories || [];
+  const animal = categories.find((item) => item.id === "animals") || categories[0];
+  const avocado = homeCard("Avocado", "start_avocado", "/static/characters/avocado.svg", { categoryId: animal?.id || "" });
+  avocado.disabled = !animal;
+  cards.appendChild(avocado);
+  const memories = appState?.memory_categories || [];
+  const shopping = memories.find((item) => item.id === "shopping") || memories[0];
+  const memory = homeCard("Memory Chain", "start_memory", "/static/images/memory-icon.svg", { categoryId: shopping?.id || "" });
+  memory.disabled = !shopping;
+  cards.appendChild(memory);
   for (const group of activities) {
     const prompt = (appState?.prompts || []).find((item) => group.ids.includes(item.id));
-    if (prompt) cards.appendChild(makeButton(group.title, "activity", { promptId: prompt.id }));
+    const icons = {
+      "ABC and phonics": "letters", "Numbers and counting": "numbers",
+      "Colours and shapes": "shapes", Animals: "elephant", Stories: "story",
+      "Music and movement": "music",
+    };
+    if (prompt) cards.appendChild(homeCard(group.title, "activity", `/static/images/${icons[group.title]}.svg`, { promptId: prompt.id }));
   }
-  cards.appendChild(makeButton("Parent-selected activity", "parent-activity"));
+  cards.appendChild(homeCard("Parent-selected activity", "parent-activity", "/static/images/phone.svg"));
 }
 
 function speakLocally(text) {
@@ -174,6 +197,7 @@ function updateVideo(state) {
 function render(state) {
   appState = state;
   if (!state) return;
+  window.offlineVoice?.update(state);
   document.body.classList.toggle("parent-managed", Boolean(state.parent_managed_activity));
   renderLearning(state);
   buildHome();
@@ -222,10 +246,10 @@ function render(state) {
     }
     const area = document.getElementById("input-area");
     area.replaceChildren();
-    if (state.game === "avocado" && ["child_turn", "confirmation"].includes(state.game_state)) {
+    if (!state.voice_input_enabled && state.game === "avocado" && ["child_turn", "confirmation"].includes(state.game_state)) {
       area.appendChild(makeAnswerForm("answer"));
     } else if (state.game === "memory" && state.game_state === "child_turn") {
-      area.appendChild(makeAnswerForm("memory_answer"));
+      if (!state.voice_input_enabled) area.appendChild(makeAnswerForm("memory_answer"));
       if (state.memory_picture_visible) {
         const pictures = document.createElement("div");
         pictures.className = "memory-picture-row";
@@ -256,7 +280,7 @@ function render(state) {
   document.getElementById("connection-status").textContent = "Connected to this device";
   document.body.classList.toggle("low-animation", Boolean(state.low_animation));
   if (
-    state.message && state.message !== lastSpoken && state.voice_enabled === false
+    state.message && state.message !== lastSpoken && state.voice_enabled === false && !state.voice_input_enabled
     && !state.muted && !state.paused && !state.locked
     && state.screen !== "home" && state.screen !== "video"
   ) {
@@ -362,6 +386,13 @@ const events = new EventSource("/api/events");
 events.onmessage = (message) => {
   try {
     const event = JSON.parse(message.data);
+    if (event.type === "SPEECH_STOPPED" && window.offlineVoice) {
+      window.offlineVoice.autoChecked = true;
+      window.offlineVoice.enabled = false;
+      window.offlineVoice.stop();
+      window.offlineVoice.button.textContent = "Start voice";
+      window.offlineVoice.setStatus("off", "Speech and listening stopped. Tap Start voice to continue.");
+    }
     if (event.payload && event.payload.screen) render(event.payload);
   } catch (_) { /* Ignore malformed local event frames and recover on the next update. */ }
 };

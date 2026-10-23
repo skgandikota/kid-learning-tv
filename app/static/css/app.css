@@ -31,6 +31,10 @@ button:hover, .secondary-button:hover { background: #d1e4ef; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: clamp(.8rem, 2vw, 1.5rem); margin: 1.5rem 0; }
 .activity-card { min-height: 145px; border-radius: 24px; background: white; border: 3px solid #d2e8f4; font-size: clamp(1.3rem, 2.4vw, 2rem); text-align: center; box-shadow: 0 5px 0 #bed7e5; }
 .activity-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #bed7e5; }
+#home-cards .activity-card { flex-direction: column; gap: .6rem; padding: 1rem; }
+#home-cards .activity-card img { width: 90px; height: 90px; object-fit: contain; }
+.voice-panel { display: flex; align-items: center; gap: 1rem; padding: .7rem 0; }
+.video-active .voice-panel { display: none; }
 .rocky-card { display: flex; align-items: center; justify-content: center; gap: 1rem; min-height: 92px; width: min(600px, 100%); margin: 1rem auto; font-size: clamp(1.4rem, 2.6vw, 2rem); background: #e5f7ec; border-color: #95c6a5; }
 .rocky-card img:last-of-type { width: 70px; height: 70px; }
 .rocky-card .phone-icon { width: 30px; height: 30px; color: #1769aa; }

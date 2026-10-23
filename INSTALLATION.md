@@ -29,6 +29,52 @@ The installer validates the bundled content before enabling the service and stop
 
 Check `systemctl status kid-learning-tv`, then open `http://<device-IP>:8765/`. Use the PIN created during installation to sign in at `/parent`. Use the device's local address, not a public address.
 
+## Offline voice setup
+
+After a normal installation, run:
+
+```bash
+sudo bash /opt/kid-learning-tv/scripts/setup-voice.sh
+```
+
+This installs eSpeak NG and Vosk, downloads the approximately 40 MB Apache-2.0
+English model from alphacephei.com, enables offline speech and restarts the app.
+Internet is needed only for setup. The model stays under
+`/opt/kid-learning-tv/models`; it is not included in the Git repository.
+
+On the laptop, open **http://127.0.0.1:8765/** in Chromium. Tap **Start voice**
+once and allow microphone access. Select the laptop's built-in microphone in
+Lubuntu audio settings. Prompts play through the browser's chosen audio output
+(select HDMI for the TV). No extra OS microphone permissions are given to the
+background service.
+
+Say **Avocado** to start Animals, **Memory** for Shopping Memory Chain, or
+**Ask Rocky** for the pretend message. Tap Home picture cards for the same
+actions; Avocado no longer has a second selection screen. In Avocado, speak an
+animal name. In Memory Chain, say the list in order and add one item. A fuzzy
+Avocado match asks for a spoken **yes** or **no**. Parent-launched counting,
+colour and shape games also accept spoken answers. Matching pairs stays
+tap/click and can only be launched/exited by a parent.
+
+Audio capture stops during prompts, pause, lock, video, matching pairs and the
+pretend Rocky message. Recognition uses memory only; audio is not saved or sent
+to any cloud service. Recognition quality for a three-year-old, distance from
+the built-in microphone and the laptop's performance must be checked on-device;
+synthetic adult-like test speech is not evidence of child-speech accuracy.
+An English small model typically uses around 300 MB RAM.
+
+Parents can switch voice answers off under **Sound and session**. Without voice
+setup, parent-assisted typed answers remain available.
+
+For an existing GitHub installation, update before running voice setup:
+
+```bash
+cd ~/kid-learning-tv
+git pull --ff-only origin main
+sudo bash scripts/update.sh "$PWD"
+sudo bash /opt/kid-learning-tv/scripts/setup-voice.sh
+```
+
 ## Kiosk
 
 Log into the desktop as the ordinary kiosk account and run `bash /opt/kid-learning-tv/scripts/enable-kiosk.sh`. This installs the `kid-learning-kiosk.service` systemd **user** unit and a desktop-login trigger; the browser starts on the next desktop login. Keep a separate administrator/recovery account. To stop the browser and disable autostart, run `bash /opt/kid-learning-tv/scripts/disable-kiosk.sh` as the same desktop user. If the kiosk obscures the desktop, recover locally through another account or a text console; the scripts do not enable shell or remote access.

@@ -9,6 +9,8 @@ This project directly declares Flask 3.1.2 and jsonschema 4.25.1 in `pyproject.t
 | waitress | Optional production WSGI server installed by deployment script | ZPL-2.1; see the installed package metadata |
 | qrcode | Optional QR generation for the parent connection page; not installed by deployment script | Consult installed package metadata for the selected release |
 | eSpeak NG / eSpeak | Optional system-provided local TTS | Consult the distribution's package copyright/license notices |
+| Vosk 0.3.45 | Optional offline speech recognition | Apache-2.0; installed package notices |
+| vosk-model-small-en-us-0.15 | Optional downloaded English recognition model, not bundled in Git | Apache-2.0; https://alphacephei.com/vosk/models |
 | Python, SQLite, Lubuntu, Chromium/Chrome | Runtime/platform/browser, not bundled here | Consult each distribution/vendor's notices |
 
 This page is an inventory, not a reproduction of third-party license texts or a complete SBOM. Before redistribution, generate and review an inventory for the exact installed versions, preserve their copyright/license notices, and inspect licenses for transitive dependencies and any media/assets included in the release.

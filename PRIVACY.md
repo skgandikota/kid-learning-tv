@@ -9,7 +9,17 @@ The app is designed to operate locally. Core pages, game logic, content, setting
 - Parent-uploaded video files and metadata in the local data directory.
 - Session cookies in the browser.
 
-There is no speech-to-text or microphone recording pipeline. Ask Rocky is simulated and does not record or retain audio. No YouTube downloading is provided. eSpeak NG, if enabled, synthesizes speech locally.
+Optional offline speech recognition captures the laptop microphone only after
+browser permission and local voice setup. Short PCM chunks go from the localhost
+TV page to the recognizer on the same laptop. Audio and recognition results are
+processed in memory, not written to files or sent to a cloud service. Recognized
+game answers can appear in current game state like typed answers. Capture stops
+during spoken prompts, pause, lock, video and non-voice activities. Ask Rocky
+remains pretend and does not open the microphone or retain audio.
+
+Voice setup downloads a fixed English Vosk model once from alphacephei.com and
+installs dependencies; play itself needs no internet. eSpeak NG synthesizes
+prompts locally and the TV browser plays them. No YouTube downloading is provided.
 
 ## Parent choices and retention
 

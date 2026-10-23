@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/static/css/app.css">
   <script src="/static/js/learning.js" defer></script>
   <script src="/static/js/tv.js" defer></script>
+  <script src="/static/js/voice.js" defer></script>
 </head>
 <body class="tv">
   <main id="app" aria-live="polite">
@@ -15,6 +16,10 @@
       <h1>Let's learn and play!</h1>
       <a class="parent-link" href="/parent" aria-label="Parent controls">Grown-up</a>
     </header>
+    <aside class="voice-panel" aria-label="Offline voice">
+      <button id="start-voice" type="button">Start voice</button>
+      <span id="voice-status" role="status">Ask a grown-up to start voice once and allow the laptop microphone.</span>
+    </aside>
     <section id="home-screen" class="screen">
       <p class="big-prompt">What shall we play?</p>
       <div id="home-cards" class="card-grid"></div>

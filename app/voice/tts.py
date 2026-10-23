@@ -9,6 +9,19 @@ import threading
 
 
 class SpeechOutput:
+    @staticmethod
+    def wave(text: str, voice: str, rate: int, volume: int) -> bytes:
+        executable = shutil.which("espeak-ng") or shutil.which("espeak")
+        if not executable:
+            raise ValueError("Offline speech needs espeak-ng. Run scripts/setup-voice.sh.")
+        voice = voice if voice in {"en-gb", "en-us", "en"} else "en-gb"
+        result = subprocess.run(
+            [executable, "--stdout", "-v", voice, "-s", str(max(100, min(rate, 200))),
+             "-a", str(max(0, min(volume, 100))), "--stdin"],
+            input=str(text)[:500].encode("utf-8"), capture_output=True, timeout=30, check=True,
+        )
+        return result.stdout
+
     def __init__(self):
         self._queue = queue.Queue(maxsize=3)
         self._lock = threading.Lock()
