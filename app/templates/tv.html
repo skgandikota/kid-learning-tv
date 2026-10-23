@@ -9,6 +9,7 @@
   <script src="{{ url_for('static', filename='js/food-time.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/quiz-tv.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/matching-tv.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/typing-tv.js') }}" defer></script>
 </head>
 <body class="tv">
   <img id="food-time-image" src="{{ url_for('static', filename='images/food-time.png') }}"
@@ -30,6 +31,9 @@
       <img src="{{ url_for('static', filename='images/matching-mascot.svg') }}" alt=""><span>Card match</span>
     </button>
     <p id="home-game-error" role="alert"></p>
+    <button id="typing-launcher" class="quiz-tile" type="button" aria-label="Hero Typing">
+      <img src="{{ url_for('static', filename='images/typing-hero.svg') }}" alt=""><span>Hero Typing</span>
+    </button>
   </section>
   <section id="quiz-screen" hidden>
     <button id="quiz-close" type="button" aria-label="Close quiz">X</button>
@@ -52,6 +56,35 @@
     <p id="matching-message" role="status"></p>
     <button id="matching-again" type="button" hidden>Play again</button>
     <p id="matching-error" role="alert"></p>
+  </section>
+  <section id="typing-screen" hidden>
+    <button id="typing-close" class="game-close" type="button" aria-label="Close Hero Typing">X</button>
+    <div id="typing-menu">
+      <h1>Hero Typing <small>Level 1</small></h1>
+      <p>Pick a name. Let's help our heroes!</p>
+      <div class="button-row typing-tabs">
+        <button id="typing-heroes-tab" type="button" aria-pressed="true">Heroes &amp; friends</button>
+        <button id="typing-words-tab" type="button" aria-pressed="false">Everyday words</button>
+      </div>
+      <p class="typing-art-note">Original hero icons, not official character pictures.</p>
+      <div id="typing-choices"></div>
+    </div>
+    <div id="typing-play" hidden>
+      <div id="typing-character"><img id="typing-picture" alt=""><span id="typing-character-name"></span></div>
+      <div id="typing-practice">
+        <h1>Level 1 <span>Hero Typing</span></h1>
+        <div id="typing-letters" aria-label="Name to type"></div>
+        <p id="typing-hint" role="status"></p>
+        <div id="typing-keyboard" aria-label="Letter keys"></div>
+        <div class="button-row typing-actions">
+          <button id="typing-listen" type="button">Hear again</button>
+          <button id="typing-choose" type="button">Choose a name</button>
+          <button id="typing-next" type="button" hidden>Next adventure</button>
+        </div>
+        <p id="typing-celebration" hidden>You did it!</p>
+      </div>
+    </div>
+    <p id="typing-error" role="alert"></p>
   </section>
 </body>
 </html>

@@ -8,6 +8,7 @@ import uuid
 
 from app.quiz import QuizRound
 from app.matching import MatchingGame
+from app.typing_game import TypingGame
 
 
 def seconds(value):
@@ -34,6 +35,7 @@ class Playback:
         self.last_seen = None
         self.quiz = None
         self.matching = None
+        self.typing = None
 
     def snapshot(self):
         with self.lock:
@@ -52,6 +54,7 @@ class Playback:
                 "tv_connected": self.last_seen is not None and time.monotonic() - self.last_seen < 6,
                 "quiz": self.quiz.snapshot() if self.mode == "quiz" and self.quiz else None,
                 "matching": self.matching.snapshot() if self.mode == "matching" and self.matching else None,
+                "typing": self.typing.snapshot() if self.mode == "typing" and self.typing else None,
             }
 
     def food(self, enabled):
@@ -60,6 +63,7 @@ class Playback:
             self.mode = "food" if enabled else "blank"
             self.quiz = None
             self.matching = None
+            self.typing = None
             self.queue = []
             self.index = 0
             self.position = 0.0
@@ -74,6 +78,7 @@ class Playback:
             self.mode = "video"
             self.quiz = None
             self.matching = None
+            self.typing = None
             self.queue = [dict(item) for item in items]
             self.index = 0
             self.position = 0.0
@@ -101,6 +106,14 @@ class Playback:
             self.food(False)
             self.mode = "quiz"
             self.quiz = quiz
+            self.session = uuid.uuid4().hex
+
+    def start_typing(self, item_id):
+        with self.lock:
+            game = TypingGame(item_id)
+            self.food(False)
+            self.typing = game
+            self.mode = "typing"
             self.session = uuid.uuid4().hex
 
     def quiz_command(self, action):

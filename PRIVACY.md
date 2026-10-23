@@ -19,6 +19,12 @@ Optional voice setup contacts Hugging Face to download a pinned model on the
 target laptop. Pictures are bundled locally and do not contact image hosts
 during play. A browser fallback uses only voices marked as local/offline.
 
+Hero Typing sends only the selected built-in lesson ID, current position and
+one letter key while that game is open. It does not capture keys elsewhere,
+record mistakes, or store typed text. Progress stays in memory until the
+activity closes or the service restarts. Fixed public sound/spelling prompts
+are cached locally under `phonics-audio`; there is no cloud phonics provider.
+
 Existing stored files and old database tables are preserved during updates but
 are not used unless part of the video library. Backups may contain those files.
 Keep backups private. HTTP is unencrypted: use only a trusted home network.

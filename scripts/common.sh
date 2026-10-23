@@ -34,7 +34,7 @@ verify_video_tools() {
         || die "Deno JavaScript runtime verification failed."
 }
 setup_quiz_voice() {
-    install -d -o kid-learning-tv -g kid-learning-tv -m 0750 "$STATE_DIR/quiz-audio"
+    install -d -o kid-learning-tv -g kid-learning-tv -m 0750 "$STATE_DIR/quiz-audio" "$STATE_DIR/phonics-audio"
     if [[ "${KLT_QUIZ_NATURAL_VOICE:-1}" == 1 ]]; then
         install -d -m 0755 "$INSTALL_DIR/models"
         info "Setting up optional local Piper voice on this laptop (model download required once)."
@@ -59,4 +59,8 @@ setup_quiz_voice() {
     runuser -u kid-learning-tv -- "$INSTALL_DIR/.venv/bin/python" \
         "$INSTALL_DIR/tools/setup_quiz_voice.py" --verify --data-dir "$STATE_DIR" \
         || die "Neither natural nor fallback quiz speech works. Fix the reported error before starting."
+    runuser -u kid-learning-tv -- env PYTHONPATH="$INSTALL_DIR" \
+        "$INSTALL_DIR/.venv/bin/python" -c \
+        'import sys; from app.phonics_speech import PhonicsSpeech; PhonicsSpeech(sys.argv[1]).audio("flash", 1, "sound")' "$STATE_DIR" \
+        || die "Hero Typing phonics failed. Check eSpeak NG before starting."
 }

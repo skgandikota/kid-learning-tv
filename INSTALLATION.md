@@ -1,6 +1,6 @@
 # Lubuntu installation
 
-This version has parent PIN login, Food time, video playlists and picture quizzes.
+This version has parent PIN login, Food time, videos, quizzes, Card match and Hero Typing.
 No microphone or speech recognition is installed. Videos download only when requested.
 
 For an existing installation:
@@ -22,7 +22,7 @@ For a fresh installation, install Python 3.10+ and `python3-venv`, then run
 `sudo bash scripts/install.sh` from the checkout. Set the parent PIN at the hidden
 terminal prompts. Python package installation requires internet.
 
-On the laptop, refresh `http://127.0.0.1:8765/`: the screen shows Quiz and Card match tiles.
+On the laptop, refresh `http://127.0.0.1:8765/`: the screen shows Quiz, Card match and Hero Typing.
 On your phone, open `http://<laptop-IP>:8765/parent` and sign in. Tap **Food time**
 to show the picture, then tap again to return home. Use a trusted private LAN only.
 
@@ -48,6 +48,10 @@ This does not remove an already installed working natural voice.
 The model is stored at `/opt/kid-learning-tv/models/piper-cori-medium`, outside
 the replaced application tree. Generated public answer audio is cached under
 `/var/lib/kid-learning-tv/quiz-audio`. There are no runtime model downloads.
+Hero Typing additionally caches fixed phoneme and spelling WAVs under
+`/var/lib/kid-learning-tv/phonics-audio`. It requires eSpeak NG even when Piper
+is available: letter names are not a substitute for phonics sounds.
+The update verifies a real phonics sound as the service user before starting.
 To check without downloading:
 
 ```bash

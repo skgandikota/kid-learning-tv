@@ -112,6 +112,8 @@
       token = game.token;
       board.replaceChildren(...game.cards.map((card) => makeCard(card.index)));
       board.dataset.size = game.cards.length;
+      const count = game.cards.length;
+      board.dataset.columns = count <= 6 ? count / 2 : count <= 12 ? 4 : count <= 20 ? 5 : count <= 30 ? 6 : 7;
       errorLabel.textContent = "";
     }
     document.getElementById("matching-round").textContent = `Round ${game.round} / ${game.rounds} \u00b7 ${game.cards.length} cards`;

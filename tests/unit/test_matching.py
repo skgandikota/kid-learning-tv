@@ -18,11 +18,12 @@ def pairs(game):
     return list(grouped.values())
 
 
-def test_all_five_rounds_have_exact_pairs_then_finish(game):
+def test_all_twenty_rounds_have_exact_pairs_then_finish(game):
     match, now = game
-    for round_number, count in enumerate((4, 6, 8, 10, 12), start=1):
+    for round_number, count in enumerate(range(4, 43, 2), start=1):
         snapshot = match.snapshot()
         assert snapshot["round"] == round_number
+        assert snapshot["rounds"] == 20
         assert len(snapshot["cards"]) == count
         assert set(Counter(card["image"] for card in match.cards).values()) == {2}
         assert all(card["image"] is None for card in snapshot["cards"])
@@ -35,7 +36,7 @@ def test_all_five_rounds_have_exact_pairs_then_finish(game):
         assert match.snapshot()["phase"] == "round-done"
         now[0] += 1.51
     assert match.snapshot()["phase"] == "complete"
-    assert match.matches == 20
+    assert match.matches == 230
 
 
 def test_mismatch_stays_open_then_flips_back_without_removing(game):

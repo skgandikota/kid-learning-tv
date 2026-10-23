@@ -63,7 +63,11 @@ chmod() { printf 'chmod %s\\n' "$*"; }
 chown() { printf 'chown %s\\n' "$*"; }
 runuser() {
     printf 'runuser %s\\n' "$*"
-    [[ "$VERIFY_FAILURE" == 0 ]]
+    if [[ "$VERIFY_FAILURE" == phonics ]]; then
+        [[ "$*" != *PhonicsSpeech* ]]
+    else
+        [[ "$VERIFY_FAILURE" == 0 ]]
+    fi
 }
 setup_quiz_voice
 """
@@ -89,3 +93,8 @@ setup_quiz_voice
         result = self.verify(verify_failure="1")
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Neither natural nor fallback quiz speech works", result.stderr)
+
+    def test_missing_phonics_blocks_service_even_if_name_voice_works(self):
+        result = self.verify(verify_failure="phonics")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Hero Typing phonics failed", result.stderr)

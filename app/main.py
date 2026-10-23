@@ -17,6 +17,8 @@ from app.video_library import VideoLibrary
 from app.quiz import validate_settings
 from app.quiz_catalog import CATEGORIES, get_items
 from app.quiz_speech import QuizSpeech
+from app.phonics_speech import PhonicsSpeech
+from app.typing_game import LESSONS, get_lesson, sound_step
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -51,6 +53,8 @@ def create_app(overrides: dict | None = None) -> Flask:
     app.extensions["klt_videos"] = library
     speech = QuizSpeech(data_dir)
     app.extensions["klt_quiz_speech"] = speech
+    phonics = PhonicsSpeech(data_dir)
+    app.extensions["klt_phonics_speech"] = phonics
 
     def csrf_token():
         if not session.get("csrf_token"):
@@ -161,6 +165,70 @@ def create_app(overrides: dict | None = None) -> Flask:
         else:
             playback.quiz_command(action)
         return jsonify({"ok": True})
+
+    @app.get("/api/typing/catalog")
+    def typing_catalog():
+        return jsonify({"lessons": [
+            {key: item[key] for key in ("id", "name", "image", "category", "blend")}
+            for item in LESSONS
+        ]})
+
+    @app.post("/api/child/typing")
+    def child_typing():
+        body = request.get_json(silent=True)
+        if not isinstance(body, dict):
+            raise ValueError("Choose a typing activity.")
+        with playback.lock:
+            if playback.mode not in {"blank", "typing-menu", "typing"}:
+                return jsonify({"error": "Close the current activity before opening Hero Typing."}), 423
+            action = body.get("action")
+            accepted = True
+            sound = None
+            if action == "menu":
+                playback.food(False)
+                playback.mode = "typing-menu"
+            elif action == "start":
+                playback.start_typing(body.get("id"))
+            elif action == "close":
+                playback.food(False)
+            elif action == "key":
+                game = playback.typing
+                if game is None:
+                    raise ValueError("Choose a name first.")
+                accepted = game.type_key(body.get("token"), body.get("position"), body.get("key"))
+                if accepted:
+                    sound = sound_step(game.item, game.position)
+                    playback.revision += 1
+            elif action == "next":
+                game = playback.typing
+                if game is None or body.get("token") != game.token or not game.snapshot()["complete"]:
+                    raise ValueError("Finish this name before choosing Next.")
+                index = next(index for index, item in enumerate(LESSONS) if item["id"] == game.item["id"])
+                if index + 1 < len(LESSONS):
+                    playback.start_typing(LESSONS[index + 1]["id"])
+                else:
+                    playback.food(False)
+                    playback.mode = "typing-menu"
+            else:
+                raise ValueError("Choose a name, letter or close.")
+            return jsonify({
+                "ok": True, "accepted": accepted, "playback": playback.snapshot(),
+                "sound": bool(sound and sound["sound"]),
+                "blend": bool(sound and sound["blend"]),
+            })
+
+    @app.get("/api/typing/audio/<item_id>/<int:position>/<kind>")
+    def typing_audio(item_id, position, kind):
+        if request.remote_addr not in {"127.0.0.1", "::1"} and not session.get("parent_authenticated"):
+            return jsonify({"error": "Local TV or parent sign-in required."}), 403
+        item = get_lesson(item_id)
+        try:
+            audio = speech.audio(item["name"]) if kind == "name" and position == 0 else phonics.audio(item_id, position, kind)
+        except (OSError, RuntimeError) as error:
+            app.logger.error("Typing sound failed: %s", error)
+            return jsonify({"error": "Typing sounds are unavailable. Run the laptop update and check eSpeak NG and volume."}), 503
+        from flask import Response
+        return Response(audio, mimetype="audio/wav")
 
     @app.post("/api/tv/quiz")
     def tv_quiz():

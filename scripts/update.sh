@@ -6,7 +6,7 @@ SOURCE="${1:-$SOURCE_DIR}"
 [[ -f "$SOURCE/pyproject.toml" && -d "$SOURCE/app" ]] || die "Usage: sudo $0 [project-source-directory]"
 [[ -d "$INSTALL_DIR" ]] || die "Install not found at $INSTALL_DIR."
 [[ "$(cd "$SOURCE" && pwd -P)" != "$INSTALL_DIR" ]] || die "Provide a separate updated project checkout as the source."
-confirm "Update Food time, Video and picture quizzes? Installs media tools, eSpeak and optional local Piper voice/model on THIS laptop. Your PIN/files stay unchanged; no videos download."
+confirm "Update Food time, Video, quizzes, Card match and Hero Typing? Installs media tools, eSpeak and optional local Piper voice/model on THIS laptop. Your PIN/files stay unchanged; no videos download."
 command -v apt-get >/dev/null 2>&1 || die "Lubuntu/Ubuntu apt-get is required to install FFmpeg."
 apt-get update
 apt-get install -y ffmpeg espeak-ng

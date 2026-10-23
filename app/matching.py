@@ -1,4 +1,4 @@
-"""Untimed pair matching, progressing from four to twelve cards."""
+"""Twenty untimed matching rounds, progressing from four to forty-two cards."""
 from __future__ import annotations
 
 import random
@@ -9,7 +9,7 @@ from app.quiz_catalog import get_items
 
 
 class MatchingGame:
-    sizes = (4, 6, 8, 10, 12)
+    sizes = tuple(range(4, 43, 2))
 
     def __init__(self, clock=time.monotonic):
         self.clock = clock
@@ -19,7 +19,10 @@ class MatchingGame:
 
     def _new_board(self):
         self.token = uuid.uuid4().hex
-        pictures = random.sample(get_items("animals") + get_items("fruits"), self.sizes[self.round] // 2)
+        pictures = random.sample(
+            get_items("animals") + get_items("fruits") + get_items("birds"),
+            self.sizes[self.round] // 2,
+        )
         self.cards = [dict(item) for item in pictures for _ in range(2)]
         random.shuffle(self.cards)
         self.open = []

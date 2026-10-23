@@ -15,6 +15,9 @@
 | GET | `/api/quiz/catalog` | Public category names, counts and local tile images |
 | POST | `/api/child/quiz` | `menu`, `start` with `category`, or `close`; blocked during Food time/video/end photo |
 | POST | `/api/child/matching` | `start`, `close`, or `flip` with board `token` and integer `index`; CSRF required |
+| GET | `/api/typing/catalog` | Curated character/word choices and local picture paths |
+| POST | `/api/child/typing` | `menu`, `start` with lesson `id`, `key`, `next`, or `close`; CSRF required |
+| GET | `/api/typing/audio/<id>/<position>/<kind>` | Local TV/parent WAV; allowlisted name, spell, sound or blend only |
 | GET | `/api/parent/quiz` | Parent settings, catalog, playback and speech status |
 | POST | `/api/parent/quiz` | `settings` with seconds/count/ticking; start/category, menu, pause, resume, reveal, next, close |
 | POST | `/api/tv/quiz` | Loopback ready/speech-done/image-error, current token and optional warning; stale token returns 409 |
@@ -35,12 +38,24 @@ Quiz phases are loading, question, answer and complete. `ready` starts the timer
 answers stay at least four seconds, waiting for speech completion (bounded by a
 further twelve seconds). No microphone or scoring API exists.
 
-`playback.matching` contains the current board token, round 1-5, card states,
+`playback.matching` contains the current board token, round 1-20, card states,
 and phase (playing, match, mismatch, round-done, complete).
-Face-down cards have no image/name in the response. Board sizes are 4/6/8/10/12;
+Face-down cards have no image/name in the response. Board sizes are 4, 6, 8...42;
 each image appears exactly twice. A match vanishes after 0.8 seconds; a mismatch
 flips back after 1.5 seconds. Completing a board advances after a short pause.
 Stale, duplicate and out-of-turn flips return 409; invalid indexes return 400.
 Child matching controls cannot interrupt quizzes, Food time, video or the end
 photo (423). Parents can interrupt through existing Food/video/quiz controls.
 The game stays in memory only; a service restart does not resume it.
+
+`playback.typing` holds the lesson, board token, accepted-letter position and
+completion flag. A `key` command supplies `token`, integer `position` and a
+single ASCII alphabetic `key`; uppercase/lowercase are equivalent.
+Wrong letters return `accepted:false` without progress; stale positions/tokens
+return 400. The response flags available `sound` and cumulative `blend`.
+Sound groups such as SH play only when the entire group is typed.
+`next` requires a completed current token. Spaces are automatic.
+Typing controls cannot interrupt another activity (423).
+Audio kind `name` and `spell` use position 0; `sound` and `blend` require an
+allowlisted group-ending position. Unknown sounds return 400; synthesis
+failure returns 503. No arbitrary speech text or raw phonemes are accepted.

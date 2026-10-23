@@ -14,12 +14,21 @@ It attempts optional Piper/model setup there, never on the development host.
 Natural setup failures explicitly fall back to verified eSpeak.
 Existing parent PIN and data are retained.
 
-Card match adds shuffled animal/fruit pairs across five boards of 4/6/8/10/12
+Card match adds shuffled animal/fruit/bird pairs across 20 boards of 4/6/8...42
 cards, animated flips and disappearing matches with locally generated sparkle
 sounds. The server owns turns and rejects stale or rapid extra flips. Matching
 uses existing licensed pictures; no new packages, models or external assets.
 The website's TV pointer is large and white during child interaction and hidden
 for Food time, videos and the end photo.
+
+Hero Typing Level 1 adds a curated 26-name character collection and eight
+everyday words, with original generic hero artwork. The server validates each
+letter; spelling, sound groups and suitable cumulative blends are spoken locally.
+SH/TH/CK and other teams wait until complete; irregular names skip prefix blends.
+eSpeak NG synthesizes explicit phonemes, not spoken letter names. Full names
+use the existing local voice. Setup now verifies phonics as the service user.
+No new packages, model downloads, cloud calls or microphone use were added.
+The large pointer and control-free Food/video screens are preserved.
 
 Browser playback was exercised with original synthetic H.264/AAC clips, not
 third-party downloads. YouTube availability and the target Lubuntu installation

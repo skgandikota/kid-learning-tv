@@ -65,14 +65,53 @@ warning also appears here; use Next or restart the category.
 ## Card match
 
 On the TV home, click the two smiling cards labelled **Card match**.
-Find pairs of familiar animals and fruits. Matching cards disappear with a
+Find pairs of familiar animals, fruits and birds. Matching cards disappear with a
 gentle magical sound; different cards stay visible briefly, then flip back.
 Only two cards can open at once. There is no time limit, scoring or wrong-answer
-sound. Complete each board to move through 4, 6, 8, 10 and 12 cards automatically.
-After the fifth round, choose Play again or the large red X to return home.
+sound. Complete each board to move through 20 rounds: 4, 6, 8, 10...42 cards,
+adding two cards each round. Larger boards use more columns to stay on screen.
+After round 20, choose Play again or the large red X to return home.
+The later boards are deliberately harder; the red X is available at any time.
 
 TV refresh keeps the current board; closing or restarting the service ends it.
 Food time or a parent-started video interrupts and clears the game.
 The white pointer is larger on home, quiz and matching screens, including
 over buttons, but stays hidden during Food time, video and the end photo.
 This changes only the website pointer, not Chromium's toolbar or the desktop.
+
+## Hero Typing - Level 1
+
+Click **Hero Typing** on the TV. Choose from **Heroes & friends** (26 names) or
+**Everyday words** (eight short words). The character pictures are original
+generic hero icons, not official artwork. Flash is the first choice; other names
+include Batman, Superman, Wonder Woman, Robin, Aquaman, familiar Avengers,
+Thanos, Joker, Venom, Woody and Buzz Lightyear. This is a starter collection,
+not every Avengers character.
+
+The introduction says and spells the name. A standing hero appears on the left;
+letters and a large keyboard appear beside it. Type on the physical keyboard
+or click the highlighted key. Lowercase and uppercase both work; spaces are
+automatic. A different letter gets a gentle hint, not a buzzer or penalty.
+Wait while each sound plays before typing the next highlighted letter.
+
+Flash builds the sounds F, FL, FLA and FLASH. **SH** is one sound: S alone does
+not play an incorrect sound; H completes the group. TH, CK and other letter
+teams work similarly. Some character names are irregular or advanced: those
+use sound chunks and the complete name, not invented blends at every letter.
+Iron is treated as a special whole-word chunk.
+
+After finishing, the hero celebrates and the full name is spoken.
+**Next adventure** moves through the names and then Ant, Apple, Cat, Dog, Pig,
+Hen, Duck and Fish. **Hear again** repeats the introduction, or the completed
+name. **Choose a name** returns to choices; the red X returns home.
+
+Sounds are local, synthesized British-English approximations, not human
+recordings. Phonics uses eSpeak NG with short vowel-assisted releases for
+voiced stops such as B/D/G/J because its bare consonants are silent.
+Listen together and model the sounds yourself; this is playful practice, not a
+validated reading course. The existing Piper/basic voice speaks the full names.
+Sound failures are shown explicitly; the app does not substitute letter names
+for missing phonics. Rerun the laptop update and check volume/kiosk autoplay.
+
+Refresh keeps the current name and progress. Closing, Food time, a video or
+service restart ends the activity. No typed text or mistakes are recorded.

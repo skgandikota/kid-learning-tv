@@ -1,6 +1,6 @@
 # Kid Learning TV
 
-Current version: **Food time, parent-controlled video playlists and picture quizzes**.
+Current version: **Food time, videos, picture quizzes, Card match and Hero Typing**.
 Existing PIN and stored files are preserved. Quiz speech runs locally; no microphone.
 
 Update on the Lubuntu laptop:
@@ -33,7 +33,7 @@ buffering. After the last video, your supplied end-of-screen-time photo appears.
 Food time interrupts playback; Stop returns to the Quiz home tile. Playlists do not restart
 automatically after a service restart.
 
-The TV home has **Quiz** and **Card match** picture buttons. Click Quiz, then choose a
+The TV home has **Quiz**, **Card match** and **Hero Typing** picture buttons. Click Quiz, then choose a
 picture tile: car logos, animals, vegetables, fruits, birds, country shapes or
 flags. A large red **X** closes the quiz. Food time and videos still have no TV
 buttons. Quizzes show a picture, count down gently, then show and speak its name
@@ -52,12 +52,25 @@ To skip natural-voice downloads, run
 `sudo env KLT_QUIZ_NATURAL_VOICE=0 bash scripts/update.sh "$PWD"`.
 Actual voice quality and speaker volume must be checked on that laptop.
 
-**Card match** uses familiar animal and fruit pictures. Click two cards: matching
+**Card match** uses familiar animal, fruit and bird pictures. Click two cards: matching
 pairs vanish with a gentle sparkle sound; different pictures flip back after a
-short look. Rounds automatically grow through **4, 6, 8, 10 and 12 cards**.
+short look. **20 rounds** automatically grow through **4, 6, 8, 10...42 cards**,
+adding two cards each round. Larger boards use up to seven columns to fit the TV.
 There is no timer or score. The red X returns home; Play again starts fresh.
 A large white mouse pointer is used on home, quizzes and Card match, including
 over buttons. Food time, videos and the end photo keep the pointer hidden.
+
+**Hero Typing - Level 1** adds 26 favourite character names, including Flash,
+Batman, Superman, Wonder Woman, Robin, Aquaman, Avengers, Thanos, Joker, Venom,
+Woody and Buzz Lightyear, followed by eight everyday words such as Ant and Apple.
+These use original generic hero artwork, not official character images.
+Choose a name, listen to its spelling, then type the highlighted letters using
+the keyboard or large on-screen keys. Sounds play after each completed sound
+group; Flash builds F, FL, FLA and then SH/FLASH. SH waits for both letters.
+Irregular names use sound chunks rather than misleading partial-name blends.
+Hear again repeats the prompt; Next adventure follows a completed name.
+There is no scoring, countdown, microphone capture or typed-text history.
+Phonics uses local eSpeak NG; complete names use the existing local voice.
 
 For sound without touching the TV, run the laptop browser in kiosk mode:
 after updating, close/reopen the kiosk browser (or log out/in to the desktop).
