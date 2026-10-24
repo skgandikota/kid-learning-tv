@@ -9,6 +9,7 @@
   <script src="{{ url_for('static', filename='js/parent.js') }}" defer></script>
   {% if authenticated %}<script src="{{ url_for('static', filename='js/videos.js') }}" defer></script>{% endif %}
   {% if authenticated %}<script src="{{ url_for('static', filename='js/quiz-parent.js') }}" defer></script>{% endif %}
+  {% if authenticated %}<script src="{{ url_for('static', filename='js/adventures-parent.js') }}" defer></script>{% endif %}
 </head>
 <body class="parent">
   <main>
@@ -17,7 +18,28 @@
       <button id="food-time" type="button" aria-pressed="{{ 'true' if food_time else 'false' }}">Food time</button>
       <button id="open-videos" type="button" aria-expanded="false" aria-controls="videos-panel">Video</button>
       <button id="open-quiz" type="button" aria-expanded="false" aria-controls="quiz-panel">Quiz</button>
+      <button id="open-adventures" type="button" aria-expanded="false" aria-controls="adventures-panel">Adventures</button>
     </nav>
+    <section id="adventures-panel" hidden>
+      <h1>Adventure games</h1>
+      <p class="help">No timers or scores. Picture choices, counting, memory and gentle spoken instructions. Settings apply to the next game; disabling an active game closes it.</p>
+      <form id="adventure-settings">
+        <label for="adventure-count">Rescue counting</label>
+        <select id="adventure-count"><option value="3">Count up to 3</option><option value="5">Count up to 5</option></select>
+        <label for="adventure-memory">Items to remember</label>
+        <select id="adventure-memory"><option value="2">2 items</option><option value="3">3 items</option></select>
+        <label><input id="adventure-spoken" type="checkbox" checked> Spoken instructions</label>
+        <h2>Games on the TV</h2>
+        <div id="parent-adventure-games"></div>
+        <button type="submit">Save adventure settings</button>
+      </form>
+      <div class="button-row">
+        <button type="button" data-adventure-action="menu">Game choices on TV</button>
+        <button type="button" data-adventure-action="close">Close adventures</button>
+      </div>
+      <p id="parent-adventure-status" role="status"></p>
+      <p id="parent-adventure-error" role="alert"></p>
+    </section>
     <section id="quiz-panel" hidden>
       <h1>Picture quiz</h1>
       <p class="help">For age three: try five familiar pictures at ten seconds. Say answers aloud together. No microphone, scores or wrong answers. Country shapes are harder.</p>

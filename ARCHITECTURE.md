@@ -11,9 +11,9 @@ SQLite stores parent credentials and rate-limited login attempts. Existing PIN
 hashes remain compatible. Sessions use HTTP-only, SameSite cookies and POST
 requests require a session CSRF token. `/api/health` reports basic service status.
 
-Game, voice, AI and event-stream code remain removed. The updater replaces
-the application tree to remove stale routes/assets and no longer downloads models.
-Runtime data and legacy content are preserved separately.
+The updater replaces the application tree to remove obsolete routes/assets.
+Runtime data and legacy content are preserved separately. Current quizzes,
+matching, typing and adventures share the exclusive display state.
 
 The Video panel uses a local folder library and a single background yt-dlp job.
 Only explicitly submitted YouTube video URLs are downloaded. FFprobe inspects
@@ -27,3 +27,14 @@ completion advances the queue on the server; the last video switches to the
 parent-supplied end photo. The TV polls every 500 ms, reports once per second, and has no
 playback controls. Parent panel polls show actual position/buffering/errors.
 No playback is automatically restored after a service restart.
+
+`AdventureGame` owns a short set of picture challenges, turn tokens, current
+phase and collected items in memory. Mutations run under `Playback.lock`;
+old tokens and duplicate collected cards cannot advance a challenge. Memory
+preview lists are omitted from packing-phase snapshots. The TV waits for
+local speech before automatically hiding previews or moving past celebrations;
+manual controls remain available after voice failure. Prompt audio is fixed
+and allowlisted, served only to the local TV or authenticated parent.
+SQLite persists parent enable/disable choices, counting/memory difficulty and
+speech preferences. Food time/video clear adventure state; other child games
+cannot take over an active adventure.

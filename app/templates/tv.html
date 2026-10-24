@@ -10,6 +10,7 @@
   <script src="{{ url_for('static', filename='js/quiz-tv.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/matching-tv.js') }}" defer></script>
   <script src="{{ url_for('static', filename='js/typing-tv.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/adventures-tv.js') }}" defer></script>
 </head>
 <body class="tv">
   <img id="food-time-image" src="{{ url_for('static', filename='images/food-time.png') }}"
@@ -33,6 +34,9 @@
     <p id="home-game-error" role="alert"></p>
     <button id="typing-launcher" class="quiz-tile" type="button" aria-label="Hero Typing">
       <img src="{{ url_for('static', filename='images/typing-logo.png') }}" alt=""><span>Hero Typing</span>
+    </button>
+    <button id="adventure-launcher" class="quiz-tile" type="button" aria-label="Adventure games">
+      <img src="{{ url_for('static', filename='images/adventure-adventure.svg') }}" alt=""><span>Adventure games</span>
     </button>
   </section>
   <section id="quiz-screen" hidden>
@@ -86,6 +90,28 @@
       <button id="typing-next" class="typing-arrow" type="button" aria-label="Next character"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="m26 12 20 20-20 20M45 32H11"/></svg></button>
     </div>
     <p id="typing-error" role="alert"></p>
+  </section>
+  <section id="adventure-screen" hidden>
+    <button id="adventure-close" class="game-close" type="button" aria-label="Close adventures">X</button>
+    <div id="adventure-menu">
+      <h1>Let's go on an adventure!</h1>
+      <div id="adventure-games"></div>
+      <p id="adventure-menu-message" role="status"></p>
+    </div>
+    <div id="adventure-play" hidden>
+      <h1 id="adventure-title"></h1>
+      <p id="adventure-prompt" role="status"></p>
+      <div id="adventure-scene"></div>
+      <div id="adventure-choices"></div>
+      <div class="button-row adventure-actions">
+        <button id="adventure-hear" type="button">Hear again</button>
+        <button id="adventure-ready" type="button" hidden>Ready to pack!</button>
+        <button id="adventure-next" type="button" hidden>Next adventure</button>
+        <button id="adventure-again" type="button" hidden>Play again</button>
+        <button id="adventure-choose" type="button">Choose a game</button>
+      </div>
+    </div>
+    <p id="adventure-error" role="alert"></p>
   </section>
 </body>
 </html>

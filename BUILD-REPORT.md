@@ -33,6 +33,18 @@ use the existing local voice. Setup now verifies phonics as the service user.
 No new packages, model downloads, cloud calls or microphone use were added.
 The large pointer and control-free Food/video screens are preserved.
 
+Adventure games adds seven child-operated, untimed games under one home tile.
+Server-owned turns handle counting, food classification, shape assembly,
+animal silhouettes/clues, hidden memory lists, repeating patterns and a
+counted body-part robot. New SVG scenes are original; animal/food pictures
+reuse the existing licensed quiz artwork. Vehicle/robot parts appear as earned,
+with driving/dancing animations and reduced-motion support.
+Local speech uses 100 fixed allowlisted prompts/feedback messages, never child
+text. The parent panel persists enabled games, speech and counting/memory
+difficulty, and supports remote start/menu/close. Food/video/quiz controls
+still interrupt games; child controls cannot interrupt a parent activity.
+No packages, models or external artwork downloads were added.
+
 Browser playback was exercised with original synthetic H.264/AAC clips, not
 third-party downloads. YouTube availability and the target Lubuntu installation
 remain on-device checks. See `TEST-REPORT.md`.

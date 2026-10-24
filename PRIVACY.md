@@ -25,6 +25,12 @@ record mistakes, or store typed text. Progress stays in memory until the
 activity closes or the service restarts. Fixed public sound/spelling prompts
 are cached locally under `phonics-audio`; there is no cloud phonics provider.
 
+Adventure games store only parent preferences: enabled games, speech and
+counting/memory difficulty. Choices and progress remain in memory, with no
+child activity history. Fixed public instructions/counts are synthesized and
+cached locally through the existing quiz voice. No free-text speech, camera,
+microphone or new external service is used.
+
 Existing stored files and old database tables are preserved during updates but
 are not used unless part of the video library. Backups may contain those files.
 Keep backups private. HTTP is unencrypted: use only a trusted home network.

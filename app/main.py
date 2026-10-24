@@ -19,6 +19,7 @@ from app.quiz_catalog import CATEGORIES, get_items
 from app.quiz_speech import QuizSpeech
 from app.phonics_speech import PhonicsSpeech
 from app.typing_game import LESSONS, get_lesson, sound_step
+from app.adventures import AUDIO, GAMES, audio_key, validate_settings as validate_adventures
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -172,6 +173,78 @@ def create_app(overrides: dict | None = None) -> Flask:
             {key: item[key] for key in ("id", "name", "image", "category", "blend")}
             for item in LESSONS
         ]})
+
+    @app.get("/api/adventures/catalog")
+    def adventure_catalog():
+        enabled = database.adventure_settings()["enabled"]
+        return jsonify({"games": [game for game in GAMES if game["id"] in enabled]})
+
+    def adventure_control(body, parent=False):
+        if not isinstance(body, dict):
+            raise ValueError("Choose an adventure control.")
+        with playback.lock:
+            action = body.get("action")
+            if not isinstance(action, str):
+                raise ValueError("Choose an adventure control.")
+            feedback = None
+            if not parent and playback.mode not in {"blank", "adventure-menu", "adventure"}:
+                return jsonify({"error": "Close the current activity before opening adventures."}), 423
+            if action == "settings" and parent:
+                settings = validate_adventures(body.get("settings"))
+                database.set_adventure_settings(settings)
+                playback.revision += 1
+                if playback.adventure and playback.adventure.id not in settings["enabled"]:
+                    playback.food(False)
+                    playback.mode = "adventure-menu"
+            elif action == "start":
+                playback.start_adventure(body.get("id"))
+            elif action == "menu":
+                playback.food(False)
+                playback.mode = "adventure-menu"
+            elif action == "close":
+                if parent and playback.mode not in {"adventure-menu", "adventure"}:
+                    raise ValueError("No adventure is open.")
+                playback.food(False)
+            elif action in {"pick", "ready", "remember", "next"}:
+                if playback.adventure is None:
+                    raise ValueError("Choose an adventure first.")
+                feedback = playback.adventure.command(action, body.get("token"), body.get("choice"))
+                playback.revision += 1
+            else:
+                raise ValueError("Choose a picture or an adventure control.")
+            return jsonify({
+                "ok": True, "playback": playback.snapshot(),
+                "feedback": {"text": feedback, "audio": audio_key(feedback)} if feedback else None,
+            })
+
+    @app.post("/api/child/adventures")
+    def child_adventure():
+        return adventure_control(request.get_json(silent=True))
+
+    @app.route("/api/parent/adventures", methods=["GET", "POST"])
+    def parent_adventure():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        if request.method == "POST":
+            return adventure_control(request.get_json(silent=True), parent=True)
+        return jsonify({
+            "games": GAMES, "settings": database.adventure_settings(),
+            "playback": playback.snapshot(),
+        })
+
+    @app.get("/api/adventures/audio/<key>")
+    def adventure_audio(key):
+        if request.remote_addr not in {"127.0.0.1", "::1"} and not session.get("parent_authenticated"):
+            return jsonify({"error": "Local TV or parent sign-in required."}), 403
+        if key not in AUDIO:
+            raise ValueError("Choose an adventure sound.")
+        try:
+            audio = speech.audio(AUDIO[key])
+        except (OSError, RuntimeError) as error:
+            app.logger.error("Adventure speech failed: %s", error)
+            return jsonify({"error": "Adventure voice unavailable. Check the laptop voice setup and volume."}), 503
+        from flask import Response
+        return Response(audio, mimetype="audio/wav")
 
     @app.post("/api/child/typing")
     def child_typing():

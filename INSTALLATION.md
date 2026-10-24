@@ -1,6 +1,7 @@
 # Lubuntu installation
 
-This version has parent PIN login, Food time, videos, quizzes, Card match and Hero Typing.
+This version has parent PIN login, Food time, videos, quizzes, Card match,
+Hero Typing and seven Adventure games.
 No microphone or speech recognition is installed. Videos download only when requested.
 
 For an existing installation:
@@ -22,7 +23,8 @@ For a fresh installation, install Python 3.10+ and `python3-venv`, then run
 `sudo bash scripts/install.sh` from the checkout. Set the parent PIN at the hidden
 terminal prompts. Python package installation requires internet.
 
-On the laptop, refresh `http://127.0.0.1:8765/`: the screen shows Quiz, Card match and Hero Typing.
+On the laptop, refresh `http://127.0.0.1:8765/`: the screen shows Quiz,
+Card match, Hero Typing and Adventure games.
 On your phone, open `http://<laptop-IP>:8765/parent` and sign in. Tap **Food time**
 to show the picture, then tap again to return home. Use a trusted private LAN only.
 

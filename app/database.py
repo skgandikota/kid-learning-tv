@@ -33,6 +33,10 @@ class Database:
                     id INTEGER PRIMARY KEY CHECK (id = 1),
                     value TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS adventure_preferences (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    value TEXT NOT NULL
+                );
             """)
 
     @contextmanager
@@ -93,4 +97,17 @@ class Database:
                 "INSERT INTO auth(id, pin_hash, changed_at) VALUES(1, ?, ?) "
                 "ON CONFLICT(id) DO UPDATE SET pin_hash=excluded.pin_hash, changed_at=excluded.changed_at",
                 (pin_hash, int(time.time())),
+            )
+
+    def adventure_settings(self):
+        from app.adventures import default_settings
+        with self.connection() as db:
+            row = db.execute("SELECT value FROM adventure_preferences WHERE id = 1").fetchone()
+            return json.loads(row["value"]) if row else default_settings()
+
+    def set_adventure_settings(self, value):
+        with self.connection() as db:
+            db.execute(
+                "INSERT INTO adventure_preferences(id, value) VALUES(1, ?) "
+                "ON CONFLICT(id) DO UPDATE SET value=excluded.value", (json.dumps(value),),
             )

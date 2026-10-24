@@ -78,6 +78,20 @@ the ends return to the choices. Hear again repeats the prompt.
 There is no scoring, countdown, microphone capture or typed-text history.
 Phonics uses local eSpeak NG; complete names use the existing local voice.
 
+**Adventure games** adds seven untimed picture games: Hero Rescue, Feed the
+Monster, Build a Hero Vehicle, Who's Hiding?, Pack the Adventure Bag,
+Finish the Magic Path and Silly Body Robot. They teach counting, colours,
+categories, shapes, observation, memory, patterns and body parts through play.
+Use the large picture buttons; mistakes get a gentle hint, not a penalty.
+Completed little challenges advance after the spoken celebration.
+The red X closes the games.
+
+On the phone, **Adventures** lets parents start/close games, enable individual
+games, turn instructions on/off, count up to 3 or 5 and remember 2 or 3 items.
+Defaults are counting to 3 and remembering 2. Preferences persist locally;
+game progress does not survive a service restart. No new packages or models
+are required.
+
 For sound without touching the TV, run the laptop browser in kiosk mode:
 after updating, close/reopen the kiosk browser (or log out/in to the desktop).
 The updated launcher allows video autoplay. For a normal browser window, launch

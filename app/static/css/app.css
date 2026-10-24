@@ -35,8 +35,8 @@ select { width: 100%; padding: 12px; font: inherit; margin-bottom: 16px; }
 input[type="checkbox"] { width: auto; }
 body.tv.quiz-interactive, body.tv.quiz-interactive * { cursor: url("../images/big-pointer.svg") 5 4, auto !important; }
 body.tv:not(.quiz-interactive), body.tv:not(.quiz-interactive) * { cursor: none !important; }
-#quiz-home { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; gap: 3vw; background: #f5efdf; }
-#quiz-home .quiz-tile { width: min(360px, 29vw); height: min(460px, 75vh); font-size: clamp(24px, 3.2vw, 48px); }
+#quiz-home { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; gap: 2vw; background: #f5efdf; }
+#quiz-home .quiz-tile { width: min(360px, 22vw); height: min(460px, 75vh); font-size: clamp(24px, 2.6vw, 48px); }
 #quiz-home .quiz-tile img { height: min(30vh, 260px); }
 #quiz-home #typing-launcher { padding: 0; gap: 0; overflow: hidden; }
 #quiz-home #typing-launcher img { flex: 1; min-height: 0; height: 0; object-fit: cover; }
@@ -138,3 +138,54 @@ body.tv:not(.quiz-interactive), body.tv:not(.quiz-interactive) * { cursor: none 
 @media (max-width: 850px) { #typing-choices { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 @media (max-width: 650px) { #quiz-home { flex-wrap: wrap; } #quiz-home .quiz-tile { width: 29vw; height: 60vh; font-size: 22px; } #typing-choices { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (prefers-reduced-motion: reduce) { .typing-success #typing-character { animation: none; } }
+#adventure-screen { position: fixed; inset: 0; padding: 2vh 4vw; overflow-y: auto; background: #eef5ec; color: #284b46; }
+#adventure-menu h1, #adventure-title { margin: 0 90px 1vh; text-align: center; font-size: clamp(26px, 3vw, 44px); }
+#adventure-games { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2vh 2vw; margin-top: 5vh; }
+#adventure-games button { margin: 0; min-height: 28vh; }
+.adventure-picture { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; min-width: 0; height: 100%; }
+.adventure-picture img { display: block; width: 100%; height: 15vh; object-fit: contain; }
+.adventure-picture span { font-size: clamp(18px, 1.9vw, 28px); line-height: 1.15; text-align: center; }
+#adventure-prompt { text-align: center; font-size: clamp(22px, 2.7vw, 36px); min-height: 2.4em; margin: 1vh auto; max-width: 90%; }
+#adventure-scene { display: flex; align-items: center; justify-content: center; gap: 2vw; height: 28vh; margin-bottom: 1vh; overflow: hidden; }
+#adventure-scene > .adventure-picture { max-width: 18%; flex: 1; }
+#adventure-scene > img { max-width: 65%; height: 100%; object-fit: contain; }
+.adventure-collected { font-size: clamp(40px, 5vw, 70px); font-weight: 700; }
+.adventure-missing { font-size: 70px; color: #8c6a2c; }
+.adventure-silhouette { filter: brightness(0); opacity: 0.8; }
+.adventure-construction { position: relative; height: 100%; aspect-ratio: 3 / 2; }
+.robot-construction { aspect-ratio: 1; }
+.adventure-construction img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+.robot-construction .adventure-layer[data-count="1"]:not([src$="-mouth.svg"]) { clip-path: inset(0 50% 0 0); }
+#adventure-choices { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 1.4vw; width: 100%; max-width: 1200px; margin: 0 auto; }
+.adventure-choice { margin: 0; padding: 10px; min-height: 20vh; border: 3px solid #b3cfc2; border-radius: 22px; background: #fff; color: #284b46; box-shadow: 0 5px 0 #ccdbce; }
+.adventure-choice img { height: 13vh; }
+.adventure-choice:hover { border-color: #dea548; }
+.adventure-choice:disabled { cursor: default; }
+.adventure-choice.adventure-picked { opacity: 0; pointer-events: none; }
+.adventure-actions { justify-content: center; margin: 2vh auto 0; max-width: 850px; }
+.adventure-actions button { flex: 0 1 auto; margin: 0; min-height: 52px; border: 2px solid #9cbcaf; border-radius: 15px; background: #fff; color: #284b46; }
+#adventure-error { margin: 1vh 0 0; text-align: center; color: #923333; }
+.adventure-choice:focus-visible { outline: 5px solid #327bc0; outline-offset: 3px; }
+.adventure-success .adventure-mascot { animation: adventure-cheer 0.6s ease-in-out 2; }
+.adventure-success .adventure-monster > .adventure-picture { animation: adventure-gulp 1.3s ease-in forwards; }
+.adventure-drive { animation: adventure-drive 1.4s ease-in forwards; }
+.adventure-dance { animation: adventure-cheer 0.5s ease-in-out infinite; }
+@keyframes adventure-cheer { 50% { transform: translateY(-10px) rotate(-5deg); } }
+@keyframes adventure-drive { 65% { transform: translateX(15vw); } 100% { transform: translateX(65vw); } }
+@keyframes adventure-gulp { to { transform: translateX(-12vw) scale(0.1); opacity: 0; } }
+.parent-tabs { flex-wrap: wrap; }
+.parent-tabs button { flex-basis: 40%; }
+#parent-adventure-games label { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+#parent-adventure-games button { width: auto; margin: 0 0 0 auto; padding: 8px 14px; }
+#parent-adventure-error { color: #923333; }
+@media (max-width: 850px) {
+  #quiz-home { flex-wrap: wrap; padding: 3vh 3vw; gap: 2vh 3vw; }
+  #quiz-home .quiz-tile { width: 42vw; height: 43vh; font-size: 26px; }
+  #quiz-home .quiz-tile img { height: 24vh; }
+  #adventure-games { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #adventure-choices { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .adventure-drive, .adventure-dance, .adventure-success .adventure-mascot,
+  .adventure-success .adventure-monster > .adventure-picture { animation: none; }
+}

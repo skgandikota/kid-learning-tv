@@ -9,6 +9,7 @@ import uuid
 from app.quiz import QuizRound
 from app.matching import MatchingGame
 from app.typing_game import TypingGame
+from app.adventures import AdventureGame
 
 
 def seconds(value):
@@ -36,6 +37,7 @@ class Playback:
         self.quiz = None
         self.matching = None
         self.typing = None
+        self.adventure = None
 
     def snapshot(self):
         with self.lock:
@@ -55,6 +57,7 @@ class Playback:
                 "quiz": self.quiz.snapshot() if self.mode == "quiz" and self.quiz else None,
                 "matching": self.matching.snapshot() if self.mode == "matching" and self.matching else None,
                 "typing": self.typing.snapshot() if self.mode == "typing" and self.typing else None,
+                "adventure": self.adventure.snapshot() if self.mode == "adventure" and self.adventure else None,
             }
 
     def food(self, enabled):
@@ -64,6 +67,7 @@ class Playback:
             self.quiz = None
             self.matching = None
             self.typing = None
+            self.adventure = None
             self.queue = []
             self.index = 0
             self.position = 0.0
@@ -79,6 +83,7 @@ class Playback:
             self.quiz = None
             self.matching = None
             self.typing = None
+            self.adventure = None
             self.queue = [dict(item) for item in items]
             self.index = 0
             self.position = 0.0
@@ -114,6 +119,14 @@ class Playback:
             self.food(False)
             self.typing = game
             self.mode = "typing"
+            self.session = uuid.uuid4().hex
+
+    def start_adventure(self, game_id):
+        with self.lock:
+            game = AdventureGame(game_id, self.database.adventure_settings())
+            self.food(False)
+            self.adventure = game
+            self.mode = "adventure"
             self.session = uuid.uuid4().hex
 
     def quiz_command(self, action):

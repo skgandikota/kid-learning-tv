@@ -119,5 +119,37 @@ validated reading course. The existing Piper/basic voice speaks the full names.
 Sound failures are shown explicitly; the app does not substitute letter names
 for missing phonics. Rerun the laptop update and check volume/kiosk autoplay.
 
+## Adventure games
+
+Click **Adventure games** on the TV and choose a picture.
+All seven games have spoken instructions, large choices and a red X.
+There are no timers, scores, penalties or microphone recording.
+
+| Game | How to play |
+|---|---|
+| Hero Rescue | Click the requested number of puppies; each rescue is counted aloud. |
+| Feed the Monster | Feed the friendly monster the requested colour, fruit or vegetable. |
+| Build a Hero Vehicle | Pick shapes to add wheels, a body, a window and a flag; watch it drive away. |
+| Who's Hiding? | Use a silhouette and a spoken clue to find an animal; correct choices reveal it. |
+| Pack the Adventure Bag | Remember the displayed items; they hide before you choose what to pack. |
+| Finish the Magic Path | Look at the picture sequence and choose what comes next. |
+| Silly Body Robot | Add eyes, a mouth, arms and legs; count paired parts and watch the completed robot dance. |
+
+Wrong choices leave the challenge unchanged and give a gentle hint. Finished
+challenges move on after their spoken celebration. **Hear again** repeats
+instructions; in the bag game it shows the memory items again and restarts packing.
+**Ready to pack!** can hide the memory pictures when your child is ready.
+**Next adventure** moves on after a completed challenge; **Play again** restarts
+the game when its short set is done.
+
+On your phone, sign in and open **Adventures**. You can start a game, show the
+game menu or close adventures. Set counting to **3 or 5**, memory to **2 or 3**
+items, turn spoken instructions off/on, and choose which games appear.
+Press **Save adventure settings**. Defaults are counting to three, two-item
+memory and all seven games enabled with speech.
+Difficulty/speech changes apply to the next game; disabling the active game
+closes it immediately. Parents can interrupt with Food time, a video or a quiz.
+Active games resume on TV refresh, but close when the service restarts.
+
 Refresh keeps the current name and progress. Closing, Food time, a video or
 service restart ends the activity. No typed text or mistakes are recorded.

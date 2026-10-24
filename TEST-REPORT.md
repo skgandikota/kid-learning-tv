@@ -1,6 +1,6 @@
 # Test report
 
-`python -m pytest -q`: **189 passed, 6 skipped** on the development Windows host.
+`python -m pytest -q`: **219 passed, 7 skipped** on the development Windows host.
 Downloader tests mock yt-dlp, ffprobe and file failures; no third-party videos
 or AI models were downloaded on this machine. A missing setuptools build backend
 was installed only to check application packaging.
@@ -82,3 +82,25 @@ Large bottom-corner arrows worked during unfinished lessons and speech, in both
 directions. Old audio could not advance a new lesson or interrupt Food time.
 The final word returned to choices. The home image fills its card edge-to-edge
 above its title at 1366x768.
+
+Adventure games add 30 focused unit/API cases covering all seven complete
+playthroughs, wrong/repeated/stale choices, memory preview hiding, counted
+assembly, invalid settings, parent authentication/CSRF, persisted preferences,
+live disabling, fixed-audio allowlists and activity interruption.
+All 100 allowlisted prompt/feedback messages produced audible local eSpeak WAVs
+without downloading models. Real Edge completed every game by mouse using
+those WAVs, including counting to five and remembering three items.
+Layouts, picture decoding, the large cursor and phone controls were checked at
+1366x768 and 390px parent width.
+
+A separate browser check held speech to prove memory previews do not hide
+early. Ready/close/Food time cancelled old speech and timers; an explicit voice
+failure stayed playable without auto-advancing, and Hear again recovered.
+An intentionally delayed picture-choice response did not undo a newer Food
+time command or reveal child controls.
+Settings disabled an active game and updated the open menu; muted games and TV
+refresh retained the current server turn. Physical Lubuntu speakers and
+power-on startup still require checking on the target laptop.
+Existing real-browser picture quiz, parent video and Hero Typing checks also
+passed. The deployment wheel contains exactly the current 177 application
+files, including every new game script and SVG, with no stale application files.

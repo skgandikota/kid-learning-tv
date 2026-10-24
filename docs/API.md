@@ -18,6 +18,10 @@
 | GET | `/api/typing/catalog` | Curated character/word choices and local picture paths |
 | POST | `/api/child/typing` | `menu`, `start` with lesson `id`, `key`, `next`, `previous`, `advance`, or `close`; CSRF required. Navigation requires current `token`; `advance` also requires completion |
 | GET | `/api/typing/audio/<id>/<position>/<kind>` | Local TV/parent WAV; allowlisted name, spell, sound or blend only |
+| GET | `/api/adventures/catalog` | Enabled adventure IDs, names and local pictures |
+| POST | `/api/child/adventures` | `menu`, `start` with `id`, `close`, or current-token `pick`/`ready`/`remember`/`next`; CSRF required |
+| GET/POST | `/api/parent/adventures` | Parent-only settings/status and remote start/menu/close |
+| GET | `/api/adventures/audio/<key>` | Local TV/parent WAV for fixed allowlisted instruction keys only |
 | GET | `/api/parent/quiz` | Parent settings, catalog, playback and speech status |
 | POST | `/api/parent/quiz` | `settings` with seconds/count/ticking; start/category, menu, pause, resume, reveal, next, close |
 | POST | `/api/tv/quiz` | Loopback ready/speech-done/image-error, current token and optional warning; stale token returns 409 |
@@ -54,8 +58,23 @@ single ASCII alphabetic `key`; uppercase/lowercase are equivalent.
 Wrong letters return `accepted:false` without progress; stale positions/tokens
 return 400. The response flags available `sound` and cumulative `blend`.
 Sound groups such as SH play only when the entire group is typed.
-`next` requires a completed current token. Spaces are automatic.
+`next`/`previous` allow skipping at any time with the current token.
+`advance` requires completion and follows the full-name audio on the TV.
+Spaces are automatic.
 Typing controls cannot interrupt another activity (423).
 Audio kind `name` and `spell` use position 0; `sound` and `blend` require an
 allowlisted group-ending position. Unknown sounds return 400; synthesis
 failure returns 503. No arbitrary speech text or raw phonemes are accepted.
+
+`playback.adventure` contains the game ID, turn token, phase, visible picture
+choices, collected count, scene parts and fixed prompt/audio key.
+Phases are `preview` (bag only), `play`, `success` and `finished`.
+`pick` supplies current `token` and picture `choice`; wrong pictures return
+gentle feedback without losing progress. Collected cards and old tokens
+return 400 if repeated. `ready` hides memory pictures; `remember` shows them
+again and clears the current packing attempt. `next` requires success.
+Child controls return 423 during other activities. Parent start/menu may
+interrupt, but parent close never stops an unrelated activity.
+Settings are exactly `enabled` (list of game IDs), `rescue_max` (3/5),
+`bag_size` (2/3) and `spoken` (boolean). They apply to the next game;
+disabling the current game closes it immediately. Empty `enabled` is valid.
