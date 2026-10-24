@@ -9,7 +9,7 @@ if [[ -e "$entry" ]]; then
     systemctl --user stop kid-learning-kiosk.service 2>/dev/null || true
     rm -f -- "$entry" "$unit"
     systemctl --user daemon-reload 2>/dev/null || true
-    info "Kiosk service stopped and autostart disabled. Keep this local recovery path available."
+    info "Kiosk autostart disabled. Press Alt+F4 in the browser to close a directly launched kiosk."
 else
     systemctl --user stop kid-learning-kiosk.service 2>/dev/null || true
     rm -f -- "$unit"

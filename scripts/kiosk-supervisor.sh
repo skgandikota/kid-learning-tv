@@ -7,7 +7,4 @@ for candidate in chromium chromium-browser google-chrome; do
 done
 [[ -n "$browser" ]] || die "Install Chromium or Google Chrome, or disable kiosk autostart."
 url="${KLT_KIOSK_URL:-http://127.0.0.1:8765/}"
-while true; do
-    "$browser" --kiosk --no-first-run --disable-translate --autoplay-policy=no-user-gesture-required "$url" || true
-    sleep 3
-done
+exec "$browser" --kiosk --no-first-run --disable-translate --autoplay-policy=no-user-gesture-required "$url"

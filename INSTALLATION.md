@@ -51,16 +51,13 @@ For power-on straight to the TV, enable automatic login for the dedicated TV
 desktop account in Lubuntu's login settings. Kiosk setup does not change login
 security or enable automatic login for you. The app service already starts at boot.
 
-To close kiosk temporarily, press **Ctrl+Alt+T** and run:
+The launcher runs directly in the desktop session, inheriting its display and
+login environment rather than using a systemd user service. Rerunning
+`enable-kiosk.sh` stops/removes the old kiosk user service and replaces its
+autostart entry.
 
-```bash
-systemctl --user stop kid-learning-kiosk.service
-```
-
-If the terminal shortcut is unavailable, use **Ctrl+Alt+F3**, log in as the same
-desktop user, and run that command. Use **Ctrl+Alt+F1** or **Ctrl+Alt+F2** to
-return to the graphical desktop (the active console varies).
-Alt+F4 alone is not enough: the supervisor reopens Chromium.
+To close kiosk temporarily, press **Alt+F4**. It stays closed until you start it
+again or log in next time. Browser errors are not hidden or automatically retried.
 To disable future kiosk startup, run
 `bash /opt/kid-learning-tv/scripts/disable-kiosk.sh`.
 

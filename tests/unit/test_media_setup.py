@@ -26,8 +26,7 @@ class KioskStartupTests(unittest.TestCase):
             binaries = root / "bin"
             binaries.mkdir()
             for name, script in (
-                ("chromium", '#!/bin/bash\nprintf "%s\\n" "$@" > "$TEST_LOG"\n'),
-                ("sleep", "#!/bin/bash\nexit 29\n"),
+                ("chromium", '#!/bin/bash\nprintf "%s\\n" "$@" > "$TEST_LOG"\nprintf "%s" "$DISPLAY" > "$TEST_LOG-display"\n'),
             ):
                 target = binaries / name
                 target.write_text(script)
@@ -36,14 +35,23 @@ class KioskStartupTests(unittest.TestCase):
                 [command[0], str(root / Path(command[1]).name)],
                 env={**os.environ, "PATH": f"{binaries}:{os.environ['PATH']}",
                      "TEST_LOG": str(root / "browser-args"),
+                     "DISPLAY": ":7",
                      "KLT_KIOSK_URL": "http://127.0.0.1:8765/"},
                 capture_output=True, text=True, timeout=10,
             )
-            self.assertEqual(result.returncode, 29, result.stderr)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual((root / "browser-args-display").read_text(), ":7")
             arguments = (root / "browser-args").read_text().splitlines()
             self.assertIn("--kiosk", arguments)
             self.assertIn("--autoplay-policy=no-user-gesture-required", arguments)
             self.assertIn("http://127.0.0.1:8765/", arguments)
+
+    def test_desktop_launcher_uses_inherited_session_not_user_service(self):
+        project = Path(__file__).resolve().parents[2]
+        launcher = (project / "scripts" / "start-kiosk.sh").read_text()
+        self.assertIn("exec /bin/bash ", launcher)
+        self.assertIn("/kiosk-supervisor.sh", launcher)
+        self.assertNotIn("systemctl", launcher)
 
 
 @unittest.skipUnless(os.name == "posix", "The deployment scripts require Linux.")

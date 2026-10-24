@@ -67,8 +67,10 @@ The supplied launcher image and all 26 character/25 word pictures loaded both
 on cards and inside lessons. Table, Chair and Mouth completed with real local
 audio; incomplete CH/AIR/OU/TH groups waited for their final letter.
 Long-name wrapping and the 1366x768 keyboard layout were checked.
-Six Linux deployment/mock tests passed, including launching the actual kiosk
-supervisor through Bash with non-executable script permissions.
+Seven Linux deployment/mock tests passed, including launching the actual kiosk
+supervisor through Bash with non-executable script permissions and preserving
+the desktop DISPLAY environment. The desktop launcher now calls the browser
+directly rather than starting a systemd user service; browser exit is not retried.
 Automatic desktop login and physical startup were not changed or tested remotely.
 Target-Lubuntu speakers and voice
 quality still need on-device listening.

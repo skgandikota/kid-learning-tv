@@ -5,9 +5,12 @@ source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)/common.sh"
 autostart="${XDG_CONFIG_HOME:-$HOME/.config}/autostart"
 user_units="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
 install -d -m 0755 "$autostart"
-install -d -m 0755 "$user_units"
-[[ -f "$INSTALL_DIR/systemd/kid-learning-kiosk.service" ]] || die "Kiosk service unit not found; install the appliance first."
-install -m 0644 "$INSTALL_DIR/systemd/kid-learning-kiosk.service" "$user_units/kid-learning-kiosk.service"
+[[ -f "$INSTALL_DIR/scripts/kiosk-supervisor.sh" ]] || die "Kiosk launcher not found; install the appliance first."
+if [[ -f "$user_units/kid-learning-kiosk.service" ]]; then
+    systemctl --user stop kid-learning-kiosk.service
+    rm -f -- "$user_units/kid-learning-kiosk.service"
+    systemctl --user daemon-reload
+fi
 cat > "$autostart/kid-learning-tv.desktop" <<EOF
 [Desktop Entry]
 Type=Application
@@ -18,5 +21,4 @@ Terminal=false
 X-GNOME-Autostart-enabled=true
 EOF
 chmod 0644 "$autostart/kid-learning-tv.desktop"
-systemctl --user daemon-reload
-info "Kiosk will start at the next desktop login via its systemd user service. Keep a separate administrator account/session for recovery."
+info "Kiosk will launch directly in your desktop session at the next login. Press Alt+F4 to close it."

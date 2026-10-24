@@ -27,7 +27,11 @@ Switch to a separate administrator account or a local text console, then run the
 bash /opt/kid-learning-tv/scripts/disable-kiosk.sh
 ```
 
-The script stops the kiosk user service and removes its desktop-login trigger. Log out and back in if needed. The supervisor restarts Chromium if it exits; it does not repair a broken browser installation. The app itself runs independently as a system service. No shell or remote-login access is enabled by kiosk setup.
+The script removes the desktop-login trigger and stops the old kiosk user service
+if present. Current kiosk startup launches directly in the desktop session.
+Press Alt+F4 to close that browser; it does not automatically reopen until your
+next login. The app itself runs independently as a system service. No shell or
+remote-login access is enabled by kiosk setup.
 
 ## Parent PIN recovery
 
