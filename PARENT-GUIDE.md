@@ -10,6 +10,12 @@ You can also sign out. Signing out does not change the TV.
 It uses the TV laptop's local time in 24-hour format. No buttons or cursor
 appear on the TV; use **Home** on your phone to leave the clock.
 
+**Refresh TV** reloads the TV page remotely without clearing the current
+activity. Games keep their progress; video resumes near its last reported
+position. It needs the TV page to be open and connected; it cannot reopen a
+closed browser or fix a frozen browser. Refresh the TV manually once after
+installing the version that first adds this button.
+
 Food time shows only the image, with no clock or controls. No microphone is used.
 
 ## Video

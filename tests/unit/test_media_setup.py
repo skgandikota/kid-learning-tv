@@ -6,6 +6,52 @@ import tempfile
 import unittest
 
 
+@unittest.skipUnless(os.name == "posix" and os.geteuid() != 0, "Requires a non-root Linux user.")
+class LidSetupTests(unittest.TestCase):
+    def test_lid_setup_is_repeatable_and_rejects_unexpected_system_config(self):
+        project = Path(__file__).resolve().parents[2]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("scripts/common.sh", "scripts/configure-lid.sh", "tools/configure_lid.py", "config/logind-lid.conf"):
+                target = root / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_text((project / name).read_text())
+            binaries = root / "bin"
+            binaries.mkdir()
+            sudo = binaries / "sudo"
+            sudo.write_text(
+                "#!/usr/bin/env python3\n"
+                "import os, subprocess, sys\n"
+                "args = sys.argv[1:]\n"
+                "if args == ['-v']: sys.exit(0)\n"
+                "args = [os.environ['TEST_ROOT'] + '/system' + arg if arg.startswith('/etc/') else arg for arg in args]\n"
+                "sys.exit(subprocess.run(args).returncode)\n"
+            )
+            sudo.chmod(0o755)
+            env = {
+                **os.environ, "PATH": f"{binaries}:{os.environ['PATH']}",
+                "TEST_ROOT": str(root), "XDG_CONFIG_HOME": str(root / "desktop"),
+            }
+            command = ["bash", str(root / "scripts/configure-lid.sh")]
+            cancelled = subprocess.run(command, input="n\n", text=True, capture_output=True, env=env, timeout=10)
+            self.assertNotEqual(cancelled.returncode, 0)
+            self.assertFalse((root / "desktop").exists())
+            self.assertFalse((root / "system").exists())
+            for _ in range(2):
+                result = subprocess.run(command, input="y\n", text=True, capture_output=True, env=env, timeout=10)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertIn("Reboot when ready", result.stdout)
+            target = root / "system/etc/systemd/logind.conf.d/90-kid-learning-tv-lid.conf"
+            self.assertEqual(target.read_text(), (project / "config/logind-lid.conf").read_text())
+            settings = root / "desktop/lxqt/lxqt-powermanagement.conf"
+            self.assertIn("lidClosedExtMonAcAction=-1", settings.read_text())
+            target.write_text("[Login]\nHandleLidSwitch=suspend\n")
+            conflict = subprocess.run(command, input="y\n", text=True, capture_output=True, env=env, timeout=10)
+            self.assertNotEqual(conflict.returncode, 0)
+            self.assertIn("already contains different settings", conflict.stderr)
+            self.assertIn("HandleLidSwitch=suspend", target.read_text())
+
+
 @unittest.skipUnless(os.name == "posix", "The deployment scripts require Linux.")
 class KioskStartupTests(unittest.TestCase):
     def test_launchers_work_without_executable_script_permissions(self):

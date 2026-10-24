@@ -63,6 +63,81 @@ again or log in next time. Browser errors are not hidden or automatically retrie
 To disable future kiosk startup, run
 `bash /opt/kid-learning-tv/scripts/disable-kiosk.sh`.
 
+## Keep running with the lid closed
+
+Run as the **Lubuntu desktop user**, without sudo in front:
+
+```bash
+bash /opt/kid-learning-tv/scripts/configure-lid.sh
+```
+
+It asks for sudo and confirmation, then sets both systemd-logind and LXQt lid
+actions to do nothing, on charger **and battery**, with or without the TV attached.
+Reboot when ready; the script deliberately does not restart logind or your desktop.
+Critical-battery protection, idle sleep and screen locking are not changed.
+If it later sleeps while idle, open **Preferences > LXQt settings > Power
+Management > Idle** and disable idle suspend on both AC and battery.
+Keep it ventilated, preferably on charger; never put it in a bag while running.
+Closing the lid does not stop battery drain, and an empty battery still shuts it down.
+
+The original existing LXQt file is backed up once beside it as
+`~/.config/lxqt/lxqt-powermanagement.conf.before-klt-lid` (or under
+`$XDG_CONFIG_HOME` if set). To undo, restore that backup, or choose your desired
+lid actions in **Power Management > Lid** if no previous file existed.
+Remove only `/etc/systemd/logind.conf.d/90-kid-learning-tv-lid.conf` with sudo,
+then reboot. Do not change or remove other logind settings.
+
+## Connect from a Mac using SSH (same private Wi-Fi)
+
+On Lubuntu, enable SSH and note your normal desktop username and LAN address:
+
+```bash
+sudo apt update
+sudo apt install openssh-server
+sudo systemctl enable --now ssh
+whoami
+hostname -I
+```
+
+On your Mac M1 Pro, open **Terminal**; no extra Mac software is needed:
+
+```bash
+ssh YOUR-LUBUNTU-USERNAME@LAPTOP-IP
+```
+
+Use your **Linux account password**, not the parent PIN. Check the server's host
+key fingerprint on the laptop with
+`sudo ssh-keygen -lf /etc/ssh/ssh_host_ed25519_key.pub` before accepting it on
+the Mac. Use a normal desktop/admin account, not root or `kid-learning-tv`.
+
+For key-based login, on the Mac create a passphrase-protected key only if you
+do not already have one, then copy its public part:
+
+```bash
+test -f ~/.ssh/id_ed25519 || ssh-keygen -t ed25519
+cat ~/.ssh/id_ed25519.pub | ssh YOUR-LUBUNTU-USERNAME@LAPTOP-IP 'umask 077; mkdir -p ~/.ssh; cat >> ~/.ssh/authorized_keys'
+ssh YOUR-LUBUNTU-USERNAME@LAPTOP-IP
+```
+
+Never copy/share the private key. Keep the existing terminal open until the
+second login succeeds. This does not alter SSH password or root-login policy.
+Use only trusted private Wi-Fi; do not forward ports 22 or 8765 on your router.
+If a firewall is active, allow TCP 22 only from your Mac's LAN IP rather than
+opening it to everyone. A router DHCP reservation keeps the laptop address stable.
+
+Once connected, update normally:
+
+```bash
+cd ~/kid-learning-tv
+git pull --ff-only origin main
+sudo bash scripts/update.sh "$PWD"
+```
+
+For a restart only: `sudo systemctl restart kid-learning-tv`.
+For logs: `sudo journalctl -u kid-learning-tv -n 50 --no-pager`.
+Open `http://LAPTOP-IP:8765/parent` on your Mac to use **Refresh TV**.
+SSH does not show the desktop or automatically reopen a closed kiosk browser.
+
 ## Quiz voice
 
 Setup tries natural Piper first and explicitly reports basic eSpeak fallback

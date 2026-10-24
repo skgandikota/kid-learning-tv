@@ -72,12 +72,14 @@ def test_home_and_clock_require_parent_and_valid_action(client):
     headers = {"X-CSRF-Token": csrf_for(client)}
     assert 'id="tv-home"' not in client.get("/parent").text
     assert 'id="show-clock"' not in client.get("/parent").text
+    assert 'id="refresh-tv"' not in client.get("/parent").text
     endpoint = "/api/parent/display"
     assert client.post(endpoint, json={"action": "clock"}, headers=headers).status_code == 401
     setup = client.post("/api/setup", json={"pin": "123456"}, headers=headers)
     headers = {"X-CSRF-Token": setup.json["csrf_token"]}
     assert 'id="tv-home"' in client.get("/parent").text
     assert 'id="show-clock"' in client.get("/parent").text
+    assert 'id="refresh-tv"' in client.get("/parent").text
     assert client.post(endpoint, json={"action": "home"}).status_code == 400
     for body in (None, {}, {"action": []}, {"action": "video"}):
         assert client.post(endpoint, json=body, headers=headers).status_code == 400
@@ -119,6 +121,36 @@ def test_home_and_clock_interrupt_activities_and_reject_old_controls(client, app
         assert client.get("/api/display").json["playback"]["mode"] == "clock"
         assert client.post("/api/parent/display", json={"action": "home"}, headers=headers).status_code == 200
         assert client.get("/api/display").json["playback"]["mode"] == "blank"
+
+
+@pytest.mark.parametrize("activity", ["food", "clock", "adventure", "video"])
+def test_refresh_tv_changes_page_token_without_stopping_activity(client, app, activity):
+    endpoint = "/api/parent/display"
+    headers = {"X-CSRF-Token": csrf_for(client)}
+    assert client.post(endpoint, json={"action": "refresh"}, headers=headers).status_code == 401
+    setup = client.post("/api/setup", json={"pin": "123456"}, headers=headers)
+    headers = {"X-CSRF-Token": setup.json["csrf_token"]}
+    playback = app.extensions["klt_playback"]
+    if activity == "adventure":
+        playback.start_adventure("bag")
+    elif activity == "video":
+        playback.start([{"id": "one", "title": "Test", "duration": 10}])
+        playback.position = 4
+    else:
+        playback.food(activity == "food")
+        playback.mode = activity
+    before = playback.snapshot()
+    assert client.post(endpoint, json={"action": "refresh"}).status_code == 400
+    response = client.post(endpoint, json={"action": "refresh"}, headers=headers)
+    assert response.status_code == 200
+    after = response.json["playback"]
+    assert after["refresh_token"] != before["refresh_token"]
+    assert after["revision"] == before["revision"] + 1
+    for key in ("mode", "session", "queue", "position", "adventure"):
+        assert after[key] == before[key]
+    assert f'name="tv-refresh-token" content="{after["refresh_token"]}"' in client.get("/").text
+    again = client.post(endpoint, json={"action": "refresh"}, headers=headers).json["playback"]
+    assert again["refresh_token"] != after["refresh_token"]
 
 
 def test_first_pin_setup_is_local_only_and_cannot_replace_existing_pin(client):

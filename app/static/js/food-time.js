@@ -136,7 +136,12 @@ async function updateDisplay() {
   try {
     const response = await fetch("/api/display", { cache: "no-store" });
     if (!response.ok) throw new Error(`TV display update failed (${response.status}).`);
-    apply((await response.json()).playback);
+    const next = (await response.json()).playback;
+    if (next.refresh_token !== document.querySelector('meta[name="tv-refresh-token"]').content) {
+      location.reload();
+      return;
+    }
+    apply(next);
   } catch (error) {
     console.error(error);
   } finally {

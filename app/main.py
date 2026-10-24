@@ -84,7 +84,10 @@ def create_app(overrides: dict | None = None) -> Flask:
 
     @app.get("/")
     def tv():
-        return render_template("tv.html", food_time=database.food_time(), csrf_token=csrf_token())
+        return render_template(
+            "tv.html", food_time=database.food_time(), csrf_token=csrf_token(),
+            refresh_token=playback.refresh_token,
+        )
 
     @app.get("/parent")
     def parent():
@@ -359,12 +362,16 @@ def create_app(overrides: dict | None = None) -> Flask:
             return jsonify({"error": "Parent sign-in required."}), 401
         body = request.get_json(silent=True)
         action = body.get("action") if isinstance(body, dict) else None
-        if action not in ("home", "clock"):
-            raise ValueError("Choose Home or Clock.")
+        if action not in ("home", "clock", "refresh"):
+            raise ValueError("Choose Home, Clock or Refresh TV.")
         with playback.lock:
-            playback.food(False)
-            if action == "clock":
-                playback.mode = "clock"
+            if action == "refresh":
+                playback.refresh_token = secrets.token_hex(16)
+                playback.revision += 1
+            else:
+                playback.food(False)
+                if action == "clock":
+                    playback.mode = "clock"
             return jsonify({"ok": True, "playback": playback.snapshot()})
 
     @app.post("/api/parent/food-time")

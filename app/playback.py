@@ -24,6 +24,7 @@ class Playback:
         self.lock = threading.RLock()
         self.session = uuid.uuid4().hex
         self.revision = 0
+        self.refresh_token = uuid.uuid4().hex
         self.seek_revision = 0
         self.mode = "food" if database.food_time() else "blank"
         self.queue = []
@@ -48,6 +49,7 @@ class Playback:
                 elapsed = total
             return {
                 "session": self.session, "revision": self.revision, "mode": self.mode,
+                "refresh_token": self.refresh_token,
                 "seek_revision": self.seek_revision,
                 "queue": self.queue, "index": self.index, "current": current,
                 "position": self.position, "paused": self.paused, "volume": self.volume,
