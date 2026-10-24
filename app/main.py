@@ -199,13 +199,16 @@ def create_app(overrides: dict | None = None) -> Flask:
                 if accepted:
                     sound = sound_step(game.item, game.position)
                     playback.revision += 1
-            elif action == "next":
+            elif action in {"next", "previous", "advance"}:
                 game = playback.typing
-                if game is None or body.get("token") != game.token or not game.snapshot()["complete"]:
-                    raise ValueError("Finish this name before choosing Next.")
+                if game is None or body.get("token") != game.token:
+                    raise ValueError("That typing turn has changed. Choose the current arrow.")
+                if action == "advance" and not game.snapshot()["complete"]:
+                    raise ValueError("Finish this name before moving on automatically.")
                 index = next(index for index, item in enumerate(LESSONS) if item["id"] == game.item["id"])
-                if index + 1 < len(LESSONS):
-                    playback.start_typing(LESSONS[index + 1]["id"])
+                target = index - 1 if action == "previous" else index + 1
+                if 0 <= target < len(LESSONS):
+                    playback.start_typing(LESSONS[target]["id"])
                 else:
                     playback.food(False)
                     playback.mode = "typing-menu"

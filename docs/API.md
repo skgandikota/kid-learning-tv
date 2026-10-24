@@ -16,7 +16,7 @@
 | POST | `/api/child/quiz` | `menu`, `start` with `category`, or `close`; blocked during Food time/video/end photo |
 | POST | `/api/child/matching` | `start`, `close`, or `flip` with board `token` and integer `index`; CSRF required |
 | GET | `/api/typing/catalog` | Curated character/word choices and local picture paths |
-| POST | `/api/child/typing` | `menu`, `start` with lesson `id`, `key`, `next`, or `close`; CSRF required |
+| POST | `/api/child/typing` | `menu`, `start` with lesson `id`, `key`, `next`, `previous`, `advance`, or `close`; CSRF required. Navigation requires current `token`; `advance` also requires completion |
 | GET | `/api/typing/audio/<id>/<position>/<kind>` | Local TV/parent WAV; allowlisted name, spell, sound or blend only |
 | GET | `/api/parent/quiz` | Parent settings, catalog, playback and speech status |
 | POST | `/api/parent/quiz` | `settings` with seconds/count/ticking; start/category, menu, pause, resume, reveal, next, close |

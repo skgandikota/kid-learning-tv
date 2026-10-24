@@ -72,7 +72,9 @@ Choose a name, listen to its spelling, then type the highlighted letters using
 the keyboard or large on-screen keys. Sounds play after each completed sound
 group; Flash builds F, FL, FLA and then SH/FLASH. SH waits for both letters.
 Irregular names use sound chunks rather than misleading partial-name blends.
-Hear again repeats the prompt; Next adventure follows a completed name.
+After the complete-name audio finishes, the next lesson starts automatically.
+Large bottom-corner arrows go back or forward at any time, even during speech;
+the ends return to the choices. Hear again repeats the prompt.
 There is no scoring, countdown, microphone capture or typed-text history.
 Phonics uses local eSpeak NG; complete names use the existing local voice.
 

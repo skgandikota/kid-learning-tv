@@ -13,7 +13,7 @@ def test_typing_menu_start_wrong_right_and_next(client):
     wrong = client.post("/api/child/typing", json={"action": "key", "token": token, "position": 0, "key": "z"}, headers=headers)
     assert wrong.json["accepted"] is False
     assert wrong.json["playback"]["typing"]["position"] == 0
-    assert client.post("/api/child/typing", json={"action": "next", "token": token}, headers=headers).status_code == 400
+    assert client.post("/api/child/typing", json={"action": "advance", "token": token}, headers=headers).status_code == 400
     for position, key in enumerate("flash"):
         result = client.post("/api/child/typing", json={
             "action": "key", "token": token, "position": position, "key": key,
@@ -21,7 +21,7 @@ def test_typing_menu_start_wrong_right_and_next(client):
         assert result.json["accepted"] is True
         assert result.json["sound"] is (position != 3)
     assert result.json["playback"]["typing"]["complete"]
-    result = client.post("/api/child/typing", json={"action": "next", "token": token}, headers=headers)
+    result = client.post("/api/child/typing", json={"action": "advance", "token": token}, headers=headers)
     assert result.json["playback"]["typing"]["item"]["id"] == "batman"
     assert client.post("/api/child/typing", json={"action": "key", "token": token, "position": 0, "key": "b"}, headers=headers).status_code == 400
 
@@ -53,7 +53,7 @@ def test_typing_interruptions_clear_state_and_block_child_controls(client, app):
         else:
             playback.start_matching()
         assert playback.typing is None
-        for action in ("start", "close", "menu"):
+        for action in ("start", "close", "menu", "next", "previous", "advance"):
             assert client.post("/api/child/typing", json={"action": action, "id": "flash"}, headers=headers).status_code == 423
         assert playback.snapshot()["mode"] == mode
 
@@ -66,8 +66,30 @@ def test_spaces_are_automatic_and_final_word_returns_to_menu(client):
             result = client.post("/api/child/typing", json={"action": "key", "token": game["token"], "position": position, "key": key}, headers=headers)
             assert result.status_code == 200
         assert result.json["playback"]["typing"]["complete"]
-    result = client.post("/api/child/typing", json={"action": "next", "token": game["token"]}, headers=headers)
+    result = client.post("/api/child/typing", json={"action": "advance", "token": game["token"]}, headers=headers)
     assert result.json["playback"]["mode"] == "typing-menu"
+
+
+def test_arrows_skip_unfinished_names_both_ways_and_reject_stale_navigation(client):
+    headers = {"X-CSRF-Token": csrf_for(client)}
+
+    def command(action, **extra):
+        return client.post("/api/child/typing", json={"action": action, **extra}, headers=headers)
+
+    game = command("start", id="batman").json["playback"]["typing"]
+    previous = command("previous", token=game["token"])
+    flash = previous.json["playback"]["typing"]
+    assert flash["item"]["id"] == "flash"
+    assert flash["position"] == 0
+    assert command("next", token=game["token"]).status_code == 400
+    batman = command("next", token=flash["token"]).json["playback"]["typing"]
+    assert batman["item"]["id"] == "batman"
+    assert batman["position"] == 0
+    flash = command("previous", token=batman["token"]).json["playback"]["typing"]
+    assert command("previous", token=flash["token"]).json["playback"]["mode"] == "typing-menu"
+    last = command("start", id="leg").json["playback"]["typing"]
+    assert command("next", token=last["token"]).json["playback"]["mode"] == "typing-menu"
+    assert command("previous", token=last["token"]).status_code == 400
 
 
 def test_catalog_and_lessons_share_available_character_and_word_pictures(client):

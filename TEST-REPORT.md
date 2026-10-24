@@ -1,6 +1,6 @@
 # Test report
 
-`python -m pytest -q`: **188 passed, 6 skipped** on the development Windows host.
+`python -m pytest -q`: **189 passed, 6 skipped** on the development Windows host.
 Downloader tests mock yt-dlp, ffprobe and file failures; no third-party videos
 or AI models were downloaded on this machine. A missing setuptools build backend
 was installed only to check application packaging.
@@ -72,3 +72,11 @@ supervisor through Bash with non-executable script permissions.
 Automatic desktop login and physical startup were not changed or tested remotely.
 Target-Lubuntu speakers and voice
 quality still need on-device listening.
+
+Real Edge also verified automatic progression only after the full-name audio
+ended, including completing Ant by keyboard and progressing to Apple. Held audio
+did not advance; audio failure stayed on the lesson and Hear again recovered.
+Large bottom-corner arrows worked during unfinished lessons and speech, in both
+directions. Old audio could not advance a new lesson or interrupt Food time.
+The final word returned to choices. The home image fills its card edge-to-edge
+above its title at 1366x768.

@@ -16,6 +16,7 @@
   let cancelAudio = null;
   let controller = new AbortController();
   let currentMode = "";
+  let navigating = false;
 
   function stopAudio() {
     controller.abort();
@@ -36,7 +37,6 @@
       button.classList.toggle("next-key", button.textContent === next);
     }
     document.getElementById("typing-listen").disabled = busy;
-    document.getElementById("typing-next").disabled = busy;
   }
 
   function showHint(message) {
@@ -76,7 +76,7 @@
       });
       if (!response.ok) throw new Error((await response.json()).error || "Typing sound could not load.");
       const blob = await response.blob();
-      if (game?.token !== token || currentMode !== "typing" || abort.signal.aborted) return;
+      if (game?.token !== token || currentMode !== "typing" || abort.signal.aborted || navigating) return false;
       url = URL.createObjectURL(blob);
       player = new Audio(url);
       audio = player;
@@ -88,6 +88,7 @@
         player.onerror = () => reject(new Error("Typing sound could not play. Check laptop volume and kiosk mode."));
         player.play().catch(reject);
       });
+      return !abort.signal.aborted;
     } finally {
       clearTimeout(timeout);
       if (aborted) abort.signal.removeEventListener("abort", aborted);
@@ -108,11 +109,14 @@
     const id = game.item.id;
     try {
       for (const kind of kinds) {
-        if (game?.token !== token || currentMode !== "typing") return;
-        await sound(id, ["name", "spell"].includes(kind) ? 0 : position, kind, token);
+        if (game?.token !== token || currentMode !== "typing" || navigating) return;
+        if (!await sound(id, ["name", "spell"].includes(kind) ? 0 : position, kind, token)) return;
+      }
+      if (kinds.includes("name") && game?.token === token && game.complete && currentMode === "typing" && !navigating) {
+        await choose("advance", { token });
       }
     } catch (error) {
-      if (game?.token === token && currentMode === "typing") {
+      if (game?.token === token && currentMode === "typing" && !navigating) {
         console.error("Hero Typing audio:", error);
         errorLabel.textContent = "Sound unavailable. Check eSpeak NG, laptop sound and the latest update, then press Hear again.";
       }
@@ -149,8 +153,20 @@
     }
   }
 
+  async function navigate(action) {
+    if (!game || navigating) return;
+    navigating = true;
+    stopAudio();
+    try {
+      await choose(action, { token: game.token });
+    } finally {
+      navigating = false;
+      if (game && currentMode === "typing") say([game.complete ? "name" : "spell"]);
+    }
+  }
+
   async function type(key) {
-    if (busy || !game || game.complete || currentMode !== "typing") return;
+    if (busy || navigating || !game || game.complete || currentMode !== "typing") return;
     const token = game.token;
     busy = true;
     updateKeys();
@@ -247,6 +263,7 @@
     const fresh = game?.token !== next.token;
     if (fresh) {
       stopAudio();
+      busy = false;
       errorLabel.textContent = "";
     }
     game = next;
@@ -256,11 +273,10 @@
     document.getElementById("typing-picture").src = game.item.image;
     document.getElementById("typing-character-name").textContent = game.item.name;
     renderLetters();
-    document.getElementById("typing-next").hidden = !game.complete;
     document.getElementById("typing-celebration").hidden = !game.complete;
     updateKeys();
     if (!busy) showHint();
-    if (fresh) say([game.complete ? "name" : "spell"]);
+    if (fresh && !navigating) say([game.complete ? "name" : "spell"]);
   });
 
   for (const row of ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"]) {
@@ -288,7 +304,8 @@
   document.getElementById("typing-launcher").addEventListener("click", () => choose("menu"));
   document.getElementById("typing-close").addEventListener("click", () => choose("close"));
   document.getElementById("typing-choose").addEventListener("click", () => choose("menu"));
-  document.getElementById("typing-next").addEventListener("click", () => choose("next", { token: game?.token }));
+  document.getElementById("typing-next").addEventListener("click", () => navigate("next"));
+  document.getElementById("typing-previous").addEventListener("click", () => navigate("previous"));
   document.getElementById("typing-listen").addEventListener("click", () => {
     errorLabel.textContent = "";
     say([game.complete ? "name" : "spell"]);

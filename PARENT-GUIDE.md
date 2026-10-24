@@ -101,7 +101,11 @@ use sound chunks and the complete name, not invented blends at every letter.
 Iron is treated as a special whole-word chunk.
 
 After finishing, the hero celebrates and the full name is spoken.
-**Next adventure** moves through the names and then Ant, Apple, Cat, Dog, Pig,
+After the full-name announcement finishes, the next lesson starts automatically.
+Large left/right arrows in the bottom corners go back or forward at any time,
+even before finishing a name or while it is speaking. Switching cancels the old
+audio and starts the chosen lesson afresh; the first/last ends return to choices.
+Lessons move through the names and then Ant, Apple, Cat, Dog, Pig,
 Hen, Duck, Fish, Table, Chair, Bed, Cup, Book, Ball, Head, Hair, Eye, Ear,
 Nose, Mouth, Tooth, Hand, Foot, Arm and Leg. Everyday words have matching pictures.
 **Hear again** repeats the introduction, or the completed
