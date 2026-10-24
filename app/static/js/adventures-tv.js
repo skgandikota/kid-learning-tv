@@ -225,7 +225,7 @@
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Adventure request failed.");
       if (!["blank", "adventure-menu", "adventure"].includes(mode)) return;
-      apply(data.playback);
+      apply(data.playback, true);
       pending = false;
       if (game && data.playback.adventure?.token === game.token) present(data.feedback);
     } catch (error) {

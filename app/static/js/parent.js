@@ -37,3 +37,10 @@ document.getElementById("food-time")?.addEventListener("click", (event) => {
     button.setAttribute("aria-pressed", String(result.food_time));
   });
 });
+for (const [id, action] of [["tv-home", "home"], ["show-clock", "clock"]]) {
+  document.getElementById(id)?.addEventListener("click", (event) => {
+    submit("/api/parent/display", { action }, event.currentTarget, () => {
+      document.getElementById("food-time").setAttribute("aria-pressed", "false");
+    });
+  });
+}

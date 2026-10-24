@@ -6,6 +6,7 @@
 | GET | `/parent` | Parent PIN login and remote controls |
 | GET | `/api/display` | Current `food_time` boolean, polled by the TV |
 | POST | `/api/parent/food-time` | Authenticated parent sets `{"enabled": true}` or `false` |
+| POST | `/api/parent/display` | Authenticated parent sends `{"action":"home"}` or `{"action":"clock"}`; stops the current activity |
 | GET | `/api/parent/videos` | Parent-only library, download jobs and playback state |
 | POST | `/api/parent/videos/download` | Parent submits `url` and `title`; starts one background job |
 | POST | `/api/parent/videos/play` | Parent submits ordered `ids` list (1-50 unique entries) |
@@ -37,6 +38,10 @@ Old game/voice endpoints remain removed. Playback is in memory; service restart
 does not restart videos. `/api/display` also includes `playback` with queue,
 current item, position, total/remaining time, paused, volume, buffering, errors
 and connection heartbeat. TV reports with stale session/revision return 409.
+Home selects `blank` (game choices); Clock selects `clock` (local 24-hour
+digital time only). Both clear games, video queues and Food time. Child game
+controls cannot leave Clock; a parent selects Home or another activity.
+Clock survives a page refresh, not a service restart.
 Use `position` (seconds) for seek and `volume` (0-1) for volume.
 Quiz phases are loading, question, answer and complete. `ready` starts the timer;
 answers stay at least four seconds, waiting for speech completion (bounded by a

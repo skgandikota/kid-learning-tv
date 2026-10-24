@@ -353,6 +353,20 @@ def create_app(overrides: dict | None = None) -> Flask:
         from flask import Response
         return Response(audio, mimetype="audio/wav")
 
+    @app.post("/api/parent/display")
+    def parent_display():
+        if not session.get("parent_authenticated"):
+            return jsonify({"error": "Parent sign-in required."}), 401
+        body = request.get_json(silent=True)
+        action = body.get("action") if isinstance(body, dict) else None
+        if action not in ("home", "clock"):
+            raise ValueError("Choose Home or Clock.")
+        with playback.lock:
+            playback.food(False)
+            if action == "clock":
+                playback.mode = "clock"
+            return jsonify({"ok": True, "playback": playback.snapshot()})
+
     @app.post("/api/parent/food-time")
     def food_time():
         if not session.get("parent_authenticated"):

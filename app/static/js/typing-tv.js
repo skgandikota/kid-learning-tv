@@ -140,7 +140,7 @@
     });
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || "Hero Typing connection failed.");
-    apply(result.playback);
+    apply(result.playback, true);
     return result;
   }
 

@@ -58,7 +58,7 @@
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Card match connection failed.");
-      apply(data.playback);
+      apply(data.playback, true);
     } catch (error) {
       const target = screen.hidden ? homeError : errorLabel;
       target.textContent = error.message;

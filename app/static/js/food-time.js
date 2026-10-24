@@ -7,6 +7,8 @@ const overlay = document.getElementById("video-overlay");
 const loading = document.getElementById("video-loading");
 const countdown = document.getElementById("video-countdown");
 const progress = document.getElementById("playlist-progress");
+const digitalClock = document.getElementById("digital-clock");
+const digitalTime = document.getElementById("digital-clock-time");
 let state = null;
 let sourceKey = "";
 let appliedSeek = -1;
@@ -60,13 +62,15 @@ async function play() {
   }
 }
 
-function apply(next) {
+function apply(next, fromCommand = false) {
   if (!next || !Number.isInteger(next.revision)) throw new Error("Invalid display state.");
-  if (state && next.session === state.session && next.revision < state.revision) return;
+  if (state && (fromCommand || next.session === state.session) && next.revision < state.revision) return;
   state = next;
   window.dispatchEvent(new CustomEvent("tv-display", { detail: next }));
   picture.hidden = state.mode !== "food";
   endPicture.hidden = state.mode !== "finished";
+  digitalClock.hidden = state.mode !== "clock";
+  if (state.mode === "clock") updateClock();
   video.hidden = overlay.hidden = state.mode !== "video";
   if (state.mode !== "video") {
     video.pause();
@@ -96,6 +100,15 @@ function apply(next) {
   if (state.paused) video.pause();
   else if (!loadingSource) play();
 }
+
+function updateClock() {
+  if (digitalClock.hidden) return;
+  const now = new Date();
+  digitalTime.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  digitalTime.dateTime = now.toISOString();
+}
+
+setInterval(updateClock, 1000);
 
 video.addEventListener("loadedmetadata", () => {
   if (!state || state.mode !== "video") return;

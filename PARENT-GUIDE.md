@@ -5,6 +5,11 @@ After login, **Food time** is at the top. Tap it to show the meal-time image on
 the TV; tap again to return to the Quiz home tile. A green button means it is on.
 You can also sign out. Signing out does not change the TV.
 
+**Home** stops the current activity and returns the TV to its game choices.
+**Clock** stops the activity and shows only a large digital clock on black.
+It uses the TV laptop's local time in 24-hour format. No buttons or cursor
+appear on the TV; use **Home** on your phone to leave the clock.
+
 Food time shows only the image, with no clock or controls. No microphone is used.
 
 ## Video

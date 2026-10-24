@@ -13,6 +13,7 @@
   <script src="{{ url_for('static', filename='js/adventures-tv.js') }}" defer></script>
 </head>
 <body class="tv">
+  <div id="digital-clock" hidden><time id="digital-clock-time" aria-label="Current time"></time></div>
   <img id="food-time-image" src="{{ url_for('static', filename='images/food-time.png') }}"
        alt="" draggable="false"{% if not food_time %} hidden{% endif %}>
   <video id="tv-video" playsinline disablepictureinpicture disableremoteplayback
