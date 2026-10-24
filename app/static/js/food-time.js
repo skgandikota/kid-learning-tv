@@ -9,6 +9,8 @@ const countdown = document.getElementById("video-countdown");
 const progress = document.getElementById("playlist-progress");
 const digitalClock = document.getElementById("digital-clock");
 const digitalTime = document.getElementById("digital-clock-time");
+const moveBackScreen = document.getElementById("move-back-screen");
+const paintingScreen = document.getElementById("painting-screen");
 let state = null;
 let sourceKey = "";
 let appliedSeek = -1;
@@ -70,6 +72,8 @@ function apply(next, fromCommand = false) {
   picture.hidden = state.mode !== "food";
   endPicture.hidden = state.mode !== "finished";
   digitalClock.hidden = state.mode !== "clock";
+  moveBackScreen.hidden = state.mode !== "move-back";
+  paintingScreen.hidden = state.mode !== "painting";
   if (state.mode === "clock") updateClock();
   video.hidden = overlay.hidden = state.mode !== "video";
   if (state.mode !== "video") {

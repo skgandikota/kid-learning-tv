@@ -10,6 +10,13 @@ You can also sign out. Signing out does not change the TV.
 It uses the TV laptop's local time in 24-hour format. No buttons or cursor
 appear on the TV; use **Home** on your phone to leave the clock.
 
+**Move back** shows a friendly child-and-TV picture with "A little step back!"
+and "Let's watch from our comfy spot."
+**Painting time** shows the supplied painting picture with "It's painting time!"
+Both stop the current activity and stay on the TV until you choose Home or
+another activity. There are no child buttons, cursor or sounds. A TV page
+refresh keeps the screen; a service restart returns home.
+
 **Refresh TV** reloads the TV page remotely without clearing the current
 activity. Games keep their progress; video resumes near its last reported
 position. It needs the TV page to be open and connected; it cannot reopen a

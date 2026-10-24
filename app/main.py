@@ -362,16 +362,16 @@ def create_app(overrides: dict | None = None) -> Flask:
             return jsonify({"error": "Parent sign-in required."}), 401
         body = request.get_json(silent=True)
         action = body.get("action") if isinstance(body, dict) else None
-        if action not in ("home", "clock", "refresh"):
-            raise ValueError("Choose Home, Clock or Refresh TV.")
+        if action not in ("home", "clock", "refresh", "move-back", "painting"):
+            raise ValueError("Choose Home, Clock, Move back, Painting time or Refresh TV.")
         with playback.lock:
             if action == "refresh":
                 playback.refresh_token = secrets.token_hex(16)
                 playback.revision += 1
             else:
                 playback.food(False)
-                if action == "clock":
-                    playback.mode = "clock"
+                if action != "home":
+                    playback.mode = action
             return jsonify({"ok": True, "playback": playback.snapshot()})
 
     @app.post("/api/parent/food-time")

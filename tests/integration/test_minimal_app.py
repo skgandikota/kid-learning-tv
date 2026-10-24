@@ -68,26 +68,32 @@ def test_wrong_pin_csrf_and_rate_limiting(client, app):
     assert "Parent login" in client.get("/parent").text
 
 
-def test_home_and_clock_require_parent_and_valid_action(client):
+def test_parent_display_requires_login_csrf_and_valid_action(client):
     headers = {"X-CSRF-Token": csrf_for(client)}
     assert 'id="tv-home"' not in client.get("/parent").text
     assert 'id="show-clock"' not in client.get("/parent").text
     assert 'id="refresh-tv"' not in client.get("/parent").text
+    assert 'id="show-move-back"' not in client.get("/parent").text
+    assert 'id="show-painting"' not in client.get("/parent").text
     endpoint = "/api/parent/display"
-    assert client.post(endpoint, json={"action": "clock"}, headers=headers).status_code == 401
+    for action in ("clock", "move-back", "painting"):
+        assert client.post(endpoint, json={"action": action}, headers=headers).status_code == 401
     setup = client.post("/api/setup", json={"pin": "123456"}, headers=headers)
     headers = {"X-CSRF-Token": setup.json["csrf_token"]}
     assert 'id="tv-home"' in client.get("/parent").text
     assert 'id="show-clock"' in client.get("/parent").text
     assert 'id="refresh-tv"' in client.get("/parent").text
-    assert client.post(endpoint, json={"action": "home"}).status_code == 400
+    assert 'id="show-move-back"' in client.get("/parent").text
+    assert 'id="show-painting"' in client.get("/parent").text
+    for action in ("home", "move-back", "painting"):
+        assert client.post(endpoint, json={"action": action}).status_code == 400
     for body in (None, {}, {"action": []}, {"action": "video"}):
         assert client.post(endpoint, json=body, headers=headers).status_code == 400
 
 
 @pytest.mark.parametrize("activity", ["food", "video", "quiz", "matching", "typing", "adventure"])
-@pytest.mark.parametrize("action", ["home", "clock"])
-def test_home_and_clock_interrupt_activities_and_reject_old_controls(client, app, activity, action):
+@pytest.mark.parametrize("action", ["home", "clock", "move-back", "painting"])
+def test_parent_screens_interrupt_activities_and_reject_old_controls(client, app, activity, action):
     setup = client.post("/api/setup", json={"pin": "123456"}, headers={"X-CSRF-Token": csrf_for(client)})
     headers = {"X-CSRF-Token": setup.json["csrf_token"]}
     playback = app.extensions["klt_playback"]
@@ -104,7 +110,7 @@ def test_home_and_clock_interrupt_activities_and_reject_old_controls(client, app
     response = client.post("/api/parent/display", json={"action": action}, headers=headers)
     assert response.status_code == 200
     state = response.json["playback"]
-    assert state["mode"] == ("clock" if action == "clock" else "blank")
+    assert state["mode"] == ("blank" if action == "home" else action)
     assert state["revision"] > old["revision"]
     assert state["queue"] == []
     assert all(state[key] is None for key in ("quiz", "matching", "typing", "adventure"))
@@ -113,17 +119,17 @@ def test_home_and_clock_interrupt_activities_and_reject_old_controls(client, app
         "session": old["session"], "revision": old["revision"],
         "event": "ended", "position": 10, "buffering": False,
     })
-    if action == "clock":
+    if action != "home":
         assert client.post("/api/child/matching", json={"action": "start"}, headers=headers).status_code == 423
         assert client.post("/api/child/quiz", json={"action": "menu"}, headers=headers).status_code == 423
         assert client.post("/api/child/typing", json={"action": "menu"}, headers=headers).status_code == 423
         assert client.post("/api/child/adventures", json={"action": "menu"}, headers=headers).status_code == 423
-        assert client.get("/api/display").json["playback"]["mode"] == "clock"
+        assert client.get("/api/display").json["playback"]["mode"] == action
         assert client.post("/api/parent/display", json={"action": "home"}, headers=headers).status_code == 200
         assert client.get("/api/display").json["playback"]["mode"] == "blank"
 
 
-@pytest.mark.parametrize("activity", ["food", "clock", "adventure", "video"])
+@pytest.mark.parametrize("activity", ["food", "clock", "move-back", "painting", "adventure", "video"])
 def test_refresh_tv_changes_page_token_without_stopping_activity(client, app, activity):
     endpoint = "/api/parent/display"
     headers = {"X-CSRF-Token": csrf_for(client)}
