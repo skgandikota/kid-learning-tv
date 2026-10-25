@@ -81,6 +81,22 @@ def test_range_stream_and_path_confinement(parent, app, fake_library, tmp_path, 
     response = parent.get("/api/videos/a", headers={"Range": "bytes=2-5"})
     assert response.status_code == 206
     assert response.data == b"2345"
+    assert parent.get("/api/videos/a", headers={"Range": "bytes=20-"}).status_code == 416
+    suffix = parent.get("/api/videos/a", headers={"Range": "bytes=-3"})
+    assert (suffix.status_code, suffix.data, suffix.headers["Content-Range"]) == (206, b"789", "bytes 7-9/10")
     assert parent.get("/api/videos/missing").status_code == 404
     with app.test_client() as guest:
         assert guest.get("/api/videos/a", environ_overrides={"REMOTE_ADDR": "192.168.1.2"}).status_code == 403
+
+
+def test_open_ended_range_is_capped_so_workers_are_released(parent, fake_library, tmp_path, monkeypatch):
+    from app import main
+    monkeypatch.setattr(main, "_VIDEO_CHUNK", 4)
+    path = tmp_path / "video.webm"
+    path.write_bytes(b"0123456789")
+    monkeypatch.setattr(fake_library, "resolve", lambda id_: path)
+    response = parent.get("/api/videos/a", headers={"Range": "bytes=3-"})
+    assert response.status_code == 206
+    assert response.data == b"3456"
+    assert response.headers["Content-Range"] == "bytes 3-6/10"
+    assert response.mimetype == "video/webm"

@@ -316,6 +316,10 @@ class VideoLibrary:
         published = False
         staging_created = False
         try:
+            if hasattr(os, "nice"):
+                # Linux applies this to the download thread and its ffmpeg/deno children,
+                # keeping the TV and parent page responsive on a slow laptop.
+                os.nice(10)
             import yt_dlp
 
             if staging.parent.is_symlink():

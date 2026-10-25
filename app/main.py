@@ -6,7 +6,7 @@ import secrets
 import time
 from pathlib import Path
 
-from flask import Flask, jsonify, render_template, request, session, send_file
+from flask import Flask, Response, jsonify, render_template, request, session, send_file
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from app.auth.security import hash_pin, valid_pin, verify_pin
@@ -20,6 +20,44 @@ from app.quiz_speech import QuizSpeech
 from app.phonics_speech import PhonicsSpeech
 from app.typing_game import LESSONS, get_lesson, sound_step
 from app.adventures import AUDIO, GAMES, audio_key, validate_settings as validate_adventures
+
+
+_VIDEO_CHUNK = 2 * 1024 * 1024
+_VIDEO_TYPES = {".mp4": "video/mp4", ".m4v": "video/mp4", ".webm": "video/webm"}
+
+
+def _video_response(path: Path):
+    """Serve at most 2 MiB per range request.
+
+    Waitress blocks a worker while a client is slow to read a large body, and
+    Chromium keeps media connections open, so open-ended ranges could use up
+    every worker. Short 206 replies finish at once; Chromium asks for the rest.
+    """
+    size = path.stat().st_size
+    header = request.headers.get("Range", "")
+    if not header:
+        return send_file(path, conditional=True)
+    try:
+        unit, spec = header.split("=", 1)
+        start_text, end_text = spec.strip().split("-", 1)
+        if unit.strip() != "bytes" or "," in spec:
+            raise ValueError
+        if start_text:
+            start = int(start_text)
+            end = int(end_text) if end_text else size - 1
+        else:
+            start, end = max(0, size - int(end_text)), size - 1
+        if start < 0 or start >= size or end < start:
+            raise ValueError
+    except ValueError:
+        return Response(status=416, headers={"Content-Range": f"bytes */{size}"})
+    end = min(end, size - 1, start + _VIDEO_CHUNK - 1)
+    with path.open("rb") as source:
+        source.seek(start)
+        data = source.read(end - start + 1)
+    return Response(data, status=206, mimetype=_VIDEO_TYPES.get(path.suffix.lower(), "application/octet-stream"),
+                    headers={"Content-Range": f"bytes {start}-{start + len(data) - 1}/{size}",
+                             "Accept-Ranges": "bytes", "Cache-Control": "no-cache"})
 
 
 def _secret_key(data_dir: Path) -> str:
@@ -435,7 +473,7 @@ def create_app(overrides: dict | None = None) -> Flask:
             path = library.resolve(video_id)
         except ValueError:
             return jsonify({"error": "Video file not found."}), 404
-        return send_file(path, conditional=True)
+        return _video_response(path)
 
     @app.post("/api/tv/playback")
     def tv_playback():
@@ -511,7 +549,7 @@ app = create_app()
 
 def main():
     from waitress import serve
-    serve(app, host=HOST, port=PORT, threads=6, channel_timeout=30)
+    serve(app, host=HOST, port=PORT, threads=12, channel_timeout=30)
 
 
 if __name__ == "__main__":
