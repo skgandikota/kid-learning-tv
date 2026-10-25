@@ -59,7 +59,10 @@ login environment rather than using a systemd user service. Rerunning
 autostart entry.
 
 To close kiosk temporarily, press **Alt+F4**. It stays closed until you start it
-again or log in next time. Browser errors are not hidden or automatically retried.
+again or log in next time. If Chromium crashes, the launcher reopens it after 3
+seconds. At startup it waits up to 60 seconds for the app to be ready. If the TV
+loses contact with the app for more than 15 seconds, it reloads itself once the
+app answers again.
 To disable future kiosk startup, run
 `bash /opt/kid-learning-tv/scripts/disable-kiosk.sh`.
 

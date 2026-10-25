@@ -231,7 +231,7 @@ def test_success_atomic_publication_title_and_deno(directory, probe, monkeypatch
     assert options["noplaylist"] is True
     assert options["merge_output_format"] == "mp4/webm"
     assert options["max_filesize"] == 2 * 1024**3
-    assert "height<=1080" in options["format"]
+    assert "height<=720" in options["format"]
     assert not {"cookies", "cookiefile", "remote_components"} & options.keys()
 
 

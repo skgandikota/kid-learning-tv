@@ -19,6 +19,19 @@ let reporting = false;
 let loadingSource = false;
 let playPending = false;
 
+let failedSince = 0;
+
+// A request that never answers must not freeze the TV loop.
+async function fetchWithTimeout(url, options = {}, ms = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function clock(seconds) {
   const value = Math.max(0, Math.ceil(seconds));
   return `${Math.floor(value / 60)}:${String(value % 60).padStart(2, "0")}`;
@@ -29,7 +42,7 @@ async function report(event = "progress", error = "") {
   reporting = true;
   const current = state;
   try {
-    const response = await fetch("/api/tv/playback", {
+    const response = await fetchWithTimeout("/api/tv/playback", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -138,15 +151,18 @@ document.addEventListener("keydown", (event) => {
 
 async function updateDisplay() {
   try {
-    const response = await fetch("/api/display", { cache: "no-store" });
+    const response = await fetchWithTimeout("/api/display", { cache: "no-store" });
     if (!response.ok) throw new Error(`TV display update failed (${response.status}).`);
     const next = (await response.json()).playback;
-    if (next.refresh_token !== document.querySelector('meta[name="tv-refresh-token"]').content) {
+    const recovered = failedSince && Date.now() - failedSince > 15000;
+    failedSince = 0;
+    if (recovered || next.refresh_token !== document.querySelector('meta[name="tv-refresh-token"]').content) {
       location.reload();
       return;
     }
     apply(next);
   } catch (error) {
+    if (!failedSince) failedSince = Date.now();
     console.error(error);
   } finally {
     setTimeout(updateDisplay, 500);

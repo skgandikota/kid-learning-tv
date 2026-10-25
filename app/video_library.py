@@ -350,13 +350,13 @@ class VideoLibrary:
 
             options = {
                 "format": (
-                    "bestvideo[ext=mp4][vcodec^=avc1][height<=1080]"
+                    "bestvideo[ext=mp4][vcodec^=avc1][height<=720]"
                     "+bestaudio[ext=m4a][acodec^=mp4a]/"
-                    "best[ext=mp4][vcodec^=avc1][acodec^=mp4a][height<=1080]/"
-                    "bestvideo[ext=webm][vcodec~='^(vp8|vp9|vp09|av01)'][height<=1080]"
+                    "best[ext=mp4][vcodec^=avc1][acodec^=mp4a][height<=720]/"
+                    "bestvideo[ext=webm][vcodec~='^(vp8|vp9|vp09|av01)'][height<=720]"
                     "+bestaudio[ext=webm][acodec~='^(opus|vorbis)']/"
                     "best[ext=webm][vcodec~='^(vp8|vp9|vp09|av01)']"
-                    "[acodec~='^(opus|vorbis)'][height<=1080]"
+                    "[acodec~='^(opus|vorbis)'][height<=720]"
                 ),
                 "outtmpl": str(staging / "video.%(ext)s"),
                 "merge_output_format": "mp4/webm",
